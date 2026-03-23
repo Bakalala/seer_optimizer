@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parent
 MANIFEST_PATH = ROOT / "rust_core" / "Cargo.toml"
 BINARY_PATH = ROOT / "rust_core" / "target" / "debug" / "rust_core"
 DEFAULT_CONFIG_PATH = ROOT / "benchmark_config.json"
+DEFAULT_COST_MODEL_PATH = ROOT / "cost_model.json"
 DEFAULT_LIMITS = {
     "iter_limit": 12,
     "node_limit": 12_000,
@@ -32,7 +33,6 @@ DEFAULT_REPORT_PATH = ROOT / "outputs" / "report.html"
 DEFAULT_ANALYSIS_PATH = ROOT / "outputs" / "analysis.md"
 DEFAULT_SUMMARY_CSV_PATH = ROOT / "outputs" / "benchmark_summary.csv"
 WEIGHT_SWEEP = [(8.0, 1.0), (2.0, 1.0), (1.0, 1.0), (1.0, 4.0)]
-DEFAULT_BASELINE_MULTIPLY_POLICY = "generic_mul_defaults_to_dsp_metrics"
 DEFAULT_BUDGET_PROFILES = {
     "latency_under_area": {"area_max_mode": "original_area"},
     "area_under_latency": {"latency_max_mode": "original_latency"},
@@ -42,6 +42,7 @@ DEFAULT_BUDGET_PROFILES = {
             "fir8": 7,
             "dot16": 15,
             "gemm_k8": 7,
+            "gemm_blocked_k8": 7,
             "conv3x3": 8,
             "stencil5": 4,
         }
@@ -54,6 +55,22 @@ DEFAULT_DSP_BUDGET_SWEEP = {
     "step": 1,
 }
 _OPTIMIZER_READY = False
+
+
+def load_cost_model(path: Path | None = None) -> dict:
+    cost_model_path = path or DEFAULT_COST_MODEL_PATH
+    raw = json.loads(cost_model_path.read_text())
+    if "ops" not in raw:
+        raise ValueError(f"cost model {cost_model_path} is missing an 'ops' table")
+    return {
+        "path": str(cost_model_path),
+        "baseline_multiply_mapping_policy": raw["baseline_multiply_mapping_policy"],
+        "ops": raw["ops"],
+    }
+
+
+SHARED_COST_MODEL = load_cost_model()
+SHARED_OP_METRICS = SHARED_COST_MODEL["ops"]
 
 
 class IrBuilder:
@@ -270,10 +287,8 @@ def load_benchmark_config(path: Path | None = None) -> dict:
     budget_profiles = raw.get("budget_profiles", DEFAULT_BUDGET_PROFILES)
     dsp_budget_sweep = raw.get("dsp_budget_sweep", DEFAULT_DSP_BUDGET_SWEEP)
     normalized = {
-        "baseline_multiply_mapping_policy": raw.get(
-            "baseline_multiply_mapping_policy",
-            DEFAULT_BASELINE_MULTIPLY_POLICY,
-        ),
+        "baseline_multiply_mapping_policy": SHARED_COST_MODEL["baseline_multiply_mapping_policy"],
+        "cost_model_path": SHARED_COST_MODEL["path"],
         "saturation_limits": {
             "iter_limit": int(saturation_limits.get("iter_limit", DEFAULT_LIMITS["iter_limit"])),
             "node_limit": int(saturation_limits.get("node_limit", DEFAULT_LIMITS["node_limit"])),
@@ -403,34 +418,20 @@ def graph_metrics(graph: dict) -> dict:
             return cache[node_id]
         node = nodes[node_id]
         op = node["op"]
+        op_metrics = SHARED_OP_METRICS.get(op)
+        if op_metrics is None:
+            raise ValueError(f"unknown op {op}")
         if op in {"input", "const"}:
-            result = {"area": 0, "latency": 0, "dsp_count": 0, "lut_count": 0}
+            result = dict(op_metrics)
         else:
             left = metrics(node["inputs"][0])
             right = metrics(node["inputs"][1])
-            if op in {"add", "sub"}:
-                result = {
-                    "area": left["area"] + right["area"] + 1,
-                    "latency": max(left["latency"], right["latency"]) + 1,
-                    "dsp_count": left["dsp_count"] + right["dsp_count"],
-                    "lut_count": left["lut_count"] + right["lut_count"] + 1,
-                }
-            elif op in {"mul", "mul_dsp"}:
-                result = {
-                    "area": left["area"] + right["area"] + 6,
-                    "latency": max(left["latency"], right["latency"]) + 3,
-                    "dsp_count": left["dsp_count"] + right["dsp_count"] + 1,
-                    "lut_count": left["lut_count"] + right["lut_count"],
-                }
-            elif op == "mul_lut":
-                result = {
-                    "area": left["area"] + right["area"] + 4,
-                    "latency": max(left["latency"], right["latency"]) + 6,
-                    "dsp_count": left["dsp_count"] + right["dsp_count"],
-                    "lut_count": left["lut_count"] + right["lut_count"] + 8,
-                }
-            else:
-                raise ValueError(f"unknown op {op}")
+            result = {
+                "area": left["area"] + right["area"] + op_metrics["area"],
+                "latency": max(left["latency"], right["latency"]) + op_metrics["latency"],
+                "dsp_count": left["dsp_count"] + right["dsp_count"] + op_metrics["dsp_count"],
+                "lut_count": left["lut_count"] + right["lut_count"] + op_metrics["lut_count"],
+            }
         cache[node_id] = result
         return result
 
@@ -1814,6 +1815,7 @@ def run_suite(benchmarks: Dict[str, dict], config: dict | None = None) -> dict:
     results = {
         "metadata": {
             "config_path": active_config["config_path"],
+            "cost_model_path": active_config["cost_model_path"],
             "baseline_multiply_mapping_policy": active_config[
                 "baseline_multiply_mapping_policy"
             ],

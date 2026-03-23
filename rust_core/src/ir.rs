@@ -2,6 +2,7 @@ use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fmt;
+use std::sync::OnceLock;
 
 fn default_weight() -> f64 {
     1.0
@@ -51,6 +52,41 @@ impl Default for Weights {
             w_latency: default_weight(),
         }
     }
+}
+
+#[derive(Clone, Debug, Deserialize)]
+struct SharedCostModel {
+    baseline_multiply_mapping_policy: String,
+    ops: HashMap<String, Metrics>,
+}
+
+static SHARED_COST_MODEL: OnceLock<SharedCostModel> = OnceLock::new();
+
+fn shared_cost_model() -> &'static SharedCostModel {
+    SHARED_COST_MODEL.get_or_init(|| {
+        serde_json::from_str(include_str!("../../cost_model.json"))
+            .expect("shared cost model json should deserialize")
+    })
+}
+
+fn op_metrics(op: &str) -> &'static Metrics {
+    shared_cost_model()
+        .ops
+        .get(op)
+        .unwrap_or_else(|| panic!("missing cost model entry for op '{op}'"))
+}
+
+fn combine_metrics(left_metrics: Metrics, right_metrics: Metrics, op: &Metrics) -> Metrics {
+    Metrics {
+        area: left_metrics.area + right_metrics.area + op.area,
+        latency: left_metrics.latency.max(right_metrics.latency) + op.latency,
+        dsp_count: left_metrics.dsp_count + right_metrics.dsp_count + op.dsp_count,
+        lut_count: left_metrics.lut_count + right_metrics.lut_count + op.lut_count,
+    }
+}
+
+pub fn baseline_multiply_mapping_policy() -> &'static str {
+    &shared_cost_model().baseline_multiply_mapping_policy
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
@@ -232,36 +268,32 @@ pub enum Expr {
 impl Expr {
     pub fn metrics(&self) -> Metrics {
         match self {
-            Expr::Input(_) | Expr::Const(_) => Metrics::default(),
+            Expr::Input(_) => op_metrics("input").clone(),
+            Expr::Const(_) => op_metrics("const").clone(),
             Expr::Add(left, right) | Expr::Sub(left, right) => {
                 let left_metrics = left.metrics();
                 let right_metrics = right.metrics();
-                Metrics {
-                    area: left_metrics.area + right_metrics.area + 1,
-                    latency: left_metrics.latency.max(right_metrics.latency) + 1,
-                    dsp_count: left_metrics.dsp_count + right_metrics.dsp_count,
-                    lut_count: left_metrics.lut_count + right_metrics.lut_count + 1,
-                }
+                let op_name = if matches!(self, Expr::Add(_, _)) {
+                    "add"
+                } else {
+                    "sub"
+                };
+                combine_metrics(left_metrics, right_metrics, op_metrics(op_name))
             }
-            Expr::Mul(left, right) | Expr::MulDsp(left, right) => {
+            Expr::Mul(left, right) => {
                 let left_metrics = left.metrics();
                 let right_metrics = right.metrics();
-                Metrics {
-                    area: left_metrics.area + right_metrics.area + 6,
-                    latency: left_metrics.latency.max(right_metrics.latency) + 3,
-                    dsp_count: left_metrics.dsp_count + right_metrics.dsp_count + 1,
-                    lut_count: left_metrics.lut_count + right_metrics.lut_count,
-                }
+                combine_metrics(left_metrics, right_metrics, op_metrics("mul"))
+            }
+            Expr::MulDsp(left, right) => {
+                let left_metrics = left.metrics();
+                let right_metrics = right.metrics();
+                combine_metrics(left_metrics, right_metrics, op_metrics("mul_dsp"))
             }
             Expr::MulLut(left, right) => {
                 let left_metrics = left.metrics();
                 let right_metrics = right.metrics();
-                Metrics {
-                    area: left_metrics.area + right_metrics.area + 4,
-                    latency: left_metrics.latency.max(right_metrics.latency) + 6,
-                    dsp_count: left_metrics.dsp_count + right_metrics.dsp_count,
-                    lut_count: left_metrics.lut_count + right_metrics.lut_count + 8,
-                }
+                combine_metrics(left_metrics, right_metrics, op_metrics("mul_lut"))
             }
         }
     }

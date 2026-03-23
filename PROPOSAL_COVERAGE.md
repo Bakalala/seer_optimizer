@@ -184,8 +184,9 @@ Repo coverage:
 
 Files:
 
-- Rust metrics: [`rust_core/src/ir.rs`](rust_core/src/ir.rs)
-- Python-side baseline metric mirror and reporting: [`run_benchmarks.py`](run_benchmarks.py)
+- Shared cost model definition: [`cost_model.json`](cost_model.json)
+- Rust metrics/extraction consumption: [`rust_core/src/ir.rs`](rust_core/src/ir.rs)
+- Python-side baseline metric and reporting consumption: [`run_benchmarks.py`](run_benchmarks.py)
 
 Clarification:
 

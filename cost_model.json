@@ -1,0 +1,47 @@
+{
+  "baseline_multiply_mapping_policy": "generic_mul_defaults_to_dsp_metrics",
+  "ops": {
+    "input": {
+      "area": 0,
+      "latency": 0,
+      "dsp_count": 0,
+      "lut_count": 0
+    },
+    "const": {
+      "area": 0,
+      "latency": 0,
+      "dsp_count": 0,
+      "lut_count": 0
+    },
+    "add": {
+      "area": 1,
+      "latency": 1,
+      "dsp_count": 0,
+      "lut_count": 1
+    },
+    "sub": {
+      "area": 1,
+      "latency": 1,
+      "dsp_count": 0,
+      "lut_count": 1
+    },
+    "mul": {
+      "area": 6,
+      "latency": 3,
+      "dsp_count": 1,
+      "lut_count": 0
+    },
+    "mul_dsp": {
+      "area": 6,
+      "latency": 3,
+      "dsp_count": 1,
+      "lut_count": 0
+    },
+    "mul_lut": {
+      "area": 4,
+      "latency": 6,
+      "dsp_count": 0,
+      "lut_count": 8
+    }
+  }
+}

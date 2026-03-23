@@ -1,5 +1,4 @@
 {
-  "baseline_multiply_mapping_policy": "generic_mul_defaults_to_dsp_metrics",
   "saturation_limits": {
     "iter_limit": 12,
     "node_limit": 12000,

@@ -25,6 +25,16 @@ class BenchmarkHarnessTest(unittest.TestCase):
         metrics = run_benchmarks.graph_metrics(graph)
         self.assertEqual(metrics, {"area": 6, "latency": 3, "dsp_count": 1, "lut_count": 0})
 
+    def test_shared_cost_model_is_loaded_from_single_file(self) -> None:
+        self.assertEqual(
+            run_benchmarks.SHARED_COST_MODEL["baseline_multiply_mapping_policy"],
+            "generic_mul_defaults_to_dsp_metrics",
+        )
+        self.assertEqual(
+            run_benchmarks.SHARED_OP_METRICS["mul_lut"],
+            {"area": 4, "latency": 6, "dsp_count": 0, "lut_count": 8},
+        )
+
     def test_optimizer_runs_end_to_end_on_smoke_case(self) -> None:
         graph = run_benchmarks.build_smoke_cases()["mul_two"]
         response = run_benchmarks.run_optimizer(

@@ -88,6 +88,7 @@ There are no Python dependencies to install after that. The `venv` is used so th
 - [`run_benchmarks.py`](run_benchmarks.py): benchmark construction, optimizer invocation, report generation, CSV/Markdown output
 - [`tests/test_benchmarks.py`](tests/test_benchmarks.py): Python integration and reporting tests
 - [`benchmark_config.json`](benchmark_config.json): saturation limits, weight sweep, fixed constraint profiles, DSP sweep settings
+- [`cost_model.json`](cost_model.json): single source of truth for datapath operation costs shared by Python and Rust
 - [`scripts/reproduce.sh`](scripts/reproduce.sh): one-command end-to-end reproduction
 - [`PROPOSAL_COVERAGE.md`](PROPOSAL_COVERAGE.md): section-by-section mapping from the original proposal to the implemented system
 - [`HLS_project_proposal.pdf`](HLS_project_proposal.pdf): original proposal document
@@ -111,21 +112,36 @@ Smoke-only toy graphs are also available for quick debugging:
 
 ## Cost Model
 
-Default datapath metrics:
+The datapath cost model is defined in one shared file:
+
+- [`cost_model.json`](cost_model.json)
+
+Both the Rust optimizer and the Python harness read from that file:
+
+- Rust loads the shared file from [`rust_core/src/ir.rs`](rust_core/src/ir.rs)
+- Python loads the shared file from [`run_benchmarks.py`](run_benchmarks.py)
+
+Default datapath metrics in [`cost_model.json`](cost_model.json):
 
 - `input`, `const`: area `0`, latency `0`, DSP `0`, LUT `0`
 - `add`, `sub`: area `1`, latency `1`, DSP `0`, LUT `1`
+- generic `mul`: area `6`, latency `3`, DSP `1`, LUT `0`
 - DSP-backed multiply: area `6`, latency `3`, DSP `1`, LUT `0`
 - LUT-backed multiply: area `4`, latency `6`, DSP `0`, LUT `8`
 
 This is intentionally a simple proxy model for controlled experiments rather than a synthesis-calibrated hardware estimator.
 
-Important: the cost model exists in two places and must stay aligned:
+Important:
 
-- Rust optimizer implementation: [`rust_core/src/ir.rs`](rust_core/src/ir.rs)
-- Python-side baseline metric calculation for original graphs: [`run_benchmarks.py`](run_benchmarks.py)
+- `benchmark_config.json` no longer owns the cost model
+- if you change operation costs, change only [`cost_model.json`](cost_model.json)
+- after changing [`cost_model.json`](cost_model.json), rerun:
 
-If you change multiply/add/sub costs, update both locations.
+```bash
+cargo test --manifest-path rust_core/Cargo.toml
+./venv/bin/python -m unittest tests/test_benchmarks.py
+./venv/bin/python run_benchmarks.py --config benchmark_config.json
+```
 
 ## Constraint Modes Evaluated By The Harness
 
@@ -349,10 +365,9 @@ cargo test --manifest-path rust_core/Cargo.toml
 
 ### If You Change The Cost Model
 
-Edit both:
+Edit:
 
-- [`rust_core/src/ir.rs`](rust_core/src/ir.rs)
-- [`run_benchmarks.py`](run_benchmarks.py)
+- [`cost_model.json`](cost_model.json)
 
 Then rerun:
 
