@@ -51,7 +51,7 @@ DEFAULT_BUDGET_PROFILES = {
 DEFAULT_DSP_BUDGET_SWEEP = {
     "enabled": True,
     "start": 0,
-    "stop_mode": "original_dsp_count",
+    "stop_mode": "dsp_eligible_op_count",
     "step": 1,
 }
 _OPTIMIZER_READY = False
@@ -376,15 +376,38 @@ def resolve_profile_budgets(name: str, profile: dict, original: dict) -> dict:
     return budgets
 
 
-def sweep_dsp_budgets(config: dict, original: dict) -> List[int]:
+def dsp_eligible_op_count(graph: dict) -> int:
+    return sum(
+        1
+        for node in graph["ir_nodes"]
+        if node["op"]
+        in {
+            "add",
+            "add_dsp",
+            "add_lut",
+            "sub",
+            "sub_dsp",
+            "sub_lut",
+            "mul",
+            "mul_dsp",
+            "mul_lut",
+            "mac_dsp",
+        }
+    )
+
+
+def sweep_dsp_budgets(config: dict, graph: dict, original: dict) -> List[int]:
     sweep = config["dsp_budget_sweep"]
     if not sweep["enabled"]:
         return []
     start = sweep["start"]
     step = max(1, sweep["step"])
-    if sweep["stop_mode"] != "original_dsp_count":
+    if sweep["stop_mode"] == "original_dsp_count":
+        stop = original["dsp_count"]
+    elif sweep["stop_mode"] == "dsp_eligible_op_count":
+        stop = dsp_eligible_op_count(graph)
+    else:
         raise ValueError(f"unsupported dsp_budget_sweep stop_mode {sweep['stop_mode']}")
-    stop = original["dsp_count"]
     return list(range(start, stop + 1, step))
 
 
@@ -421,16 +444,15 @@ def graph_metrics(graph: dict) -> dict:
         op_metrics = SHARED_OP_METRICS.get(op)
         if op_metrics is None:
             raise ValueError(f"unknown op {op}")
-        if op in {"input", "const"}:
+        if not node.get("inputs"):
             result = dict(op_metrics)
         else:
-            left = metrics(node["inputs"][0])
-            right = metrics(node["inputs"][1])
+            children = [metrics(child_id) for child_id in node["inputs"]]
             result = {
-                "area": left["area"] + right["area"] + op_metrics["area"],
-                "latency": max(left["latency"], right["latency"]) + op_metrics["latency"],
-                "dsp_count": left["dsp_count"] + right["dsp_count"] + op_metrics["dsp_count"],
-                "lut_count": left["lut_count"] + right["lut_count"] + op_metrics["lut_count"],
+                "area": sum(child["area"] for child in children) + op_metrics["area"],
+                "latency": max(child["latency"] for child in children) + op_metrics["latency"],
+                "dsp_count": sum(child["dsp_count"] for child in children) + op_metrics["dsp_count"],
+                "lut_count": sum(child["lut_count"] for child in children) + op_metrics["lut_count"],
             }
         cache[node_id] = result
         return result
@@ -553,8 +575,21 @@ def graph_to_expr_text(graph: dict | None) -> str:
             return node["name"]
         if op == "const":
             return str(node["value"])
+        if op == "mac_dsp":
+            acc = render(node["inputs"][0])
+            left = render(node["inputs"][1])
+            right = render(node["inputs"][2])
+            return f"(mac_dsp {acc} {left} {right})"
         left = render(node["inputs"][0])
         right = render(node["inputs"][1])
+        if op == "add_dsp":
+            return f"({left} +dsp {right})"
+        if op == "add_lut":
+            return f"({left} +lut {right})"
+        if op == "sub_dsp":
+            return f"({left} -dsp {right})"
+        if op == "sub_lut":
+            return f"({left} -lut {right})"
         if op == "mul_dsp":
             return f"({left} *dsp {right})"
         if op == "mul_lut":
@@ -575,10 +610,20 @@ def graph_to_ir_lines(graph: dict | None) -> List[str]:
             rhs = f'input("{node["name"]}")'
         elif op == "const":
             rhs = f'const({node["value"]})'
+        elif op == "add_dsp":
+            rhs = f'add_dsp({", ".join(node["inputs"])})'
+        elif op == "add_lut":
+            rhs = f'add_lut({", ".join(node["inputs"])})'
+        elif op == "sub_dsp":
+            rhs = f'sub_dsp({", ".join(node["inputs"])})'
+        elif op == "sub_lut":
+            rhs = f'sub_lut({", ".join(node["inputs"])})'
         elif op == "mul_dsp":
             rhs = f'mul_dsp({", ".join(node["inputs"])})'
         elif op == "mul_lut":
             rhs = f'mul_lut({", ".join(node["inputs"])})'
+        elif op == "mac_dsp":
+            rhs = f'mac_dsp({", ".join(node["inputs"])})'
         else:
             rhs = f'{op}({", ".join(node["inputs"])})'
         lines.append(f'{node["id"]} = {rhs}')
@@ -587,7 +632,20 @@ def graph_to_ir_lines(graph: dict | None) -> List[str]:
 
 
 def graph_op_counts(graph: dict | None) -> dict:
-    counts = {"input": 0, "const": 0, "add": 0, "sub": 0, "mul": 0, "mul_dsp": 0, "mul_lut": 0}
+    counts = {
+        "input": 0,
+        "const": 0,
+        "add": 0,
+        "add_dsp": 0,
+        "add_lut": 0,
+        "sub": 0,
+        "sub_dsp": 0,
+        "sub_lut": 0,
+        "mul": 0,
+        "mul_dsp": 0,
+        "mul_lut": 0,
+        "mac_dsp": 0,
+    }
     if not graph:
         return counts
     for node in graph["ir_nodes"]:
@@ -954,10 +1012,15 @@ def render_ir_panel(title: str, graph: dict | None, metrics: dict | None = None)
         [
             f"nodes {0 if not graph else len(graph['ir_nodes'])}",
             f"add {counts['add']}",
+            f"add_dsp {counts['add_dsp']}",
+            f"add_lut {counts['add_lut']}",
             f"sub {counts['sub']}",
+            f"sub_dsp {counts['sub_dsp']}",
+            f"sub_lut {counts['sub_lut']}",
             f"mul {counts['mul']}",
             f"mul_dsp {counts['mul_dsp']}",
             f"mul_lut {counts['mul_lut']}",
+            f"mac_dsp {counts['mac_dsp']}",
             f"const {counts['const']}",
             f"input {counts['input']}",
         ]
@@ -1963,7 +2026,7 @@ def run_suite(benchmarks: Dict[str, dict], config: dict | None = None) -> dict:
             ),
         }
         dsp_budget_sweep = []
-        for dsp_max in sweep_dsp_budgets(active_config, original):
+        for dsp_max in sweep_dsp_budgets(active_config, graph, original):
             applied_budgets = {"dsp_max": dsp_max}
             response = finalize_run(
                 run_optimizer(

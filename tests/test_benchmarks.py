@@ -31,6 +31,10 @@ class BenchmarkHarnessTest(unittest.TestCase):
             "generic_mul_defaults_to_dsp_metrics",
         )
         self.assertEqual(
+            run_benchmarks.SHARED_OP_METRICS["add_dsp"],
+            {"area": 2, "latency": 1, "dsp_count": 1, "lut_count": 0},
+        )
+        self.assertEqual(
             run_benchmarks.SHARED_OP_METRICS["mul_lut"],
             {"area": 4, "latency": 6, "dsp_count": 0, "lut_count": 8},
         )
@@ -65,6 +69,55 @@ class BenchmarkHarnessTest(unittest.TestCase):
         self.assertTrue(response["feasible"])
         self.assertEqual(response["metrics"]["dsp_count"], 0)
         self.assertEqual(response["metrics"]["latency"], 6)
+
+    def test_dsp_budget_can_be_spent_on_adders(self) -> None:
+        builder = run_benchmarks.IrBuilder()
+        a = builder.input("a")
+        b = builder.input("b")
+        c = builder.input("c")
+        graph = builder.graph(builder.add(builder.add(a, b), c))
+        response = run_benchmarks.run_optimizer(
+            run_benchmarks.make_request(
+                "add_chain",
+                graph,
+                mode="constrained",
+                objective="latency",
+                budgets={"dsp_max": 1},
+            )
+        )
+        self.assertTrue(response["feasible"])
+        self.assertEqual(response["metrics"]["dsp_count"], 1)
+        self.assertLess(response["metrics"]["latency"], run_benchmarks.graph_metrics(graph)["latency"])
+        self.assertIn("add_dsp", {node["op"] for node in response["optimized_ir"]["ir_nodes"]})
+
+    def test_mac_dsp_is_selected_when_latency_is_prioritized(self) -> None:
+        builder = run_benchmarks.IrBuilder()
+        a = builder.input("a")
+        b = builder.input("b")
+        c = builder.input("c")
+        graph = builder.graph(builder.add(builder.mul(a, b), c))
+        unconstrained = run_benchmarks.run_optimizer(
+            run_benchmarks.make_request(
+                "mac_candidate",
+                graph,
+                mode="constrained",
+                objective="latency",
+                budgets={"dsp_max": 1},
+            )
+        )
+        zero_dsp = run_benchmarks.run_optimizer(
+            run_benchmarks.make_request(
+                "mac_candidate_zero_dsp",
+                graph,
+                mode="constrained",
+                objective="latency",
+                budgets={"dsp_max": 0},
+            )
+        )
+        self.assertTrue(unconstrained["feasible"])
+        self.assertTrue(zero_dsp["feasible"])
+        self.assertLess(unconstrained["metrics"]["latency"], zero_dsp["metrics"]["latency"])
+        self.assertIn("mac_dsp", {node["op"] for node in unconstrained["optimized_ir"]["ir_nodes"]})
 
     def test_unique_weight_sweep_points_dedupes_duplicates(self) -> None:
         payload = {

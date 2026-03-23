@@ -127,10 +127,15 @@ pub enum IrOp {
     Input,
     Const,
     Add,
+    AddDsp,
+    AddLut,
     Sub,
+    SubDsp,
+    SubLut,
     Mul,
     MulDsp,
     MulLut,
+    MacDsp,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -259,10 +264,15 @@ pub enum Expr {
     Input(String),
     Const(i64),
     Add(Box<Expr>, Box<Expr>),
+    AddDsp(Box<Expr>, Box<Expr>),
+    AddLut(Box<Expr>, Box<Expr>),
     Sub(Box<Expr>, Box<Expr>),
+    SubDsp(Box<Expr>, Box<Expr>),
+    SubLut(Box<Expr>, Box<Expr>),
     Mul(Box<Expr>, Box<Expr>),
     MulDsp(Box<Expr>, Box<Expr>),
     MulLut(Box<Expr>, Box<Expr>),
+    MacDsp(Box<Expr>, Box<Expr>, Box<Expr>),
 }
 
 impl Expr {
@@ -270,15 +280,35 @@ impl Expr {
         match self {
             Expr::Input(_) => op_metrics("input").clone(),
             Expr::Const(_) => op_metrics("const").clone(),
-            Expr::Add(left, right) | Expr::Sub(left, right) => {
+            Expr::Add(left, right) => {
                 let left_metrics = left.metrics();
                 let right_metrics = right.metrics();
-                let op_name = if matches!(self, Expr::Add(_, _)) {
-                    "add"
-                } else {
-                    "sub"
-                };
-                combine_metrics(left_metrics, right_metrics, op_metrics(op_name))
+                combine_metrics(left_metrics, right_metrics, op_metrics("add"))
+            }
+            Expr::AddDsp(left, right) => {
+                let left_metrics = left.metrics();
+                let right_metrics = right.metrics();
+                combine_metrics(left_metrics, right_metrics, op_metrics("add_dsp"))
+            }
+            Expr::AddLut(left, right) => {
+                let left_metrics = left.metrics();
+                let right_metrics = right.metrics();
+                combine_metrics(left_metrics, right_metrics, op_metrics("add_lut"))
+            }
+            Expr::Sub(left, right) => {
+                let left_metrics = left.metrics();
+                let right_metrics = right.metrics();
+                combine_metrics(left_metrics, right_metrics, op_metrics("sub"))
+            }
+            Expr::SubDsp(left, right) => {
+                let left_metrics = left.metrics();
+                let right_metrics = right.metrics();
+                combine_metrics(left_metrics, right_metrics, op_metrics("sub_dsp"))
+            }
+            Expr::SubLut(left, right) => {
+                let left_metrics = left.metrics();
+                let right_metrics = right.metrics();
+                combine_metrics(left_metrics, right_metrics, op_metrics("sub_lut"))
             }
             Expr::Mul(left, right) => {
                 let left_metrics = left.metrics();
@@ -295,6 +325,26 @@ impl Expr {
                 let right_metrics = right.metrics();
                 combine_metrics(left_metrics, right_metrics, op_metrics("mul_lut"))
             }
+            Expr::MacDsp(acc, left, right) => {
+                let acc_metrics = acc.metrics();
+                let left_metrics = left.metrics();
+                let right_metrics = right.metrics();
+                Metrics {
+                    area: acc_metrics.area + left_metrics.area + right_metrics.area + op_metrics("mac_dsp").area,
+                    latency: acc_metrics
+                        .latency
+                        .max(left_metrics.latency.max(right_metrics.latency))
+                        + op_metrics("mac_dsp").latency,
+                    dsp_count: acc_metrics.dsp_count
+                        + left_metrics.dsp_count
+                        + right_metrics.dsp_count
+                        + op_metrics("mac_dsp").dsp_count,
+                    lut_count: acc_metrics.lut_count
+                        + left_metrics.lut_count
+                        + right_metrics.lut_count
+                        + op_metrics("mac_dsp").lut_count,
+                }
+            }
         }
     }
 
@@ -302,10 +352,15 @@ impl Expr {
         match self {
             Expr::Input(_) | Expr::Const(_) => 1,
             Expr::Add(left, right)
+            | Expr::AddDsp(left, right)
+            | Expr::AddLut(left, right)
             | Expr::Sub(left, right)
+            | Expr::SubDsp(left, right)
+            | Expr::SubLut(left, right)
             | Expr::Mul(left, right)
             | Expr::MulDsp(left, right)
             | Expr::MulLut(left, right) => 1 + left.size() + right.size(),
+            Expr::MacDsp(acc, left, right) => 1 + acc.size() + left.size() + right.size(),
         }
     }
 
@@ -350,6 +405,34 @@ impl Expr {
                     });
                     id
                 }
+                Expr::AddDsp(left, right) => {
+                    let left_id = push_expr(left, nodes, next_id);
+                    let right_id = push_expr(right, nodes, next_id);
+                    let id = format!("n{next_id}");
+                    *next_id += 1;
+                    nodes.push(IrNode {
+                        id: id.clone(),
+                        op: IrOp::AddDsp,
+                        name: None,
+                        value: None,
+                        inputs: vec![left_id, right_id],
+                    });
+                    id
+                }
+                Expr::AddLut(left, right) => {
+                    let left_id = push_expr(left, nodes, next_id);
+                    let right_id = push_expr(right, nodes, next_id);
+                    let id = format!("n{next_id}");
+                    *next_id += 1;
+                    nodes.push(IrNode {
+                        id: id.clone(),
+                        op: IrOp::AddLut,
+                        name: None,
+                        value: None,
+                        inputs: vec![left_id, right_id],
+                    });
+                    id
+                }
                 Expr::Sub(left, right) => {
                     let left_id = push_expr(left, nodes, next_id);
                     let right_id = push_expr(right, nodes, next_id);
@@ -358,6 +441,34 @@ impl Expr {
                     nodes.push(IrNode {
                         id: id.clone(),
                         op: IrOp::Sub,
+                        name: None,
+                        value: None,
+                        inputs: vec![left_id, right_id],
+                    });
+                    id
+                }
+                Expr::SubDsp(left, right) => {
+                    let left_id = push_expr(left, nodes, next_id);
+                    let right_id = push_expr(right, nodes, next_id);
+                    let id = format!("n{next_id}");
+                    *next_id += 1;
+                    nodes.push(IrNode {
+                        id: id.clone(),
+                        op: IrOp::SubDsp,
+                        name: None,
+                        value: None,
+                        inputs: vec![left_id, right_id],
+                    });
+                    id
+                }
+                Expr::SubLut(left, right) => {
+                    let left_id = push_expr(left, nodes, next_id);
+                    let right_id = push_expr(right, nodes, next_id);
+                    let id = format!("n{next_id}");
+                    *next_id += 1;
+                    nodes.push(IrNode {
+                        id: id.clone(),
+                        op: IrOp::SubLut,
                         name: None,
                         value: None,
                         inputs: vec![left_id, right_id],
@@ -406,6 +517,21 @@ impl Expr {
                     });
                     id
                 }
+                Expr::MacDsp(acc, left, right) => {
+                    let acc_id = push_expr(acc, nodes, next_id);
+                    let left_id = push_expr(left, nodes, next_id);
+                    let right_id = push_expr(right, nodes, next_id);
+                    let id = format!("n{next_id}");
+                    *next_id += 1;
+                    nodes.push(IrNode {
+                        id: id.clone(),
+                        op: IrOp::MacDsp,
+                        name: None,
+                        value: None,
+                        inputs: vec![acc_id, left_id, right_id],
+                    });
+                    id
+                }
             }
         }
 
@@ -425,10 +551,15 @@ impl fmt::Display for Expr {
             Expr::Input(name) => write!(f, "{name}"),
             Expr::Const(value) => write!(f, "{value}"),
             Expr::Add(left, right) => write!(f, "(+ {left} {right})"),
+            Expr::AddDsp(left, right) => write!(f, "(+dsp {left} {right})"),
+            Expr::AddLut(left, right) => write!(f, "(+lut {left} {right})"),
             Expr::Sub(left, right) => write!(f, "(- {left} {right})"),
+            Expr::SubDsp(left, right) => write!(f, "(-dsp {left} {right})"),
+            Expr::SubLut(left, right) => write!(f, "(-lut {left} {right})"),
             Expr::Mul(left, right) => write!(f, "(* {left} {right})"),
             Expr::MulDsp(left, right) => write!(f, "(*dsp {left} {right})"),
             Expr::MulLut(left, right) => write!(f, "(*lut {left} {right})"),
+            Expr::MacDsp(acc, left, right) => write!(f, "(mac_dsp {acc} {left} {right})"),
         }
     }
 }
@@ -485,10 +616,15 @@ fn build_expr(
             Expr::Const(value)
         }
         IrOp::Add => binary_expr(node, nodes_by_id, cache, visiting, Expr::Add)?,
+        IrOp::AddDsp => binary_expr(node, nodes_by_id, cache, visiting, Expr::AddDsp)?,
+        IrOp::AddLut => binary_expr(node, nodes_by_id, cache, visiting, Expr::AddLut)?,
         IrOp::Sub => binary_expr(node, nodes_by_id, cache, visiting, Expr::Sub)?,
+        IrOp::SubDsp => binary_expr(node, nodes_by_id, cache, visiting, Expr::SubDsp)?,
+        IrOp::SubLut => binary_expr(node, nodes_by_id, cache, visiting, Expr::SubLut)?,
         IrOp::Mul => binary_expr(node, nodes_by_id, cache, visiting, Expr::Mul)?,
         IrOp::MulDsp => binary_expr(node, nodes_by_id, cache, visiting, Expr::MulDsp)?,
         IrOp::MulLut => binary_expr(node, nodes_by_id, cache, visiting, Expr::MulLut)?,
+        IrOp::MacDsp => ternary_expr(node, nodes_by_id, cache, visiting, Expr::MacDsp)?,
     };
 
     visiting.remove(node_id);
@@ -513,4 +649,28 @@ fn binary_expr(
     let left = build_expr(&node.inputs[0], nodes_by_id, cache, visiting)?;
     let right = build_expr(&node.inputs[1], nodes_by_id, cache, visiting)?;
     Ok(constructor(Box::new(left), Box::new(right)))
+}
+
+fn ternary_expr(
+    node: &IrNode,
+    nodes_by_id: &HashMap<String, IrNode>,
+    cache: &mut HashMap<String, Expr>,
+    visiting: &mut HashSet<String>,
+    constructor: fn(Box<Expr>, Box<Expr>, Box<Expr>) -> Expr,
+) -> Result<Expr> {
+    if node.inputs.len() != 3 {
+        bail!(
+            "ternary node {} must have exactly three inputs, got {}",
+            node.id,
+            node.inputs.len()
+        );
+    }
+    let first = build_expr(&node.inputs[0], nodes_by_id, cache, visiting)?;
+    let second = build_expr(&node.inputs[1], nodes_by_id, cache, visiting)?;
+    let third = build_expr(&node.inputs[2], nodes_by_id, cache, visiting)?;
+    Ok(constructor(
+        Box::new(first),
+        Box::new(second),
+        Box::new(third),
+    ))
 }

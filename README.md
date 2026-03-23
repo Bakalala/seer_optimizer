@@ -124,17 +124,27 @@ Both the Rust optimizer and the Python harness read from that file:
 Default datapath metrics in [`cost_model.json`](cost_model.json):
 
 - `input`, `const`: area `0`, latency `0`, DSP `0`, LUT `0`
-- `add`, `sub`: area `1`, latency `1`, DSP `0`, LUT `1`
+- abstract `add`, `sub`: baseline LUT-style costs, area `1`, latency `2`, DSP `0`, LUT `1`
+- `add_dsp`, `sub_dsp`: area `2`, latency `1`, DSP `1`, LUT `0`
+- `add_lut`, `sub_lut`: area `1`, latency `2`, DSP `0`, LUT `1`
 - generic `mul`: area `6`, latency `3`, DSP `1`, LUT `0`
 - DSP-backed multiply: area `6`, latency `3`, DSP `1`, LUT `0`
 - LUT-backed multiply: area `4`, latency `6`, DSP `0`, LUT `8`
+- DSP-backed fused multiply-accumulate: area `7`, latency `3`, DSP `1`, LUT `0`
+
+The extractor keeps the input IR abstract, then chooses concrete implementations during extraction. In practice this means the shared `dsp_max` budget can now be spent on:
+
+- add/sub implementations
+- multiply implementations
+- fused DSP MAC implementations
 
 This is intentionally a simple proxy model for controlled experiments rather than a synthesis-calibrated hardware estimator.
 
 Important:
 
 - `benchmark_config.json` no longer owns the cost model
-- if you change operation costs, change only [`cost_model.json`](cost_model.json)
+- if you change only operation costs, change only [`cost_model.json`](cost_model.json)
+- if you introduce brand new operation kinds, you must also add parsing/serialization support in Rust and Python
 - after changing [`cost_model.json`](cost_model.json), rerun:
 
 ```bash
@@ -155,7 +165,7 @@ The harness runs all of the following:
 - minimize latency with a configured per-benchmark LUT cap
 - exact Pareto extraction
 - sampled weight sweep from [`benchmark_config.json`](benchmark_config.json)
-- DSP-budget sweep from `dsp_max = 0` up to the original DSP count
+- DSP-budget sweep from `dsp_max = 0` up to the number of DSP-eligible arithmetic ops in the original graph
 
 ## Exact Commands To Run Everything
 

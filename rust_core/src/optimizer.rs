@@ -10,7 +10,7 @@ use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
-const MAX_FRONTIER_PER_ECLASS: usize = 12;
+const MAX_FRONTIER_PER_ECLASS: usize = 128;
 const MAX_FRONTIER_PASSES: usize = 16;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -180,12 +180,12 @@ fn expr_to_recexpr(expr: &Expr) -> RecExpr<Math> {
         match expr {
             Expr::Input(name) => recexpr.add(Math::Symbol(Symbol::from(name.as_str()))),
             Expr::Const(value) => recexpr.add(Math::Num(*value)),
-            Expr::Add(left, right) => {
+            Expr::Add(left, right) | Expr::AddDsp(left, right) | Expr::AddLut(left, right) => {
                 let left_id = push(left, recexpr);
                 let right_id = push(right, recexpr);
                 recexpr.add(Math::Add([left_id, right_id]))
             }
-            Expr::Sub(left, right) => {
+            Expr::Sub(left, right) | Expr::SubDsp(left, right) | Expr::SubLut(left, right) => {
                 let left_id = push(left, recexpr);
                 let right_id = push(right, recexpr);
                 recexpr.add(Math::Sub([left_id, right_id]))
@@ -199,6 +199,13 @@ fn expr_to_recexpr(expr: &Expr) -> RecExpr<Math> {
                 let left_id = push(left, recexpr);
                 let right_id = push(right, recexpr);
                 recexpr.add(Math::Mul([left_id, right_id]))
+            }
+            Expr::MacDsp(acc, left, right) => {
+                let acc_id = push(acc, recexpr);
+                let left_id = push(left, recexpr);
+                let right_id = push(right, recexpr);
+                let mul_id = recexpr.add(Math::Mul([left_id, right_id]));
+                recexpr.add(Math::Add([acc_id, mul_id]))
             }
         }
     }
@@ -237,21 +244,17 @@ fn candidates_for_node(node: &Math, frontiers: &HashMap<Id, Vec<Candidate>>) -> 
     match node {
         Math::Num(value) => vec![Candidate::from_expr(Expr::Const(*value))],
         Math::Symbol(symbol) => vec![Candidate::from_expr(Expr::Input(symbol.to_string()))],
-        Math::Add([left, right]) => combine_binary(*left, *right, frontiers, |l, r| {
-            Expr::Add(Box::new(l), Box::new(r))
-        }),
-        Math::Sub([left, right]) => combine_binary(*left, *right, frontiers, |l, r| {
-            Expr::Sub(Box::new(l), Box::new(r))
-        }),
+        Math::Add([left, right]) => combine_add(*left, *right, frontiers),
+        Math::Sub([left, right]) => combine_sub(*left, *right, frontiers),
         Math::Mul([left, right]) => combine_mul(*left, *right, frontiers),
     }
 }
 
-fn combine_binary(
+fn combine_binary_variants(
     left_id: Id,
     right_id: Id,
     frontiers: &HashMap<Id, Vec<Candidate>>,
-    constructor: fn(Expr, Expr) -> Expr,
+    constructors: &[fn(Expr, Expr) -> Expr],
 ) -> Vec<Candidate> {
     let Some(left_candidates) = frontiers.get(&left_id) else {
         return Vec::new();
@@ -260,16 +263,42 @@ fn combine_binary(
         return Vec::new();
     };
 
-    let mut combined = Vec::with_capacity(left_candidates.len() * right_candidates.len());
+    let mut combined =
+        Vec::with_capacity(left_candidates.len() * right_candidates.len() * constructors.len());
     for left in left_candidates {
         for right in right_candidates {
-            combined.push(Candidate::from_expr(constructor(
-                left.expr.clone(),
-                right.expr.clone(),
-            )));
+            for constructor in constructors {
+                combined.push(Candidate::from_expr(constructor(
+                    left.expr.clone(),
+                    right.expr.clone(),
+                )));
+            }
         }
     }
     combined
+}
+
+fn combine_add(
+    left_id: Id,
+    right_id: Id,
+    frontiers: &HashMap<Id, Vec<Candidate>>,
+) -> Vec<Candidate> {
+    let mut combined = combine_binary_variants(
+        left_id,
+        right_id,
+        frontiers,
+        &[make_add_lut, make_add_dsp],
+    );
+    combined.extend(combine_mac_candidates(left_id, right_id, frontiers));
+    combined
+}
+
+fn combine_sub(
+    left_id: Id,
+    right_id: Id,
+    frontiers: &HashMap<Id, Vec<Candidate>>,
+) -> Vec<Candidate> {
+    combine_binary_variants(left_id, right_id, frontiers, &[make_sub_lut, make_sub_dsp])
 }
 
 fn combine_mul(
@@ -298,6 +327,65 @@ fn combine_mul(
         }
     }
     combined
+}
+
+fn combine_mac_candidates(
+    left_id: Id,
+    right_id: Id,
+    frontiers: &HashMap<Id, Vec<Candidate>>,
+) -> Vec<Candidate> {
+    let Some(left_candidates) = frontiers.get(&left_id) else {
+        return Vec::new();
+    };
+    let Some(right_candidates) = frontiers.get(&right_id) else {
+        return Vec::new();
+    };
+
+    let mut combined = Vec::new();
+    for left in left_candidates {
+        for right in right_candidates {
+            if let Some((mul_left, mul_right)) = multiply_operands(&left.expr) {
+                combined.push(Candidate::from_expr(Expr::MacDsp(
+                    Box::new(right.expr.clone()),
+                    Box::new(mul_left),
+                    Box::new(mul_right),
+                )));
+            }
+            if let Some((mul_left, mul_right)) = multiply_operands(&right.expr) {
+                combined.push(Candidate::from_expr(Expr::MacDsp(
+                    Box::new(left.expr.clone()),
+                    Box::new(mul_left),
+                    Box::new(mul_right),
+                )));
+            }
+        }
+    }
+    combined
+}
+
+fn multiply_operands(expr: &Expr) -> Option<(Expr, Expr)> {
+    match expr {
+        Expr::Mul(left, right) | Expr::MulDsp(left, right) | Expr::MulLut(left, right) => {
+            Some((*left.clone(), *right.clone()))
+        }
+        _ => None,
+    }
+}
+
+fn make_add_lut(left: Expr, right: Expr) -> Expr {
+    Expr::AddLut(Box::new(left), Box::new(right))
+}
+
+fn make_add_dsp(left: Expr, right: Expr) -> Expr {
+    Expr::AddDsp(Box::new(left), Box::new(right))
+}
+
+fn make_sub_lut(left: Expr, right: Expr) -> Expr {
+    Expr::SubLut(Box::new(left), Box::new(right))
+}
+
+fn make_sub_dsp(left: Expr, right: Expr) -> Expr {
+    Expr::SubDsp(Box::new(left), Box::new(right))
 }
 
 fn prune_candidates(candidates: Vec<Candidate>) -> Vec<Candidate> {
@@ -607,7 +695,7 @@ mod tests {
         assert!(response.feasible);
         let metrics = response.metrics.expect("metrics");
         assert!(metrics.area <= 1);
-        assert_eq!(metrics.latency, 1);
+        assert_eq!(metrics.latency, 2);
     }
 
     #[test]
@@ -873,5 +961,138 @@ mod tests {
             let metrics = response.metrics.expect("metrics");
             assert!(unconstrained_latency <= metrics.latency);
         }
+    }
+
+    #[test]
+    fn dsp_budget_can_be_spent_on_adders() {
+        let request = request_from_nodes(
+            "add_chain",
+            vec![
+                IrNode {
+                    id: "a".into(),
+                    op: IrOp::Input,
+                    name: Some("a".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "b".into(),
+                    op: IrOp::Input,
+                    name: Some("b".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "c".into(),
+                    op: IrOp::Input,
+                    name: Some("c".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "sum0".into(),
+                    op: IrOp::Add,
+                    name: None,
+                    value: None,
+                    inputs: vec!["a".into(), "b".into()],
+                },
+                IrNode {
+                    id: "root".into(),
+                    op: IrOp::Add,
+                    name: None,
+                    value: None,
+                    inputs: vec!["sum0".into(), "c".into()],
+                },
+            ],
+            "root",
+            Mode::Constrained,
+            Objective::Latency,
+            Budgets {
+                dsp_max: Some(1),
+                ..Budgets::default()
+            },
+        );
+
+        let response = optimize_request(&request).expect("optimizer should succeed");
+        assert!(response.feasible);
+        let metrics = response.metrics.expect("metrics");
+        assert_eq!(metrics.dsp_count, 1);
+        assert_eq!(metrics.latency, 3);
+        let optimized = response.optimized_ir.expect("optimized ir");
+        assert!(optimized.ir_nodes.iter().any(|node| node.op == IrOp::AddDsp));
+    }
+
+    #[test]
+    fn mac_dsp_is_selected_when_available() {
+        let request = request_from_nodes(
+            "mac_candidate",
+            vec![
+                IrNode {
+                    id: "a".into(),
+                    op: IrOp::Input,
+                    name: Some("a".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "b".into(),
+                    op: IrOp::Input,
+                    name: Some("b".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "c".into(),
+                    op: IrOp::Input,
+                    name: Some("c".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "prod".into(),
+                    op: IrOp::Mul,
+                    name: None,
+                    value: None,
+                    inputs: vec!["a".into(), "b".into()],
+                },
+                IrNode {
+                    id: "root".into(),
+                    op: IrOp::Add,
+                    name: None,
+                    value: None,
+                    inputs: vec!["prod".into(), "c".into()],
+                },
+            ],
+            "root",
+            Mode::Constrained,
+            Objective::Latency,
+            Budgets {
+                dsp_max: Some(1),
+                ..Budgets::default()
+            },
+        );
+
+        let zero_dsp_request = request_from_nodes(
+            "mac_candidate_zero_dsp",
+            request.ir_nodes.clone(),
+            &request.root,
+            Mode::Constrained,
+            Objective::Latency,
+            Budgets {
+                dsp_max: Some(0),
+                ..Budgets::default()
+            },
+        );
+
+        let response = optimize_request(&request).expect("optimizer should succeed");
+        let zero_dsp = optimize_request(&zero_dsp_request).expect("optimizer should succeed");
+        assert!(response.feasible);
+        assert!(zero_dsp.feasible);
+        let metrics = response.metrics.expect("metrics");
+        let zero_dsp_metrics = zero_dsp.metrics.expect("zero-dsp metrics");
+        assert_eq!(metrics.dsp_count, 1);
+        assert!(metrics.latency < zero_dsp_metrics.latency);
+        let optimized = response.optimized_ir.expect("optimized ir");
+        assert!(optimized.ir_nodes.iter().any(|node| node.op == IrOp::MacDsp));
     }
 }

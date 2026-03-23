@@ -46,7 +46,7 @@
   "dsp_budget_sweep": {
     "enabled": true,
     "start": 0,
-    "stop_mode": "original_dsp_count",
+    "stop_mode": "dsp_eligible_op_count",
     "step": 1
   }
 }

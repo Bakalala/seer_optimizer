@@ -128,7 +128,7 @@ Files:
 
 Clarification:
 
-- Resource constraints currently model DSPs and LUTs.
+- Resource constraints currently model DSPs and LUTs, and DSP usage can now be assigned across add/sub/mul/mac implementations during extraction.
 - BRAM is not modeled because the final project scope excludes memory-system optimization.
 
 Status: covered for datapath resources

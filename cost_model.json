@@ -15,13 +15,37 @@
     },
     "add": {
       "area": 1,
+      "latency": 2,
+      "dsp_count": 0,
+      "lut_count": 1
+    },
+    "add_dsp": {
+      "area": 2,
       "latency": 1,
+      "dsp_count": 1,
+      "lut_count": 0
+    },
+    "add_lut": {
+      "area": 1,
+      "latency": 2,
       "dsp_count": 0,
       "lut_count": 1
     },
     "sub": {
       "area": 1,
+      "latency": 2,
+      "dsp_count": 0,
+      "lut_count": 1
+    },
+    "sub_dsp": {
+      "area": 2,
       "latency": 1,
+      "dsp_count": 1,
+      "lut_count": 0
+    },
+    "sub_lut": {
+      "area": 1,
+      "latency": 2,
       "dsp_count": 0,
       "lut_count": 1
     },
@@ -42,6 +66,12 @@
       "latency": 6,
       "dsp_count": 0,
       "lut_count": 8
+    },
+    "mac_dsp": {
+      "area": 7,
+      "latency": 3,
+      "dsp_count": 1,
+      "lut_count": 0
     }
   }
 }
