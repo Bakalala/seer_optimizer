@@ -38,6 +38,7 @@
         "fir8": 7,
         "dot16": 15,
         "gemm_k8": 7,
+        "gemm_blocked_k8": 7,
         "conv3x3": 8,
         "stencil5": 4
       }

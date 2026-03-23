@@ -89,6 +89,7 @@ There are no Python dependencies to install after that. The `venv` is used so th
 - [`tests/test_benchmarks.py`](tests/test_benchmarks.py): Python integration and reporting tests
 - [`benchmark_config.json`](benchmark_config.json): saturation limits, weight sweep, fixed constraint profiles, DSP sweep settings
 - [`scripts/reproduce.sh`](scripts/reproduce.sh): one-command end-to-end reproduction
+- [`PROPOSAL_COVERAGE.md`](PROPOSAL_COVERAGE.md): section-by-section mapping from the original proposal to the implemented system
 - [`HLS_project_proposal.pdf`](HLS_project_proposal.pdf): original proposal document
 
 ## Benchmarks
@@ -98,6 +99,7 @@ The acceptance suite models one combinational datapath per benchmark:
 - `fir8`
 - `dot16`
 - `gemm_k8`
+- `gemm_blocked_k8`
 - `conv3x3`
 - `stencil5`
 

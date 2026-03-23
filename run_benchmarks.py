@@ -110,6 +110,21 @@ def left_fold_sum(builder: IrBuilder, terms: Iterable[str]) -> str:
     return acc
 
 
+def blocked_sum(builder: IrBuilder, terms: Iterable[str], block_size: int) -> str:
+    term_list = list(terms)
+    if not term_list:
+        raise ValueError("cannot sum an empty term list")
+    if block_size <= 0:
+        raise ValueError("block_size must be positive")
+    partials = [
+        left_fold_sum(builder, term_list[idx : idx + block_size])
+        for idx in range(0, len(term_list), block_size)
+    ]
+    if len(partials) == 1:
+        return partials[0]
+    return left_fold_sum(builder, partials)
+
+
 def build_smoke_cases() -> Dict[str, dict]:
     return {
         "identity_mul_add": _build_identity_mul_add(),
@@ -123,6 +138,7 @@ def build_acceptance_benchmarks() -> Dict[str, dict]:
         "fir8": _build_fir8(),
         "dot16": _build_dot16(),
         "gemm_k8": _build_gemm_k8(),
+        "gemm_blocked_k8": _build_gemm_blocked_k8(),
         "conv3x3": _build_conv3x3(),
         "stencil5": _build_stencil5(),
     }
@@ -182,6 +198,16 @@ def _build_gemm_k8() -> dict:
         right = builder.input(f"B{idx}")
         terms.append(builder.mul(left, right))
     return builder.graph(left_fold_sum(builder, terms))
+
+
+def _build_gemm_blocked_k8() -> dict:
+    builder = IrBuilder()
+    terms = []
+    for idx in range(8):
+        left = builder.input(f"BA{idx}")
+        right = builder.input(f"BB{idx}")
+        terms.append(builder.mul(left, right))
+    return builder.graph(blocked_sum(builder, terms, block_size=4))
 
 
 def _build_conv3x3() -> dict:

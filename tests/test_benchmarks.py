@@ -10,7 +10,10 @@ import run_benchmarks
 class BenchmarkHarnessTest(unittest.TestCase):
     def test_acceptance_benchmarks_use_only_datapath_ops(self) -> None:
         benchmarks = run_benchmarks.build_acceptance_benchmarks()
-        self.assertEqual(set(benchmarks.keys()), {"fir8", "dot16", "gemm_k8", "conv3x3", "stencil5"})
+        self.assertEqual(
+            set(benchmarks.keys()),
+            {"fir8", "dot16", "gemm_k8", "gemm_blocked_k8", "conv3x3", "stencil5"},
+        )
         allowed_ops = {"input", "const", "add", "sub", "mul"}
         for graph in benchmarks.values():
             self.assertTrue(graph["root"])
