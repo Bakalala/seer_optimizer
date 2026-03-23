@@ -70,7 +70,7 @@ If that command fails, install the Python venv package for your platform before 
 From the repository root:
 
 ```bash
-git clone <your-repo-url> seer_optimizer
+git clone git@github.com:Bakalala/seer_optimizer.git seer_optimizer
 cd seer_optimizer
 python3 -m venv venv
 ./venv/bin/python -m pip install --upgrade pip
