@@ -1,0 +1,25 @@
+{
+  "saturation_limits": {
+    "iter_limit": 12,
+    "node_limit": 12000,
+    "time_limit_ms": 800
+  },
+  "weight_sweep": [
+    {
+      "w_area": 8.0,
+      "w_latency": 1.0
+    },
+    {
+      "w_area": 2.0,
+      "w_latency": 1.0
+    },
+    {
+      "w_area": 1.0,
+      "w_latency": 1.0
+    },
+    {
+      "w_area": 1.0,
+      "w_latency": 4.0
+    }
+  ]
+}
