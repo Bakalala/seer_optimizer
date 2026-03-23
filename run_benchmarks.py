@@ -15,7 +15,7 @@ import json
 import subprocess
 from statistics import mean
 from pathlib import Path
-from typing import Dict, Iterable, List
+from typing import Callable, Dict, Iterable, List
 
 
 ROOT = Path(__file__).resolve().parent
@@ -32,6 +32,27 @@ DEFAULT_REPORT_PATH = ROOT / "outputs" / "report.html"
 DEFAULT_ANALYSIS_PATH = ROOT / "outputs" / "analysis.md"
 DEFAULT_SUMMARY_CSV_PATH = ROOT / "outputs" / "benchmark_summary.csv"
 WEIGHT_SWEEP = [(8.0, 1.0), (2.0, 1.0), (1.0, 1.0), (1.0, 4.0)]
+DEFAULT_BASELINE_MULTIPLY_POLICY = "generic_mul_defaults_to_dsp_metrics"
+DEFAULT_BUDGET_PROFILES = {
+    "latency_under_area": {"area_max_mode": "original_area"},
+    "area_under_latency": {"latency_max_mode": "original_latency"},
+    "latency_under_dsp": {"dsp_max": 0},
+    "latency_under_lut": {
+        "lut_max_by_benchmark": {
+            "fir8": 7,
+            "dot16": 15,
+            "gemm_k8": 7,
+            "conv3x3": 8,
+            "stencil5": 4,
+        }
+    },
+}
+DEFAULT_DSP_BUDGET_SWEEP = {
+    "enabled": True,
+    "start": 0,
+    "stop_mode": "original_dsp_count",
+    "step": 1,
+}
 _OPTIMIZER_READY = False
 
 
@@ -220,7 +241,13 @@ def load_benchmark_config(path: Path | None = None) -> dict:
         raw = {}
     saturation_limits = raw.get("saturation_limits", {})
     weight_sweep = raw.get("weight_sweep", [])
+    budget_profiles = raw.get("budget_profiles", DEFAULT_BUDGET_PROFILES)
+    dsp_budget_sweep = raw.get("dsp_budget_sweep", DEFAULT_DSP_BUDGET_SWEEP)
     normalized = {
+        "baseline_multiply_mapping_policy": raw.get(
+            "baseline_multiply_mapping_policy",
+            DEFAULT_BASELINE_MULTIPLY_POLICY,
+        ),
         "saturation_limits": {
             "iter_limit": int(saturation_limits.get("iter_limit", DEFAULT_LIMITS["iter_limit"])),
             "node_limit": int(saturation_limits.get("node_limit", DEFAULT_LIMITS["node_limit"])),
@@ -233,9 +260,99 @@ def load_benchmark_config(path: Path | None = None) -> dict:
             for item in weight_sweep
         ]
         or list(WEIGHT_SWEEP),
+        "budget_profiles": json.loads(json.dumps(budget_profiles)),
+        "dsp_budget_sweep": {
+            "enabled": bool(dsp_budget_sweep.get("enabled", DEFAULT_DSP_BUDGET_SWEEP["enabled"])),
+            "start": int(dsp_budget_sweep.get("start", DEFAULT_DSP_BUDGET_SWEEP["start"])),
+            "stop_mode": dsp_budget_sweep.get(
+                "stop_mode",
+                DEFAULT_DSP_BUDGET_SWEEP["stop_mode"],
+            ),
+            "step": int(dsp_budget_sweep.get("step", DEFAULT_DSP_BUDGET_SWEEP["step"])),
+        },
         "config_path": str(config_path),
     }
     return normalized
+
+
+def budget_label(budgets: dict | None) -> str:
+    if not budgets:
+        return "none"
+    parts = [f"{key}={value}" for key, value in sorted(budgets.items())]
+    return ", ".join(parts)
+
+
+def run_status(run: dict) -> str:
+    if run.get("feasible") is False:
+        return "Infeasible"
+    if run.get("frontier"):
+        return "Frontier"
+    if run.get("metrics"):
+        return "Feasible"
+    return "n/a"
+
+
+def run_diverged_from(weighted_metrics: dict | None, run: dict) -> str:
+    metrics = run.get("metrics")
+    if not weighted_metrics or not metrics:
+        return "n/a"
+    return "Yes" if metrics != weighted_metrics else "No"
+
+
+def staircase_polyline_points(
+    points: List[tuple[int, int]],
+    x_pos: Callable[[int], float],
+    y_pos: Callable[[int], float],
+) -> str:
+    if not points:
+        return ""
+    coords = [(x_pos(points[0][0]), y_pos(points[0][1]))]
+    for prev, curr in zip(points, points[1:]):
+        coords.append((x_pos(curr[0]), y_pos(prev[1])))
+        coords.append((x_pos(curr[0]), y_pos(curr[1])))
+    return " ".join(f"{x:.1f},{y:.1f}" for x, y in coords)
+
+
+def resolve_profile_budgets(name: str, profile: dict, original: dict) -> dict:
+    budgets: dict = {}
+    if "area_max_mode" in profile:
+        if profile["area_max_mode"] != "original_area":
+            raise ValueError(f"unsupported area_max_mode {profile['area_max_mode']}")
+        budgets["area_max"] = original["area"]
+    if "latency_max_mode" in profile:
+        if profile["latency_max_mode"] != "original_latency":
+            raise ValueError(f"unsupported latency_max_mode {profile['latency_max_mode']}")
+        budgets["latency_max"] = original["latency"]
+    if "dsp_max" in profile:
+        budgets["dsp_max"] = int(profile["dsp_max"])
+    if "lut_max" in profile:
+        budgets["lut_max"] = int(profile["lut_max"])
+    if "lut_max_by_benchmark" in profile:
+        lut_map = profile["lut_max_by_benchmark"]
+        if name not in lut_map:
+            raise ValueError(f"missing LUT cap for benchmark {name}")
+        budgets["lut_max"] = int(lut_map[name])
+    return budgets
+
+
+def sweep_dsp_budgets(config: dict, original: dict) -> List[int]:
+    sweep = config["dsp_budget_sweep"]
+    if not sweep["enabled"]:
+        return []
+    start = sweep["start"]
+    step = max(1, sweep["step"])
+    if sweep["stop_mode"] != "original_dsp_count":
+        raise ValueError(f"unsupported dsp_budget_sweep stop_mode {sweep['stop_mode']}")
+    stop = original["dsp_count"]
+    return list(range(start, stop + 1, step))
+
+
+def finalize_run(response: dict, *, applied_budgets: dict | None = None, label: str | None = None) -> dict:
+    enriched = dict(response)
+    enriched["applied_budgets"] = applied_budgets or {}
+    if label is not None:
+        enriched["label"] = label
+    return enriched
 
 
 def run_optimizer(request: dict) -> dict:
@@ -344,6 +461,10 @@ def weight_sweep_entries(payload: dict) -> List[dict]:
     return payload.get("weight_sweep", [])
 
 
+def dsp_budget_sweep_entries(payload: dict) -> List[dict]:
+    return payload.get("dsp_budget_sweep", [])
+
+
 def unique_weight_sweep_points(payload: dict) -> List[tuple[int, int]]:
     return sorted(
         {
@@ -362,6 +483,16 @@ def unique_pareto_points(payload: dict) -> List[tuple[int, int]]:
             for point in frontier
         }
     )
+
+
+def dsp_sweep_latency_points(payload: dict) -> List[tuple[int, int]]:
+    points = []
+    for entry in dsp_budget_sweep_entries(payload):
+        metrics = entry.get("metrics")
+        if not metrics:
+            continue
+        points.append((entry["dsp_max"], metrics["latency"]))
+    return sorted(points)
 
 
 def summarize_group_labels(labels: List[str]) -> str:
@@ -441,15 +572,18 @@ def display_run_name(name: str) -> str:
     labels = {
         "original": "Original",
         "weighted": "Weighted",
+        "latency_unconstrained": "Latency-optimal (no budgets)",
         "latency_under_area": "Latency with area budget",
         "area_under_latency": "Area with latency budget",
         "latency_under_dsp": "Latency with zero-DSP budget",
         "latency_under_lut": "Latency with LUT cap",
+        "dsp_budget_sweep": "DSP budget sweep",
         "pareto": "Pareto",
         "pareto_2d": "Pareto 2D",
         "weight_sweep": "Weight sweep",
         "area_reduction": "Area reduction",
         "latency_reduction": "Latency reduction",
+        "latency_delta": "Latency delta",
         "dsp_reduction": "DSP reduction",
         "runtime_ms": "Runtime (ms)",
     }
@@ -460,10 +594,12 @@ def chart_palette() -> dict:
     return {
         "original": "#355070",
         "weighted": "#2a9d8f",
+        "latency_unconstrained": "#1d3557",
         "latency_under_area": "#e9c46a",
         "area_under_latency": "#f4a261",
         "latency_under_dsp": "#e76f51",
         "latency_under_lut": "#577590",
+        "dsp_budget_sweep": "#3a86ff",
         "pareto": "#264653",
         "weight_sweep": "#8d99ae",
     }
@@ -535,6 +671,76 @@ def render_horizontal_bar_chart(
     return "".join(lines)
 
 
+def render_diverging_bar_chart(
+    title: str,
+    categories: List[str],
+    series: List[tuple[str, str, List[float]]],
+    *,
+    width: int = 560,
+) -> str:
+    bar_height = 16
+    bar_gap = 8
+    category_gap = 18
+    left_pad = 110
+    right_pad = 70
+    top_pad = 54
+    bottom_pad = 24
+    category_block = len(series) * (bar_height + bar_gap) + category_gap
+    height = top_pad + bottom_pad + max(len(categories), 1) * category_block
+    plot_width = width - left_pad - right_pad
+    zero_x = left_pad + plot_width / 2
+    max_abs = max([abs(value) for _, _, values in series for value in values], default=1.0)
+    max_abs = max(max_abs, 1.0)
+    lines = [
+        f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{html.escape(title)}">',
+        f'<text x="{width / 2}" y="24" text-anchor="middle" font-size="18" font-weight="700" fill="#102a43">{html.escape(title)}</text>',
+        f'<line x1="{zero_x:.1f}" y1="{top_pad}" x2="{zero_x:.1f}" y2="{height - bottom_pad}" stroke="#9fb3c8" stroke-width="1.2"/>',
+    ]
+
+    for tick in range(-2, 3):
+        value = max_abs * tick / 2
+        x = zero_x + (value / max_abs) * (plot_width / 2)
+        lines.append(
+            f'<line x1="{x:.1f}" y1="{top_pad}" x2="{x:.1f}" y2="{height - bottom_pad}" stroke="#e6edf3" stroke-width="1"/>'
+        )
+        lines.append(
+            f'<text x="{x:.1f}" y="{height - 6}" text-anchor="middle" font-size="10" fill="#486581">{value:.1f}</text>'
+        )
+
+    for category_index, category in enumerate(categories):
+        block_y = top_pad + category_index * category_block
+        lines.append(
+            f'<text x="{left_pad - 12}" y="{block_y + ((len(series) * (bar_height + bar_gap)) / 2):.1f}" text-anchor="end" font-size="12" fill="#243b53">{html.escape(category)}</text>'
+        )
+        for series_index, (label, color, values) in enumerate(series):
+            value = values[category_index]
+            y = block_y + series_index * (bar_height + bar_gap)
+            bar_width = abs(value) / max_abs * (plot_width / 2)
+            bar_x = zero_x if value >= 0 else zero_x - bar_width
+            lines.append(
+                f'<rect x="{bar_x:.1f}" y="{y:.1f}" width="{bar_width:.1f}" height="{bar_height:.1f}" rx="4" fill="{color}"/>'
+            )
+            label_x = zero_x + bar_width + 8 if value >= 0 else zero_x - bar_width - 8
+            anchor = "start" if value >= 0 else "end"
+            lines.append(
+                f'<text x="{label_x:.1f}" y="{y + 12:.1f}" text-anchor="{anchor}" font-size="10" fill="#243b53">{display_run_name(label)}: {value:.1f}</text>'
+            )
+
+    legend_x = left_pad
+    legend_y = 42
+    for label, color, _ in series:
+        lines.append(
+            f'<rect x="{legend_x}" y="{legend_y - 10}" width="12" height="12" rx="2" fill="{color}"/>'
+        )
+        lines.append(
+            f'<text x="{legend_x + 18}" y="{legend_y}" font-size="12" fill="#243b53">{html.escape(display_run_name(label))}</text>'
+        )
+        legend_x += 145
+
+    lines.append("</svg>")
+    return "".join(lines)
+
+
 def render_percentage_chart(results: dict, *, width: int = 560) -> str:
     names = list(results["benchmarks"].keys())
     area = []
@@ -547,8 +753,8 @@ def render_percentage_chart(results: dict, *, width: int = 560) -> str:
         area.append(pct_reduction(original["area"], weighted["area"]))
         latency.append(pct_reduction(original["latency"], weighted["latency"]))
         dsp.append(pct_reduction(original["dsp_count"], weighted["dsp_count"]))
-    return render_horizontal_bar_chart(
-        "Weighted Improvements (%)",
+    return render_diverging_bar_chart(
+        "Weighted Reduction vs Original (%)",
         names,
         [
             ("area_reduction", "#2a9d8f", area),
@@ -583,6 +789,7 @@ def tradeoff_point_groups(payload: dict) -> List[dict]:
     add_point(display_run_name("original"), original["area"], original["latency"], "original")
     for run_name in (
         "weighted",
+        "latency_unconstrained",
         "latency_under_area",
         "area_under_latency",
         "latency_under_dsp",
@@ -664,7 +871,7 @@ def render_tradeoff_plot(name: str, payload: dict, *, width: int = 500, height: 
         )
 
     if len(frontier_points) > 1:
-        polyline = " ".join(f"{x_pos(area):.1f},{y_pos(latency):.1f}" for area, latency in frontier_points)
+        polyline = staircase_polyline_points(frontier_points, x_pos, y_pos)
         lines.append(
             f'<polyline points="{polyline}" fill="none" stroke="{palette["pareto"]}" stroke-width="2.5" stroke-dasharray="4 4"/>'
         )
@@ -751,6 +958,19 @@ def render_ir_comparison(payload: dict) -> str:
         render_ir_panel("Original IR", original_graph, original_metrics),
         render_ir_panel("Weighted Optimized IR", weighted_graph, weighted_metrics),
     ]
+    latency_unconstrained = payload["runs"].get("latency_unconstrained", {})
+    unconstrained_graph = latency_unconstrained.get("optimized_ir")
+    unconstrained_metrics = latency_unconstrained.get("metrics")
+    if unconstrained_metrics and (
+        unconstrained_metrics != weighted_metrics or unconstrained_graph != weighted_graph
+    ):
+        panels.append(
+            render_ir_panel(
+                "Latency-Optimal IR",
+                unconstrained_graph,
+                unconstrained_metrics,
+            )
+        )
     zero_dsp = payload["runs"].get("latency_under_dsp", {})
     zero_dsp_graph = zero_dsp.get("optimized_ir")
     zero_dsp_metrics = zero_dsp.get("metrics")
@@ -780,13 +1000,18 @@ def summarize_results(results: dict) -> dict:
     runtime_ms = []
     pareto_points = []
     weight_sweep_points = []
+    dsp_sweep_points = []
     identical_constrained = []
     component_budget_divergent = []
+    resource_scaling_benefit = []
+    latency_unconstrained_improvements = []
 
     for name, payload in results["benchmarks"].items():
         original = payload["original_metrics"]
         weighted = payload["runs"]["weighted"]
+        latency_unconstrained = payload["runs"]["latency_unconstrained"]
         weighted_metrics = weighted["metrics"]
+        unconstrained_metrics = latency_unconstrained["metrics"]
         area_reduction = pct_reduction(original["area"], weighted_metrics["area"])
         latency_reduction = pct_reduction(original["latency"], weighted_metrics["latency"])
         dsp_reduction = pct_reduction(original["dsp_count"], weighted_metrics["dsp_count"])
@@ -794,6 +1019,9 @@ def summarize_results(results: dict) -> dict:
         latency_reductions.append(latency_reduction)
         dsp_reductions.append(dsp_reduction)
         runtime_ms.append(weighted["stats"]["runtime_ms"])
+        latency_unconstrained_improvements.append(
+            pct_reduction(original["latency"], unconstrained_metrics["latency"])
+        )
 
         constrained_same = all(
             payload["runs"].get(run_name, {}).get("metrics") == weighted_metrics
@@ -814,8 +1042,15 @@ def summarize_results(results: dict) -> dict:
 
         pareto_count = len(unique_pareto_points(payload))
         weight_sweep_count = len(unique_weight_sweep_points(payload))
+        dsp_sweep_count = len(dsp_budget_sweep_entries(payload))
+        dsp_sweep_latencies = [latency for _, latency in dsp_sweep_latency_points(payload)]
         pareto_points.append(pareto_count)
         weight_sweep_points.append(weight_sweep_count)
+        dsp_sweep_points.append(dsp_sweep_count)
+        if dsp_sweep_latencies:
+            resource_scaling_benefit.append(max(dsp_sweep_latencies) - min(dsp_sweep_latencies))
+        else:
+            resource_scaling_benefit.append(0)
 
         summary["benchmarks"][name] = {
             "original_expr": graph_to_expr_text(payload.get("original_ir")),
@@ -823,10 +1058,16 @@ def summarize_results(results: dict) -> dict:
             "weighted_latency_reduction_pct": latency_reduction,
             "weighted_dsp_reduction_pct": dsp_reduction,
             "weighted_expr": graph_to_expr_text(weighted.get("optimized_ir")),
+            "latency_unconstrained_expr": graph_to_expr_text(
+                latency_unconstrained.get("optimized_ir")
+            ),
+            "latency_unconstrained_latency": unconstrained_metrics["latency"],
             "pareto_points": pareto_count,
             "weight_sweep_points": weight_sweep_count,
+            "dsp_sweep_points": dsp_sweep_count,
             "constrained_matches_weighted": constrained_same,
             "component_budget_differs": name in component_budget_divergent,
+            "resource_scaling_latency_gain": resource_scaling_benefit[-1],
         }
 
     best_area = max(
@@ -837,16 +1078,32 @@ def summarize_results(results: dict) -> dict:
         summary["benchmarks"].items(),
         key=lambda item: item[1]["weighted_latency_reduction_pct"],
     )
+    best_latency_value = best_latency[1]["weighted_latency_reduction_pct"]
     summary["overview"] = {
         "benchmark_count": len(results["benchmarks"]),
         "avg_area_reduction_pct": mean(area_reductions) if area_reductions else 0.0,
         "avg_latency_reduction_pct": mean(latency_reductions) if latency_reductions else 0.0,
         "avg_dsp_reduction_pct": mean(dsp_reductions) if dsp_reductions else 0.0,
+        "avg_latency_unconstrained_improvement_pct": (
+            mean(latency_unconstrained_improvements)
+            if latency_unconstrained_improvements
+            else 0.0
+        ),
         "avg_weighted_runtime_ms": mean(runtime_ms) if runtime_ms else 0.0,
         "avg_pareto_points": mean(pareto_points) if pareto_points else 0.0,
         "avg_weight_sweep_points": mean(weight_sweep_points) if weight_sweep_points else 0.0,
+        "avg_dsp_sweep_points": mean(dsp_sweep_points) if dsp_sweep_points else 0.0,
+        "avg_resource_scaling_latency_gain": (
+            mean(resource_scaling_benefit) if resource_scaling_benefit else 0.0
+        ),
         "best_area_benchmark": best_area[0],
         "best_latency_benchmark": best_latency[0],
+        "best_latency_value_pct": best_latency_value,
+        "best_latency_label": (
+            "Strongest Latency Improvement"
+            if best_latency_value > 0
+            else "Least Latency Regression"
+        ),
         "identical_constrained": identical_constrained,
         "component_budget_divergent": component_budget_divergent,
     }
@@ -859,6 +1116,7 @@ def write_summary_csv(results: dict, output_path: Path) -> None:
         "benchmark",
         "run",
         "weight_label",
+        "applied_budgets",
         "feasible",
         "area",
         "latency",
@@ -867,6 +1125,7 @@ def write_summary_csv(results: dict, output_path: Path) -> None:
         "score",
         "runtime_ms",
         "iterations",
+        "message",
         "area_reduction_pct_vs_original",
         "latency_reduction_pct_vs_original",
         "dsp_reduction_pct_vs_original",
@@ -882,6 +1141,7 @@ def write_summary_csv(results: dict, output_path: Path) -> None:
                     "benchmark": name,
                     "run": "original",
                     "weight_label": "",
+                    "applied_budgets": "",
                     "feasible": True,
                     "area": original["area"],
                     "latency": original["latency"],
@@ -890,6 +1150,7 @@ def write_summary_csv(results: dict, output_path: Path) -> None:
                     "score": "",
                     "runtime_ms": "",
                     "iterations": "",
+                    "message": "",
                     "area_reduction_pct_vs_original": 0.0,
                     "latency_reduction_pct_vs_original": 0.0,
                     "dsp_reduction_pct_vs_original": 0.0,
@@ -903,6 +1164,7 @@ def write_summary_csv(results: dict, output_path: Path) -> None:
                         "benchmark": name,
                         "run": run_name,
                         "weight_label": "",
+                        "applied_budgets": json.dumps(run.get("applied_budgets", {}), sort_keys=True),
                         "feasible": run.get("feasible", False),
                         "area": metrics["area"] if metrics else "",
                         "latency": metrics["latency"] if metrics else "",
@@ -911,6 +1173,7 @@ def write_summary_csv(results: dict, output_path: Path) -> None:
                         "score": run.get("score", ""),
                         "runtime_ms": run.get("stats", {}).get("runtime_ms", ""),
                         "iterations": run.get("stats", {}).get("iterations", ""),
+                        "message": run.get("message", ""),
                         "area_reduction_pct_vs_original": pct_reduction(original["area"], metrics["area"]) if metrics else "",
                         "latency_reduction_pct_vs_original": pct_reduction(original["latency"], metrics["latency"]) if metrics else "",
                         "dsp_reduction_pct_vs_original": pct_reduction(original["dsp_count"], metrics["dsp_count"]) if metrics else "",
@@ -925,6 +1188,10 @@ def write_summary_csv(results: dict, output_path: Path) -> None:
                         "benchmark": name,
                         "run": "weight_sweep",
                         "weight_label": weight_label(entry["weights"]),
+                        "applied_budgets": json.dumps(
+                            response.get("applied_budgets", {}),
+                            sort_keys=True,
+                        ),
                         "feasible": response.get("feasible", False),
                         "area": metrics["area"] if metrics else "",
                         "latency": metrics["latency"] if metrics else "",
@@ -933,6 +1200,33 @@ def write_summary_csv(results: dict, output_path: Path) -> None:
                         "score": response.get("score", ""),
                         "runtime_ms": response.get("stats", {}).get("runtime_ms", ""),
                         "iterations": response.get("stats", {}).get("iterations", ""),
+                        "message": response.get("message", ""),
+                        "area_reduction_pct_vs_original": pct_reduction(original["area"], metrics["area"]) if metrics else "",
+                        "latency_reduction_pct_vs_original": pct_reduction(original["latency"], metrics["latency"]) if metrics else "",
+                        "dsp_reduction_pct_vs_original": pct_reduction(original["dsp_count"], metrics["dsp_count"]) if metrics else "",
+                        "pareto_points": "",
+                    }
+                )
+            for entry in dsp_budget_sweep_entries(payload):
+                metrics = entry.get("metrics")
+                writer.writerow(
+                    {
+                        "benchmark": name,
+                        "run": "dsp_budget_sweep",
+                        "weight_label": "",
+                        "applied_budgets": json.dumps(
+                            entry.get("applied_budgets", {}),
+                            sort_keys=True,
+                        ),
+                        "feasible": entry.get("feasible", False),
+                        "area": metrics["area"] if metrics else "",
+                        "latency": metrics["latency"] if metrics else "",
+                        "dsp_count": metrics["dsp_count"] if metrics else "",
+                        "lut_count": metrics["lut_count"] if metrics else "",
+                        "score": entry.get("score", ""),
+                        "runtime_ms": entry.get("stats", {}).get("runtime_ms", ""),
+                        "iterations": entry.get("stats", {}).get("iterations", ""),
+                        "message": entry.get("message", ""),
                         "area_reduction_pct_vs_original": pct_reduction(original["area"], metrics["area"]) if metrics else "",
                         "latency_reduction_pct_vs_original": pct_reduction(original["latency"], metrics["latency"]) if metrics else "",
                         "dsp_reduction_pct_vs_original": pct_reduction(original["dsp_count"], metrics["dsp_count"]) if metrics else "",
@@ -944,29 +1238,44 @@ def write_summary_csv(results: dict, output_path: Path) -> None:
 def benchmark_analysis_lines(name: str, payload: dict) -> List[str]:
     original = payload["original_metrics"]
     weighted = payload["runs"]["weighted"]["metrics"]
+    latency_unconstrained = payload["runs"]["latency_unconstrained"]["metrics"]
     lines = []
     lines.append(
         f"Weighted extraction changed area {original['area']} -> {weighted['area']} ({pct_reduction(original['area'], weighted['area']):.1f}% reduction) and latency {original['latency']} -> {weighted['latency']} ({pct_reduction(original['latency'], weighted['latency']):.1f}% reduction)."
+    )
+    lines.append(
+        f"Latency-optimal extraction with no budgets reached latency {latency_unconstrained['latency']} with area {latency_unconstrained['area']}, DSP {latency_unconstrained['dsp_count']}, and LUT {latency_unconstrained['lut_count']}."
     )
     dsp_delta = pct_reduction(original["dsp_count"], weighted["dsp_count"])
     lut_delta = pct_change(original["lut_count"], weighted["lut_count"])
     lines.append(
         f"DSP count changed {original['dsp_count']} -> {weighted['dsp_count']} ({dsp_delta:.1f}% reduction) while LUT count changed {original['lut_count']} -> {weighted['lut_count']} ({lut_delta:+.1f}%)."
     )
+    dsp_sweep = dsp_sweep_latency_points(payload)
+    if dsp_sweep:
+        low_budget = dsp_sweep[0]
+        high_budget = dsp_sweep[-1]
+        lines.append(
+            f"Across the DSP-budget sweep, latency moved from {low_budget[1]} at dsp_max={low_budget[0]} to {high_budget[1]} at dsp_max={high_budget[0]}, which quantifies the benefit of a larger FPGA budget on this datapath."
+        )
     zero_dsp = payload["runs"].get("latency_under_dsp", {}).get("metrics")
     if zero_dsp:
+        zero_dsp_budget = budget_label(
+            payload["runs"].get("latency_under_dsp", {}).get("applied_budgets", {})
+        )
         lines.append(
-            f"With a strict zero-DSP budget, the optimizer returned area {zero_dsp['area']}, latency {zero_dsp['latency']}, DSP {zero_dsp['dsp_count']}, LUT {zero_dsp['lut_count']}, which demonstrates that component budgets are enforced directly during extraction."
+            f"With the configured zero-DSP budget ({zero_dsp_budget}), the optimizer returned area {zero_dsp['area']}, latency {zero_dsp['latency']}, DSP {zero_dsp['dsp_count']}, LUT {zero_dsp['lut_count']}."
         )
     lut_cap_run = payload["runs"].get("latency_under_lut", {})
     lut_cap = lut_cap_run.get("metrics")
+    lut_cap_budget = budget_label(lut_cap_run.get("applied_budgets", {}))
     if lut_cap:
         lines.append(
-            f"With a LUT cap of {original['lut_count']} matching the original datapath, the optimizer returned area {lut_cap['area']}, latency {lut_cap['latency']}, DSP {lut_cap['dsp_count']}, LUT {lut_cap['lut_count']}, which shows the same extractor can also push the design toward DSP-heavy implementations."
+            f"With the configured LUT-cap budget ({lut_cap_budget}), the optimizer returned area {lut_cap['area']}, latency {lut_cap['latency']}, DSP {lut_cap['dsp_count']}, LUT {lut_cap['lut_count']}, which pushes the solution back toward DSP-heavy implementations."
         )
     elif lut_cap_run and lut_cap_run.get("feasible") is False:
         lines.append(
-            f"With a LUT cap of {original['lut_count']} matching the original datapath, no feasible solution was found inside the bounded extraction frontier, which shows the constraint is stricter than the retained tradeoff set for this benchmark."
+            f"With the configured LUT-cap budget ({lut_cap_budget}), no feasible solution was found inside the bounded extraction frontier, which shows the constraint is stricter than the retained tradeoff set for this benchmark."
         )
     constrained_same = all(
         payload["runs"].get(run_name, {}).get("metrics") == weighted
@@ -1015,12 +1324,15 @@ def write_analysis_markdown(results: dict, summary: dict, output_path: Path) -> 
         f"- Benchmarks evaluated: {overview['benchmark_count']}",
         f"- Average weighted area reduction: {overview['avg_area_reduction_pct']:.1f}%",
         f"- Average weighted latency reduction: {overview['avg_latency_reduction_pct']:.1f}%",
+        f"- Average latency improvement with no budgets: {overview['avg_latency_unconstrained_improvement_pct']:.1f}%",
         f"- Average weighted DSP reduction: {overview['avg_dsp_reduction_pct']:.1f}%",
         f"- Average weighted runtime: {overview['avg_weighted_runtime_ms']:.1f} ms",
         f"- Average Pareto points: {overview['avg_pareto_points']:.1f}",
         f"- Average distinct weight-sweep points: {overview['avg_weight_sweep_points']:.1f}",
+        f"- Average DSP-sweep points: {overview['avg_dsp_sweep_points']:.1f}",
+        f"- Average latency gain across DSP scaling: {overview['avg_resource_scaling_latency_gain']:.1f}",
         f"- Strongest area improvement: {overview['best_area_benchmark']}",
-        f"- Strongest latency improvement: {overview['best_latency_benchmark']}",
+        f"- {overview['best_latency_label']}: {overview['best_latency_benchmark']}",
         "",
         "## Cross-Benchmark Observations",
         "",
@@ -1036,6 +1348,9 @@ def write_analysis_markdown(results: dict, summary: dict, output_path: Path) -> 
         lines.append(
             f"- At least one strict component budget forced a different implementation on: {', '.join(overview['component_budget_divergent'])}."
         )
+    lines.append(
+        "- The new latency-unconstrained run should be read as the fastest datapath reachable within the bounded search, while the DSP-budget sweep shows how quickly that latency can be recovered as FPGA resources increase."
+    )
     if overview["avg_pareto_points"] <= 1.0:
         lines.append(
             "- Exact Pareto extraction still collapses to one point on average, so the weight sweep is currently the clearest way to visualize tradeoffs."
@@ -1070,9 +1385,11 @@ def render_overview_cards(summary: dict) -> str:
         ("Benchmarks", str(overview["benchmark_count"])),
         ("Avg Area Reduction", f"{overview['avg_area_reduction_pct']:.1f}%"),
         ("Avg Latency Reduction", f"{overview['avg_latency_reduction_pct']:.1f}%"),
+        ("Avg Unconstrained Latency Gain", f"{overview['avg_latency_unconstrained_improvement_pct']:.1f}%"),
         ("Avg DSP Reduction", f"{overview['avg_dsp_reduction_pct']:.1f}%"),
         ("Avg Pareto Points", f"{overview['avg_pareto_points']:.1f}"),
         ("Avg Weight-Sweep Points", f"{overview['avg_weight_sweep_points']:.1f}"),
+        ("Avg DSP-Sweep Points", f"{overview['avg_dsp_sweep_points']:.1f}"),
         ("Component Divergence", str(len(overview["component_budget_divergent"]))),
         ("Avg Weighted Runtime", f"{overview['avg_weighted_runtime_ms']:.0f} ms"),
     ]
@@ -1100,6 +1417,7 @@ def render_run_table(name: str, payload: dict) -> str:
     ]
     for run_name, run in payload["runs"].items():
         metrics = run.get("metrics")
+        budgets_text = budget_label(run.get("applied_budgets", {}))
         if metrics:
             rows.append(
                 (
@@ -1109,7 +1427,7 @@ def render_run_table(name: str, payload: dict) -> str:
                     metrics["dsp_count"],
                     metrics["lut_count"],
                     f"{run.get('score', '')}",
-                    f"runtime={run.get('stats', {}).get('runtime_ms', '')} ms",
+                    f"budgets={budgets_text}; runtime={run.get('stats', {}).get('runtime_ms', '')} ms",
                 )
             )
         else:
@@ -1137,7 +1455,7 @@ def render_run_table(name: str, payload: dict) -> str:
                 metrics["dsp_count"],
                 metrics["lut_count"],
                 f"{response.get('score', '')}",
-                f"runtime={response.get('stats', {}).get('runtime_ms', '')} ms",
+                f"budgets={budget_label(response.get('applied_budgets', {}))}; runtime={response.get('stats', {}).get('runtime_ms', '')} ms",
             )
         )
     body = []
@@ -1160,6 +1478,121 @@ def render_run_table(name: str, payload: dict) -> str:
     )
 
 
+def render_status_table(payload: dict) -> str:
+    weighted_metrics = payload["runs"]["weighted"].get("metrics")
+    rows = []
+    for run_name in (
+        "weighted",
+        "latency_unconstrained",
+        "latency_under_area",
+        "latency_under_dsp",
+        "latency_under_lut",
+    ):
+        run = payload["runs"].get(run_name, {})
+        metrics = run.get("metrics")
+        rows.append(
+            (
+                display_run_name(run_name),
+                run_status(run),
+                "n/a" if run_name == "weighted" else run_diverged_from(weighted_metrics, run),
+                budget_label(run.get("applied_budgets", {})),
+                metrics["latency"] if metrics else "",
+                metrics["dsp_count"] if metrics else "",
+                metrics["lut_count"] if metrics else "",
+            )
+        )
+
+    body = []
+    for run_name, status, diverged, budgets, latency, dsp, lut in rows:
+        body.append(
+            "<tr>"
+            f"<td>{html.escape(str(run_name))}</td>"
+            f"<td>{html.escape(str(status))}</td>"
+            f"<td>{html.escape(str(diverged))}</td>"
+            f"<td>{html.escape(str(budgets))}</td>"
+            f"<td>{html.escape(str(latency))}</td>"
+            f"<td>{html.escape(str(dsp))}</td>"
+            f"<td>{html.escape(str(lut))}</td>"
+            "</tr>"
+        )
+    return (
+        '<table class="status-table">'
+        "<thead><tr><th>Run</th><th>Status</th><th>Diverged</th><th>Budgets</th><th>Latency</th><th>DSP</th><th>LUT</th></tr></thead>"
+        f"<tbody>{''.join(body)}</tbody></table>"
+    )
+
+
+def render_resource_scaling_plot(name: str, payload: dict, *, width: int = 500, height: int = 300) -> str:
+    points = dsp_sweep_latency_points(payload)
+    latency_unconstrained = payload["runs"]["latency_unconstrained"]["metrics"]["latency"]
+    palette = chart_palette()
+    left_pad = 52
+    right_pad = 22
+    top_pad = 36
+    bottom_pad = 42
+    plot_width = width - left_pad - right_pad
+    plot_height = height - top_pad - bottom_pad
+    max_budget = max([budget for budget, _ in points], default=1)
+    max_budget = max(max_budget, 1)
+    max_latency = max([latency for _, latency in points] + [latency_unconstrained], default=1)
+    max_latency = max(max_latency, 1)
+
+    def x_pos(budget: int) -> float:
+        return left_pad + (budget / max_budget) * plot_width
+
+    def y_pos(latency: int) -> float:
+        return top_pad + plot_height - (latency / max_latency) * plot_height
+
+    lines = [
+        f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{html.escape(name)} dsp scaling plot">',
+        f'<text x="{width / 2}" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#102a43">Bigger FPGA, Faster Datapath?</text>',
+        f'<line x1="{left_pad}" y1="{top_pad + plot_height}" x2="{width - right_pad}" y2="{top_pad + plot_height}" stroke="#9fb3c8" stroke-width="1.2"/>',
+        f'<line x1="{left_pad}" y1="{top_pad}" x2="{left_pad}" y2="{top_pad + plot_height}" stroke="#9fb3c8" stroke-width="1.2"/>',
+        f'<text x="{width / 2}" y="{height - 8}" text-anchor="middle" font-size="12" fill="#486581">Allowed DSP Budget</text>',
+        f'<text x="18" y="{top_pad + plot_height / 2}" transform="rotate(-90 18 {top_pad + plot_height / 2})" text-anchor="middle" font-size="12" fill="#486581">Best Latency</text>',
+    ]
+
+    for tick in range(max_budget + 1):
+        x = x_pos(tick)
+        lines.append(
+            f'<line x1="{x:.1f}" y1="{top_pad + plot_height}" x2="{x:.1f}" y2="{top_pad + plot_height + 5}" stroke="#9fb3c8" stroke-width="1"/>'
+        )
+        lines.append(
+            f'<text x="{x:.1f}" y="{top_pad + plot_height + 18}" text-anchor="middle" font-size="10" fill="#486581">{tick}</text>'
+        )
+
+    for tick in range(5):
+        latency_value = max_latency * tick / 4
+        y = top_pad + plot_height - plot_height * tick / 4
+        lines.append(
+            f'<line x1="{left_pad - 5}" y1="{y:.1f}" x2="{left_pad}" y2="{y:.1f}" stroke="#9fb3c8" stroke-width="1"/>'
+        )
+        lines.append(
+            f'<text x="{left_pad - 10}" y="{y + 4:.1f}" text-anchor="end" font-size="10" fill="#486581">{latency_value:.1f}</text>'
+        )
+
+    if points:
+        polyline = staircase_polyline_points(points, x_pos, y_pos)
+        lines.append(
+            f'<polyline points="{polyline}" fill="none" stroke="{palette["dsp_budget_sweep"]}" stroke-width="2.5"/>'
+        )
+        for budget, latency in points:
+            x = x_pos(budget)
+            y = y_pos(latency)
+            lines.append(
+                f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4.5" fill="{palette["dsp_budget_sweep"]}"/>'
+            )
+    unconstrained_y = y_pos(latency_unconstrained)
+    lines.append(
+        f'<line x1="{left_pad}" y1="{unconstrained_y:.1f}" x2="{width - right_pad}" y2="{unconstrained_y:.1f}" stroke="{palette["latency_unconstrained"]}" stroke-width="2" stroke-dasharray="5 4"/>'
+    )
+    lines.append(
+        f'<text x="{width - right_pad - 4}" y="{unconstrained_y - 6:.1f}" text-anchor="end" font-size="10" fill="{palette["latency_unconstrained"]}">Latency-optimal = {latency_unconstrained}</text>'
+    )
+    lines.append("</svg>")
+    return "<div class='tradeoff-card'>" + "".join(lines) + "</div>"
+
+
 def write_html_report(results: dict, summary: dict, output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     palette = chart_palette()
@@ -1177,6 +1610,10 @@ def write_html_report(results: dict, summary: dict, output_path: Path) -> None:
     ]
     weighted_latency = [
         results["benchmarks"][name]["runs"]["weighted"]["metrics"]["latency"] for name in benchmark_names
+    ]
+    latency_unconstrained = [
+        results["benchmarks"][name]["runs"]["latency_unconstrained"]["metrics"]["latency"]
+        for name in benchmark_names
     ]
     weighted_dsp = [
         results["benchmarks"][name]["runs"]["weighted"]["metrics"]["dsp_count"] for name in benchmark_names
@@ -1215,6 +1652,7 @@ def write_html_report(results: dict, summary: dict, output_path: Path) -> None:
             [
                 ("original", palette["original"], original_latency),
                 ("weighted", palette["weighted"], weighted_latency),
+                ("latency_unconstrained", palette["latency_unconstrained"], latency_unconstrained),
             ],
         ),
         render_horizontal_bar_chart(
@@ -1270,6 +1708,9 @@ def write_html_report(results: dict, summary: dict, output_path: Path) -> None:
         ".run-table{width:100%;border-collapse:collapse;font-size:14px;}"
         ".run-table th,.run-table td{border-bottom:1px solid #e6edf3;padding:8px 10px;text-align:left;}"
         ".run-table th{font-size:12px;text-transform:uppercase;color:#627d98;letter-spacing:.04em;}"
+        ".status-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px;}"
+        ".status-table th,.status-table td{border-bottom:1px solid #e6edf3;padding:7px 9px;text-align:left;}"
+        ".status-table th{font-size:11px;text-transform:uppercase;color:#627d98;letter-spacing:.04em;}"
         ".expr{background:#f7fafc;border:1px solid #d9e2ec;border-radius:12px;padding:12px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;}"
         ".ir-code{background:#f7fafc;border:1px solid #d9e2ec;border-radius:12px;padding:12px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.5;white-space:pre-wrap;}"
         ".note-list{margin:10px 0 0 18px;padding:0;}"
@@ -1288,10 +1729,11 @@ def write_html_report(results: dict, summary: dict, output_path: Path) -> None:
         ".point-legend{display:grid;gap:8px;}"
         ".point-entry{display:flex;gap:10px;align-items:flex-start;background:#f7fafc;border:1px solid #d9e2ec;border-radius:12px;padding:10px;}"
         ".point-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;color:#fff;font-size:12px;font-weight:700;flex:0 0 auto;}"
+        ".plot-stack{display:grid;gap:18px;}"
         "@media (max-width: 980px){.benchmark-grid{grid-template-columns:1fr;}.chart-grid{grid-template-columns:1fr;}}"
         "</style></head><body>"
         "<h1>Datapath Benchmark Report</h1>"
-        "<p class='subtle'>Auto-generated from the Rust optimizer benchmark JSON. This report compares original datapaths against weighted and constrained extraction, overlays exact Pareto points with sampled weight-sweep points, and highlights strict zero-DSP solutions when budgets force a different implementation.</p>",
+        "<p class='subtle'>Auto-generated from the Rust optimizer benchmark JSON. This report separates the weighted tradeoff choice from the latency-optimal unconstrained result, overlays exact Pareto points with sampled weight-sweep points, and shows how latency improves as DSP budget increases.</p>",
         render_overview_cards(summary),
         "<h2>Cross-Benchmark Charts</h2>",
         '<div class="chart-grid">',
@@ -1305,13 +1747,16 @@ def write_html_report(results: dict, summary: dict, output_path: Path) -> None:
         sections.append('<div class="benchmark-grid">')
         sections.append("<div>")
         sections.append(render_run_table(name, payload))
+        sections.append("<h3>Status</h3>")
+        sections.append(render_status_table(payload))
         sections.append("<h3>Analysis</h3><ul class='note-list'>")
         for line in benchmark_analysis_lines(name, payload):
             sections.append(f"<li>{html.escape(line)}</li>")
         sections.append("</ul>")
         sections.append(render_ir_comparison(payload))
         sections.append("</div>")
-        sections.append("<div>")
+        sections.append("<div class='plot-stack'>")
+        sections.append(render_resource_scaling_plot(name, payload))
         sections.append(render_tradeoff_plot(name, payload))
         sections.append("</div></div></section>")
 
@@ -1340,103 +1785,189 @@ def write_report_artifacts(
 def run_suite(benchmarks: Dict[str, dict], config: dict | None = None) -> dict:
     active_config = config or load_benchmark_config()
     limits = active_config["saturation_limits"]
-    weight_sweep = active_config["weight_sweep"]
     results = {
         "metadata": {
             "config_path": active_config["config_path"],
+            "baseline_multiply_mapping_policy": active_config[
+                "baseline_multiply_mapping_policy"
+            ],
             "saturation_limits": limits,
             "weight_sweep": [
                 {"w_area": w_area, "w_latency": w_latency}
                 for w_area, w_latency in active_config["weight_sweep"]
             ],
+            "budget_profiles": active_config["budget_profiles"],
+            "dsp_budget_sweep": active_config["dsp_budget_sweep"],
         },
         "benchmarks": {},
     }
     for name, graph in benchmarks.items():
         original = graph_metrics(graph)
+        budget_profiles = active_config["budget_profiles"]
+        latency_area_budgets = resolve_profile_budgets(
+            name,
+            budget_profiles["latency_under_area"],
+            original,
+        )
+        area_latency_budgets = resolve_profile_budgets(
+            name,
+            budget_profiles["area_under_latency"],
+            original,
+        )
+        zero_dsp_budgets = resolve_profile_budgets(
+            name,
+            budget_profiles["latency_under_dsp"],
+            original,
+        )
+        lut_cap_budgets = resolve_profile_budgets(
+            name,
+            budget_profiles["latency_under_lut"],
+            original,
+        )
         weight_run_results = []
         for w_area, w_latency in active_config["weight_sweep"]:
             weights = {"w_area": w_area, "w_latency": w_latency}
             weight_run_results.append(
                 {
                     "weights": weights,
-                    "response": run_optimizer(
-                        make_request(
-                            name,
-                            graph,
-                            mode="weighted",
-                            objective="weighted",
-                            weights=weights,
-                            saturation_limits=limits,
-                        )
+                    "response": finalize_run(
+                        run_optimizer(
+                            make_request(
+                                name,
+                                graph,
+                                mode="weighted",
+                                objective="weighted",
+                                weights=weights,
+                                saturation_limits=limits,
+                            )
+                        ),
+                        applied_budgets={},
+                        label=weight_display_label(weights),
                     ),
                 }
             )
         runs = {
-            "weighted": run_optimizer(
-                make_request(
-                    name,
-                    graph,
-                    mode="weighted",
-                    objective="weighted",
-                    saturation_limits=limits,
+            "weighted": finalize_run(
+                run_optimizer(
+                    make_request(
+                        name,
+                        graph,
+                        mode="weighted",
+                        objective="weighted",
+                        saturation_limits=limits,
+                    )
                 )
             ),
-            "latency_under_area": run_optimizer(
-                make_request(
-                    name,
-                    graph,
-                    mode="constrained",
-                    objective="latency",
-                    budgets={"area_max": original["area"]},
-                    saturation_limits=limits,
+            "latency_unconstrained": finalize_run(
+                run_optimizer(
+                    make_request(
+                        name,
+                        graph,
+                        mode="constrained",
+                        objective="latency",
+                        budgets={},
+                        saturation_limits=limits,
+                    )
                 )
             ),
-            "area_under_latency": run_optimizer(
-                make_request(
-                    name,
-                    graph,
-                    mode="constrained",
-                    objective="area",
-                    budgets={"latency_max": original["latency"]},
-                    saturation_limits=limits,
-                )
+            "latency_under_area": finalize_run(
+                run_optimizer(
+                    make_request(
+                        name,
+                        graph,
+                        mode="constrained",
+                        objective="latency",
+                        budgets=latency_area_budgets,
+                        saturation_limits=limits,
+                    )
+                ),
+                applied_budgets=latency_area_budgets,
             ),
-            "latency_under_dsp": run_optimizer(
-                make_request(
-                    name,
-                    graph,
-                    mode="constrained",
-                    objective="latency",
-                    budgets={"dsp_max": 0},
-                    saturation_limits=limits,
-                )
+            "area_under_latency": finalize_run(
+                run_optimizer(
+                    make_request(
+                        name,
+                        graph,
+                        mode="constrained",
+                        objective="area",
+                        budgets=area_latency_budgets,
+                        saturation_limits=limits,
+                    )
+                ),
+                applied_budgets=area_latency_budgets,
             ),
-            "latency_under_lut": run_optimizer(
-                make_request(
-                    name,
-                    graph,
-                    mode="constrained",
-                    objective="latency",
-                    budgets={"lut_max": original["lut_count"]},
-                    saturation_limits=limits,
-                )
+            "latency_under_dsp": finalize_run(
+                run_optimizer(
+                    make_request(
+                        name,
+                        graph,
+                        mode="constrained",
+                        objective="latency",
+                        budgets=zero_dsp_budgets,
+                        saturation_limits=limits,
+                    )
+                ),
+                applied_budgets=zero_dsp_budgets,
             ),
-            "pareto_2d": run_optimizer(
-                make_request(
-                    name,
-                    graph,
-                    mode="pareto_2d",
-                    objective="latency",
-                    saturation_limits=limits,
+            "latency_under_lut": finalize_run(
+                run_optimizer(
+                    make_request(
+                        name,
+                        graph,
+                        mode="constrained",
+                        objective="latency",
+                        budgets=lut_cap_budgets,
+                        saturation_limits=limits,
+                    )
+                ),
+                applied_budgets=lut_cap_budgets,
+            ),
+            "pareto_2d": finalize_run(
+                run_optimizer(
+                    make_request(
+                        name,
+                        graph,
+                        mode="pareto_2d",
+                        objective="latency",
+                        saturation_limits=limits,
+                    )
                 )
             ),
         }
+        dsp_budget_sweep = []
+        for dsp_max in sweep_dsp_budgets(active_config, original):
+            applied_budgets = {"dsp_max": dsp_max}
+            response = finalize_run(
+                run_optimizer(
+                    make_request(
+                        name,
+                        graph,
+                        mode="constrained",
+                        objective="latency",
+                        budgets=applied_budgets,
+                        saturation_limits=limits,
+                    )
+                ),
+                applied_budgets=applied_budgets,
+            )
+            sweep_entry = {
+                "dsp_max": dsp_max,
+                "feasible": response["feasible"],
+                "applied_budgets": response["applied_budgets"],
+                "stats": response.get("stats", {}),
+            }
+            if response.get("metrics"):
+                sweep_entry["metrics"] = response["metrics"]
+                sweep_entry["score"] = response.get("score")
+            if response.get("message"):
+                sweep_entry["message"] = response["message"]
+            dsp_budget_sweep.append(sweep_entry)
         results["benchmarks"][name] = {
             "original_ir": graph,
             "original_metrics": original,
             "runs": runs,
             "weight_sweep": weight_run_results,
+            "dsp_budget_sweep": dsp_budget_sweep,
         }
     return results
 
@@ -1445,10 +1976,11 @@ def print_summary(results: dict) -> None:
     for name, payload in results["benchmarks"].items():
         original = payload["original_metrics"]
         weighted = payload["runs"]["weighted"]
+        latency_unconstrained = payload["runs"]["latency_unconstrained"]
         zero_dsp = payload["runs"]["latency_under_dsp"]
         lut_cap = payload["runs"].get("latency_under_lut", {})
-        pareto = payload["runs"]["pareto_2d"]
         weight_points = len(unique_weight_sweep_points(payload))
+        dsp_points = len(dsp_budget_sweep_entries(payload))
         print(f"\n{name}")
         print(
             "  original:"
@@ -1459,6 +1991,13 @@ def print_summary(results: dict) -> None:
             metrics = weighted["metrics"]
             print(
                 "  weighted:"
+                f" area={metrics['area']} latency={metrics['latency']}"
+                f" dsp={metrics['dsp_count']} lut={metrics['lut_count']}"
+            )
+        if latency_unconstrained.get("metrics"):
+            metrics = latency_unconstrained["metrics"]
+            print(
+                "  latency-optimal:"
                 f" area={metrics['area']} latency={metrics['latency']}"
                 f" dsp={metrics['dsp_count']} lut={metrics['lut_count']}"
             )
@@ -1476,8 +2015,11 @@ def print_summary(results: dict) -> None:
                 f" area={metrics['area']} latency={metrics['latency']}"
                 f" dsp={metrics['dsp_count']} lut={metrics['lut_count']}"
             )
+        elif lut_cap:
+            print(f"  lut-cap: {lut_cap.get('message', 'infeasible')}")
         print(f"  pareto points: {len(unique_pareto_points(payload))}")
         print(f"  weight-sweep points: {weight_points}")
+        print(f"  dsp-sweep points: {dsp_points}")
 
 
 def main() -> None:
@@ -1520,7 +2062,9 @@ def main() -> None:
 
     output_path = Path(args.output)
     config = load_benchmark_config(Path(args.config))
+    results_source = str(output_path)
     if args.results_input:
+        results_source = args.results_input
         results = json.loads(Path(args.results_input).read_text())
     else:
         benchmarks = build_smoke_cases() if args.smoke else build_acceptance_benchmarks()
@@ -1535,7 +2079,10 @@ def main() -> None:
         summary_csv_path=Path(args.summary_csv),
     )
     print_summary(results)
-    print(f"\nResults written to {output_path}")
+    if args.results_input:
+        print(f"\nResults loaded from {results_source}")
+    else:
+        print(f"\nResults written to {results_source}")
     print(f"HTML report written to {artifacts['report_path']}")
     print(f"Analysis markdown written to {artifacts['analysis_path']}")
     print(f"CSV summary written to {artifacts['summary_csv_path']}")

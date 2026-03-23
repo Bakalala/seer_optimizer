@@ -98,6 +98,37 @@ class BenchmarkHarnessTest(unittest.TestCase):
         self.assertGreater(len(run_benchmarks.unique_pareto_points(payload)), 1)
         self.assertGreater(len(run_benchmarks.unique_weight_sweep_points(payload)), 1)
 
+    def test_latency_unconstrained_and_dsp_sweep_are_present(self) -> None:
+        config = run_benchmarks.load_benchmark_config()
+        results = run_benchmarks.run_suite(
+            {"gemm_k8": run_benchmarks.build_acceptance_benchmarks()["gemm_k8"]},
+            config,
+        )
+        payload = results["benchmarks"]["gemm_k8"]
+        self.assertIn("latency_unconstrained", payload["runs"])
+        self.assertIn("metrics", payload["runs"]["latency_unconstrained"])
+        self.assertTrue(payload["dsp_budget_sweep"])
+        self.assertEqual(
+            payload["dsp_budget_sweep"][-1]["metrics"]["latency"],
+            payload["runs"]["latency_unconstrained"]["metrics"]["latency"],
+        )
+
+    def test_dsp_budget_sweep_is_monotone_and_improves_latency(self) -> None:
+        config = run_benchmarks.load_benchmark_config()
+        results = run_benchmarks.run_suite(
+            {"fir8": run_benchmarks.build_acceptance_benchmarks()["fir8"]},
+            config,
+        )
+        payload = results["benchmarks"]["fir8"]
+        sweep = payload["dsp_budget_sweep"]
+        latencies = [entry["metrics"]["latency"] for entry in sweep if entry.get("metrics")]
+        self.assertEqual(latencies, sorted(latencies, reverse=True))
+        self.assertGreater(latencies[0], latencies[-1])
+        self.assertEqual(
+            latencies[-1],
+            payload["runs"]["latency_unconstrained"]["metrics"]["latency"],
+        )
+
     def test_dot16_lut_cap_reports_infeasible_budget(self) -> None:
         config = run_benchmarks.load_benchmark_config()
         results = run_benchmarks.run_suite(
@@ -108,8 +139,121 @@ class BenchmarkHarnessTest(unittest.TestCase):
         self.assertFalse(lut_cap["feasible"])
         self.assertIn("no feasible solution", lut_cap.get("message", ""))
 
+    def test_summary_uses_least_latency_regression_when_needed(self) -> None:
+        fake_results = {
+            "metadata": {},
+            "benchmarks": {
+                "demo": {
+                    "original_ir": {
+                        "ir_nodes": [
+                            {"id": "n0", "op": "input", "name": "x"},
+                        ],
+                        "root": "n0",
+                    },
+                    "original_metrics": {
+                        "area": 10,
+                        "latency": 5,
+                        "dsp_count": 1,
+                        "lut_count": 0,
+                    },
+                    "runs": {
+                        "weighted": {
+                            "feasible": True,
+                            "metrics": {
+                                "area": 8,
+                                "latency": 6,
+                                "dsp_count": 0,
+                                "lut_count": 8,
+                            },
+                            "stats": {"runtime_ms": 10, "iterations": 2},
+                        },
+                        "latency_unconstrained": {
+                            "feasible": True,
+                            "metrics": {
+                                "area": 9,
+                                "latency": 4,
+                                "dsp_count": 1,
+                                "lut_count": 0,
+                            },
+                            "stats": {"runtime_ms": 10, "iterations": 2},
+                        },
+                        "latency_under_area": {
+                            "feasible": True,
+                            "metrics": {
+                                "area": 10,
+                                "latency": 4,
+                                "dsp_count": 1,
+                                "lut_count": 0,
+                            },
+                            "applied_budgets": {"area_max": 10},
+                            "stats": {"runtime_ms": 10, "iterations": 2},
+                        },
+                        "area_under_latency": {
+                            "feasible": True,
+                            "metrics": {
+                                "area": 9,
+                                "latency": 5,
+                                "dsp_count": 1,
+                                "lut_count": 0,
+                            },
+                            "applied_budgets": {"latency_max": 5},
+                            "stats": {"runtime_ms": 10, "iterations": 2},
+                        },
+                        "latency_under_dsp": {
+                            "feasible": True,
+                            "metrics": {
+                                "area": 8,
+                                "latency": 6,
+                                "dsp_count": 0,
+                                "lut_count": 8,
+                            },
+                            "applied_budgets": {"dsp_max": 0},
+                            "stats": {"runtime_ms": 10, "iterations": 2},
+                        },
+                        "latency_under_lut": {
+                            "feasible": False,
+                            "message": "no feasible solution satisfies the provided budgets",
+                            "applied_budgets": {"lut_max": 0},
+                            "stats": {"runtime_ms": 10, "iterations": 2},
+                        },
+                        "pareto_2d": {
+                            "feasible": True,
+                            "frontier": [],
+                            "stats": {"runtime_ms": 10, "iterations": 2},
+                        },
+                    },
+                    "weight_sweep": [],
+                    "dsp_budget_sweep": [
+                        {
+                            "dsp_max": 0,
+                            "feasible": True,
+                            "metrics": {"area": 8, "latency": 6, "dsp_count": 0, "lut_count": 8},
+                            "applied_budgets": {"dsp_max": 0},
+                        },
+                        {
+                            "dsp_max": 1,
+                            "feasible": True,
+                            "metrics": {"area": 9, "latency": 4, "dsp_count": 1, "lut_count": 0},
+                            "applied_budgets": {"dsp_max": 1},
+                        },
+                    ],
+                }
+            },
+        }
+        summary = run_benchmarks.summarize_results(fake_results)
+        self.assertEqual(summary["overview"]["best_latency_label"], "Least Latency Regression")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "analysis.md"
+            run_benchmarks.write_analysis_markdown(fake_results, summary, path)
+            self.assertIn("Least Latency Regression", path.read_text())
+
     def test_report_artifacts_are_generated(self) -> None:
         fake_results = {
+            "metadata": {
+                "baseline_multiply_mapping_policy": "generic_mul_defaults_to_dsp_metrics",
+                "budget_profiles": {},
+                "dsp_budget_sweep": {"enabled": True, "start": 0, "stop_mode": "original_dsp_count", "step": 1},
+            },
             "benchmarks": {
                 "demo": {
                     "original_ir": {
@@ -144,6 +288,27 @@ class BenchmarkHarnessTest(unittest.TestCase):
                                 "lut_count": 1,
                             },
                             "score": 2.0,
+                            "applied_budgets": {},
+                            "stats": {"runtime_ms": 10, "iterations": 2},
+                        },
+                        "latency_unconstrained": {
+                            "feasible": True,
+                            "optimized_ir": {
+                                "ir_nodes": [
+                                    {"id": "n0", "op": "input", "name": "x"},
+                                    {"id": "n1", "op": "const", "value": 2},
+                                    {"id": "n2", "op": "mul_dsp", "inputs": ["n0", "n1"]},
+                                ],
+                                "root": "n2",
+                            },
+                            "metrics": {
+                                "area": 6,
+                                "latency": 3,
+                                "dsp_count": 1,
+                                "lut_count": 0,
+                            },
+                            "score": 3.0,
+                            "applied_budgets": {},
                             "stats": {"runtime_ms": 10, "iterations": 2},
                         },
                         "latency_under_area": {
@@ -163,6 +328,7 @@ class BenchmarkHarnessTest(unittest.TestCase):
                                 "lut_count": 1,
                             },
                             "score": 1.0,
+                            "applied_budgets": {"area_max": 4},
                             "stats": {"runtime_ms": 10, "iterations": 2},
                         },
                         "area_under_latency": {
@@ -182,6 +348,7 @@ class BenchmarkHarnessTest(unittest.TestCase):
                                 "lut_count": 1,
                             },
                             "score": 1.0,
+                            "applied_budgets": {"latency_max": 3},
                             "stats": {"runtime_ms": 10, "iterations": 2},
                         },
                         "latency_under_dsp": {
@@ -201,6 +368,7 @@ class BenchmarkHarnessTest(unittest.TestCase):
                                 "lut_count": 1,
                             },
                             "score": 1.0,
+                            "applied_budgets": {"dsp_max": 0},
                             "stats": {"runtime_ms": 10, "iterations": 2},
                         },
                         "latency_under_lut": {
@@ -220,6 +388,7 @@ class BenchmarkHarnessTest(unittest.TestCase):
                                 "lut_count": 0,
                             },
                             "score": 3.0,
+                            "applied_budgets": {"lut_max": 0},
                             "stats": {"runtime_ms": 10, "iterations": 2},
                         },
                         "pareto_2d": {
@@ -242,6 +411,7 @@ class BenchmarkHarnessTest(unittest.TestCase):
                                     },
                                 }
                             ],
+                            "applied_budgets": {},
                             "stats": {"runtime_ms": 10, "iterations": 2},
                         },
                     },
@@ -265,9 +435,34 @@ class BenchmarkHarnessTest(unittest.TestCase):
                                     "lut_count": 8,
                                 },
                                 "score": 30.0,
+                                "applied_budgets": {},
                                 "stats": {"runtime_ms": 10, "iterations": 2},
                             },
                         }
+                    ],
+                    "dsp_budget_sweep": [
+                        {
+                            "dsp_max": 0,
+                            "feasible": True,
+                            "metrics": {
+                                "area": 4,
+                                "latency": 6,
+                                "dsp_count": 0,
+                                "lut_count": 8,
+                            },
+                            "applied_budgets": {"dsp_max": 0},
+                        },
+                        {
+                            "dsp_max": 1,
+                            "feasible": True,
+                            "metrics": {
+                                "area": 6,
+                                "latency": 3,
+                                "dsp_count": 1,
+                                "lut_count": 0,
+                            },
+                            "applied_budgets": {"dsp_max": 1},
+                        },
                     ],
                 }
             }
@@ -286,6 +481,8 @@ class BenchmarkHarnessTest(unittest.TestCase):
             self.assertIn("Datapath Benchmark Report", Path(artifacts["report_path"]).read_text())
             self.assertIn("Original IR", Path(artifacts["report_path"]).read_text())
             self.assertIn("Weight-sweep sampled curve", Path(artifacts["report_path"]).read_text())
+            self.assertIn("Bigger FPGA, Faster Datapath?", Path(artifacts["report_path"]).read_text())
+            self.assertIn("Latency-optimal (no budgets)", Path(artifacts["report_path"]).read_text())
             self.assertIn("Benchmark Analysis", Path(artifacts["analysis_path"]).read_text())
 
 

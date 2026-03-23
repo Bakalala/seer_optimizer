@@ -11,6 +11,8 @@ Datapath-only constraint-aware HLS optimizer built around a Rust `egg` core and 
   - weighted optimization
   - constrained optimization under explicit budgets
   - exact 2D area/latency Pareto extraction
+  - latency-optimal extraction with no budgets
+  - DSP-budget scaling sweeps for “bigger FPGA, faster datapath” analysis
 
 ## Repository Layout
 
@@ -48,12 +50,14 @@ This is intentionally a simple proxy model for controlled experiments rather tha
 The harness evaluates:
 
 - weighted extraction
+- latency-optimal extraction with no budgets
 - minimize latency with `area_max = original_area`
 - minimize area with `latency_max = original_latency`
 - minimize latency with `dsp_max = 0`
-- minimize latency with `lut_max = original_lut_count`
+- minimize latency with a configured per-benchmark LUT cap
 - exact Pareto extraction
 - sampled weight sweep from [`benchmark_config.json`](benchmark_config.json)
+- DSP-budget sweep from `dsp_max = 0` up to the original DSP count
 
 ## Running
 
@@ -99,13 +103,3 @@ Main outputs:
 - The rewrite set is intentionally bounded to keep extraction tractable.
 - Some strict constraints can be infeasible within the bounded frontier.
 - The cost model is a proxy model; it should be calibrated further before claiming synthesis-accurate absolute numbers.
-
-## CIRCT
-
-For this project, CIRCT is best treated as a future backend/export target rather than the main optimization engine.
-
-- Keep `egg` as the search/extraction engine.
-- Keep the current custom IR as the optimization IR.
-- If needed later, lower optimized datapaths into CIRCT `comb`/`hw` as a backend step.
-
-That keeps the paper aligned with its actual contribution: constraint-aware equality saturation for datapaths.

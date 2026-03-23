@@ -786,4 +786,92 @@ mod tests {
         assert!(constrained_metrics.area > weighted_metrics.area);
         assert!(constrained_metrics.latency <= original_metrics.latency);
     }
+
+    #[test]
+    fn impossible_budget_reports_infeasible_solution() {
+        let request = request_from_nodes(
+            "generic_mul_impossible_budget",
+            vec![
+                IrNode {
+                    id: "x".into(),
+                    op: IrOp::Input,
+                    name: Some("x".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "y".into(),
+                    op: IrOp::Input,
+                    name: Some("y".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "root".into(),
+                    op: IrOp::Mul,
+                    name: None,
+                    value: None,
+                    inputs: vec!["x".into(), "y".into()],
+                },
+            ],
+            "root",
+            Mode::Constrained,
+            Objective::Latency,
+            Budgets {
+                area_max: Some(0),
+                latency_max: Some(0),
+                dsp_max: Some(0),
+                lut_max: Some(0),
+            },
+        );
+
+        let response = optimize_request(&request).expect("optimizer should succeed");
+        assert!(!response.feasible);
+        assert!(response.metrics.is_none());
+        assert!(
+            response
+                .message
+                .expect("message")
+                .contains("no feasible solution")
+        );
+    }
+
+    #[test]
+    fn latency_unconstrained_is_no_worse_than_any_dsp_capped_result() {
+        let (nodes, root) = build_fir8_nodes();
+        let original_metrics = graph_to_expr(&IrGraph {
+            ir_nodes: nodes.clone(),
+            root: root.clone(),
+        })
+        .expect("graph should parse")
+        .metrics();
+
+        let unconstrained = optimize_request(&request_from_nodes(
+            "fir8_latency_unconstrained",
+            nodes.clone(),
+            &root,
+            Mode::Constrained,
+            Objective::Latency,
+            Budgets::default(),
+        ))
+        .expect("unconstrained extraction should succeed");
+        let unconstrained_latency = unconstrained.metrics.expect("metrics").latency;
+
+        for dsp_max in 0..=original_metrics.dsp_count {
+            let response = optimize_request(&request_from_nodes(
+                &format!("fir8_dsp_cap_{dsp_max}"),
+                nodes.clone(),
+                &root,
+                Mode::Constrained,
+                Objective::Latency,
+                Budgets {
+                    dsp_max: Some(dsp_max),
+                    ..Budgets::default()
+                },
+            ))
+            .expect("constrained extraction should succeed");
+            let metrics = response.metrics.expect("metrics");
+            assert!(unconstrained_latency <= metrics.latency);
+        }
+    }
 }
