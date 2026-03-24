@@ -419,7 +419,32 @@ def finalize_run(response: dict, *, applied_budgets: dict | None = None, label: 
     return enriched
 
 
+def finalize_batch_run(
+    response: dict,
+    *,
+    shared_stats: dict,
+    applied_budgets: dict | None = None,
+    label: str | None = None,
+) -> dict:
+    enriched = finalize_run(response, applied_budgets=applied_budgets, label=label)
+    enriched["stats"] = dict(shared_stats)
+    return enriched
+
+
 def run_optimizer(request: dict) -> dict:
+    binary = ensure_optimizer_binary()
+    completed = subprocess.run(
+        [str(binary)],
+        cwd=ROOT,
+        input=json.dumps(request),
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    return json.loads(completed.stdout)
+
+
+def run_optimizer_batch(request: dict) -> dict:
     binary = ensure_optimizer_binary()
     completed = subprocess.run(
         [str(binary)],
@@ -479,6 +504,43 @@ def make_request(
         "weights": weights or {"w_area": 1.0, "w_latency": 1.0},
         "budgets": budgets or {},
         "saturation_limits": saturation_limits or DEFAULT_LIMITS,
+    }
+
+
+def make_batch_query(
+    name: str,
+    *,
+    mode: str,
+    objective: str,
+    budgets: dict | None = None,
+    weights: dict | None = None,
+    label: str | None = None,
+) -> dict:
+    query = {
+        "name": name,
+        "mode": mode,
+        "objective": objective,
+        "weights": weights or {"w_area": 1.0, "w_latency": 1.0},
+        "budgets": budgets or {},
+    }
+    if label is not None:
+        query["label"] = label
+    return query
+
+
+def make_batch_request(
+    benchmark_name: str,
+    graph: dict,
+    queries: List[dict],
+    *,
+    saturation_limits: dict | None = None,
+) -> dict:
+    return {
+        "benchmark_name": benchmark_name,
+        "ir_nodes": graph["ir_nodes"],
+        "root": graph["root"],
+        "saturation_limits": saturation_limits or DEFAULT_LIMITS,
+        "queries": queries,
     }
 
 
@@ -1915,130 +1977,146 @@ def run_suite(benchmarks: Dict[str, dict], config: dict | None = None) -> dict:
             budget_profiles["latency_under_lut"],
             original,
         )
-        weight_run_results = []
-        for w_area, w_latency in active_config["weight_sweep"]:
+        weight_query_specs = []
+        dsp_query_specs = []
+        queries = [
+            make_batch_query(
+                "weighted",
+                mode="weighted",
+                objective="weighted",
+            ),
+            make_batch_query(
+                "latency_unconstrained",
+                mode="constrained",
+                objective="latency",
+            ),
+            make_batch_query(
+                "latency_under_area",
+                mode="constrained",
+                objective="latency",
+                budgets=latency_area_budgets,
+            ),
+            make_batch_query(
+                "area_under_latency",
+                mode="constrained",
+                objective="area",
+                budgets=area_latency_budgets,
+            ),
+            make_batch_query(
+                "latency_under_dsp",
+                mode="constrained",
+                objective="latency",
+                budgets=zero_dsp_budgets,
+            ),
+            make_batch_query(
+                "latency_under_lut",
+                mode="constrained",
+                objective="latency",
+                budgets=lut_cap_budgets,
+            ),
+            make_batch_query(
+                "pareto_2d",
+                mode="pareto_2d",
+                objective="latency",
+            ),
+        ]
+        for idx, (w_area, w_latency) in enumerate(active_config["weight_sweep"]):
             weights = {"w_area": w_area, "w_latency": w_latency}
-            weight_run_results.append(
-                {
-                    "weights": weights,
-                    "response": finalize_run(
-                        run_optimizer(
-                            make_request(
-                                name,
-                                graph,
-                                mode="weighted",
-                                objective="weighted",
-                                weights=weights,
-                                saturation_limits=limits,
-                            )
-                        ),
-                        applied_budgets={},
-                        label=weight_display_label(weights),
-                    ),
-                }
+            query_name = f"weight_sweep_{idx}"
+            weight_query_specs.append((query_name, weights))
+            queries.append(
+                make_batch_query(
+                    query_name,
+                    mode="weighted",
+                    objective="weighted",
+                    weights=weights,
+                    label=weight_display_label(weights),
+                )
             )
+        for idx, dsp_max in enumerate(sweep_dsp_budgets(active_config, graph, original)):
+            query_name = f"dsp_budget_{idx}"
+            applied_budgets = {"dsp_max": dsp_max}
+            dsp_query_specs.append((query_name, dsp_max, applied_budgets))
+            queries.append(
+                make_batch_query(
+                    query_name,
+                    mode="constrained",
+                    objective="latency",
+                    budgets=applied_budgets,
+                )
+            )
+
+        batch_response = run_optimizer_batch(
+            make_batch_request(
+                name,
+                graph,
+                queries,
+                saturation_limits=limits,
+            )
+        )
+        if batch_response.get("message"):
+            raise RuntimeError(
+                f"batch optimizer failed for benchmark {name}: {batch_response['message']}"
+            )
+        shared_stats = batch_response.get("shared_stats", {})
+        responses_by_name = {
+            entry["name"]: entry for entry in batch_response.get("results", [])
+        }
+
+        def response_for(query_name: str) -> dict:
+            if query_name not in responses_by_name:
+                raise KeyError(f"batch response for {name} is missing query {query_name}")
+            return responses_by_name[query_name]
+
+        weight_run_results = []
+        for query_name, weights in weight_query_specs:
+            response = finalize_batch_run(
+                response_for(query_name),
+                shared_stats=shared_stats,
+                applied_budgets={},
+                label=weight_display_label(weights),
+            )
+            weight_run_results.append({"weights": weights, "response": response})
+
         runs = {
-            "weighted": finalize_run(
-                run_optimizer(
-                    make_request(
-                        name,
-                        graph,
-                        mode="weighted",
-                        objective="weighted",
-                        saturation_limits=limits,
-                    )
-                )
+            "weighted": finalize_batch_run(
+                response_for("weighted"),
+                shared_stats=shared_stats,
             ),
-            "latency_unconstrained": finalize_run(
-                run_optimizer(
-                    make_request(
-                        name,
-                        graph,
-                        mode="constrained",
-                        objective="latency",
-                        budgets={},
-                        saturation_limits=limits,
-                    )
-                )
+            "latency_unconstrained": finalize_batch_run(
+                response_for("latency_unconstrained"),
+                shared_stats=shared_stats,
             ),
-            "latency_under_area": finalize_run(
-                run_optimizer(
-                    make_request(
-                        name,
-                        graph,
-                        mode="constrained",
-                        objective="latency",
-                        budgets=latency_area_budgets,
-                        saturation_limits=limits,
-                    )
-                ),
+            "latency_under_area": finalize_batch_run(
+                response_for("latency_under_area"),
+                shared_stats=shared_stats,
                 applied_budgets=latency_area_budgets,
             ),
-            "area_under_latency": finalize_run(
-                run_optimizer(
-                    make_request(
-                        name,
-                        graph,
-                        mode="constrained",
-                        objective="area",
-                        budgets=area_latency_budgets,
-                        saturation_limits=limits,
-                    )
-                ),
+            "area_under_latency": finalize_batch_run(
+                response_for("area_under_latency"),
+                shared_stats=shared_stats,
                 applied_budgets=area_latency_budgets,
             ),
-            "latency_under_dsp": finalize_run(
-                run_optimizer(
-                    make_request(
-                        name,
-                        graph,
-                        mode="constrained",
-                        objective="latency",
-                        budgets=zero_dsp_budgets,
-                        saturation_limits=limits,
-                    )
-                ),
+            "latency_under_dsp": finalize_batch_run(
+                response_for("latency_under_dsp"),
+                shared_stats=shared_stats,
                 applied_budgets=zero_dsp_budgets,
             ),
-            "latency_under_lut": finalize_run(
-                run_optimizer(
-                    make_request(
-                        name,
-                        graph,
-                        mode="constrained",
-                        objective="latency",
-                        budgets=lut_cap_budgets,
-                        saturation_limits=limits,
-                    )
-                ),
+            "latency_under_lut": finalize_batch_run(
+                response_for("latency_under_lut"),
+                shared_stats=shared_stats,
                 applied_budgets=lut_cap_budgets,
             ),
-            "pareto_2d": finalize_run(
-                run_optimizer(
-                    make_request(
-                        name,
-                        graph,
-                        mode="pareto_2d",
-                        objective="latency",
-                        saturation_limits=limits,
-                    )
-                )
+            "pareto_2d": finalize_batch_run(
+                response_for("pareto_2d"),
+                shared_stats=shared_stats,
             ),
         }
         dsp_budget_sweep = []
-        for dsp_max in sweep_dsp_budgets(active_config, graph, original):
-            applied_budgets = {"dsp_max": dsp_max}
-            response = finalize_run(
-                run_optimizer(
-                    make_request(
-                        name,
-                        graph,
-                        mode="constrained",
-                        objective="latency",
-                        budgets=applied_budgets,
-                        saturation_limits=limits,
-                    )
-                ),
+        for query_name, dsp_max, applied_budgets in dsp_query_specs:
+            response = finalize_batch_run(
+                response_for(query_name),
+                shared_stats=shared_stats,
                 applied_budgets=applied_budgets,
             )
             sweep_entry = {
@@ -2056,6 +2134,7 @@ def run_suite(benchmarks: Dict[str, dict], config: dict | None = None) -> dict:
         results["benchmarks"][name] = {
             "original_ir": graph,
             "original_metrics": original,
+            "shared_stats": shared_stats,
             "runs": runs,
             "weight_sweep": weight_run_results,
             "dsp_budget_sweep": dsp_budget_sweep,

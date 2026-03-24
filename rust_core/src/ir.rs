@@ -138,7 +138,7 @@ pub enum IrOp {
     MacDsp,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IrNode {
     pub id: String,
     pub op: IrOp,
@@ -150,7 +150,7 @@ pub struct IrNode {
     pub inputs: Vec<String>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IrGraph {
     pub ir_nodes: Vec<IrNode>,
     pub root: String,
@@ -172,6 +172,38 @@ pub struct OptimizeRequest {
 }
 
 impl OptimizeRequest {
+    pub fn graph(&self) -> IrGraph {
+        IrGraph {
+            ir_nodes: self.ir_nodes.clone(),
+            root: self.root.clone(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct BatchQuery {
+    pub name: String,
+    pub mode: Mode,
+    pub objective: Objective,
+    #[serde(default)]
+    pub weights: Weights,
+    #[serde(default)]
+    pub budgets: Budgets,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct BatchOptimizeRequest {
+    pub benchmark_name: String,
+    pub ir_nodes: Vec<IrNode>,
+    pub root: String,
+    #[serde(default)]
+    pub saturation_limits: SaturationLimits,
+    pub queries: Vec<BatchQuery>,
+}
+
+impl BatchOptimizeRequest {
     pub fn graph(&self) -> IrGraph {
         IrGraph {
             ir_nodes: self.ir_nodes.clone(),
@@ -213,7 +245,7 @@ impl Metrics {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FrontierPoint {
     pub optimized_ir: IrGraph,
     pub metrics: Metrics,
@@ -221,7 +253,7 @@ pub struct FrontierPoint {
     pub score: Option<f64>,
 }
 
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RunStats {
     pub iterations: usize,
     pub eclasses: usize,
@@ -254,6 +286,64 @@ impl OptimizeResponse {
             score: None,
             frontier: Vec::new(),
             stats: RunStats::default(),
+            message: Some(message.into()),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct BatchQueryResponse {
+    pub name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+    pub feasible: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub optimized_ir: Option<IrGraph>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metrics: Option<Metrics>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub score: Option<f64>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub frontier: Vec<FrontierPoint>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+
+impl BatchQueryResponse {
+    pub fn from_optimize_response(
+        name: impl Into<String>,
+        label: Option<String>,
+        response: OptimizeResponse,
+    ) -> Self {
+        Self {
+            name: name.into(),
+            label,
+            feasible: response.feasible,
+            optimized_ir: response.optimized_ir,
+            metrics: response.metrics,
+            score: response.score,
+            frontier: response.frontier,
+            message: response.message,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct BatchOptimizeResponse {
+    pub benchmark_name: String,
+    pub shared_stats: RunStats,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub results: Vec<BatchQueryResponse>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+
+impl BatchOptimizeResponse {
+    pub fn error(benchmark_name: impl Into<String>, message: impl Into<String>) -> Self {
+        Self {
+            benchmark_name: benchmark_name.into(),
+            shared_stats: RunStats::default(),
+            results: Vec::new(),
             message: Some(message.into()),
         }
     }
@@ -330,7 +420,10 @@ impl Expr {
                 let left_metrics = left.metrics();
                 let right_metrics = right.metrics();
                 Metrics {
-                    area: acc_metrics.area + left_metrics.area + right_metrics.area + op_metrics("mac_dsp").area,
+                    area: acc_metrics.area
+                        + left_metrics.area
+                        + right_metrics.area
+                        + op_metrics("mac_dsp").area,
                     latency: acc_metrics
                         .latency
                         .max(left_metrics.latency.max(right_metrics.latency))

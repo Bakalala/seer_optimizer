@@ -3,6 +3,7 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import run_benchmarks
 
@@ -194,6 +195,78 @@ class BenchmarkHarnessTest(unittest.TestCase):
             latencies[-1],
             payload["runs"]["latency_unconstrained"]["metrics"]["latency"],
         )
+
+    def test_run_suite_uses_one_batch_optimizer_call_per_benchmark(self) -> None:
+        benchmarks = {
+            "fir8": run_benchmarks.build_acceptance_benchmarks()["fir8"],
+            "gemm_k8": run_benchmarks.build_acceptance_benchmarks()["gemm_k8"],
+        }
+        config = run_benchmarks.load_benchmark_config()
+
+        def fake_batch_response(request: dict) -> dict:
+            results = []
+            for query in request["queries"]:
+                result = {
+                    "name": query["name"],
+                    "feasible": True,
+                }
+                if query["mode"] == "pareto_2d":
+                    result["frontier"] = [
+                        {
+                            "optimized_ir": {
+                                "ir_nodes": request["ir_nodes"],
+                                "root": request["root"],
+                            },
+                            "metrics": {
+                                "area": 1,
+                                "latency": 1,
+                                "dsp_count": 0,
+                                "lut_count": 1,
+                            },
+                        }
+                    ]
+                else:
+                    result["optimized_ir"] = {
+                        "ir_nodes": request["ir_nodes"],
+                        "root": request["root"],
+                    }
+                    result["metrics"] = {
+                        "area": 1,
+                        "latency": 1,
+                        "dsp_count": 0,
+                        "lut_count": 1,
+                    }
+                    result["score"] = 1.0
+                results.append(result)
+            return {
+                "benchmark_name": request["benchmark_name"],
+                "shared_stats": {
+                    "iterations": 2,
+                    "eclasses": 3,
+                    "enodes": 4,
+                    "runtime_ms": 10,
+                },
+                "results": results,
+            }
+
+        with (
+            mock.patch.object(
+                run_benchmarks,
+                "run_optimizer_batch",
+                side_effect=fake_batch_response,
+            ) as run_batch,
+            mock.patch.object(
+                run_benchmarks,
+                "run_optimizer",
+                side_effect=AssertionError("old single-request path should not be used"),
+            ),
+        ):
+            results = run_benchmarks.run_suite(benchmarks, config)
+
+        self.assertEqual(run_batch.call_count, len(benchmarks))
+        for payload in results["benchmarks"].values():
+            self.assertIn("shared_stats", payload)
+            self.assertEqual(payload["runs"]["weighted"]["stats"]["runtime_ms"], 10)
 
     def test_dot16_lut_cap_reports_infeasible_budget(self) -> None:
         config = run_benchmarks.load_benchmark_config()

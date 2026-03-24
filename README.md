@@ -216,8 +216,8 @@ This validates:
 
 This does all of the following:
 
-- builds the 5 acceptance benchmarks in Python
-- invokes the Rust optimizer for every benchmark/run mode
+- builds the 6 acceptance benchmarks in Python
+- invokes the Rust optimizer once per benchmark with a batch of weighted, constrained, Pareto, weight-sweep, and DSP-sweep queries
 - writes machine-readable JSON results
 - writes the HTML report
 - writes the Markdown analysis
@@ -302,7 +302,10 @@ Useful variants:
 
 ## Running The Rust Optimizer Directly
 
-The Rust binary reads a JSON request on stdin and prints a JSON response on stdout.
+The Rust binary reads a JSON request on stdin and prints a JSON response on stdout. It supports both:
+
+- single-request mode for direct debugging of one optimization query
+- batch mode for one-saturation-per-benchmark execution from the Python harness
 
 Build it:
 

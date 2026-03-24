@@ -1,6 +1,7 @@
 use crate::ir::{
-    Budgets, Expr, FrontierPoint, Metrics, Mode, Objective, OptimizeRequest, OptimizeResponse,
-    RunStats, Weights, graph_to_expr,
+    BatchOptimizeRequest, BatchOptimizeResponse, BatchQuery, BatchQueryResponse, Budgets, Expr,
+    FrontierPoint, Metrics, Mode, Objective, OptimizeRequest, OptimizeResponse, RunStats,
+    SaturationLimits, Weights, graph_to_expr,
 };
 use crate::language::{Math, MathAnalysis};
 use crate::rewrites::datapath_rewrites;
@@ -19,6 +20,12 @@ struct Candidate {
     metrics: Metrics,
 }
 
+#[derive(Clone, Debug)]
+struct PreparedBenchmark {
+    root_frontier: Option<Vec<Candidate>>,
+    stats: RunStats,
+}
+
 impl Candidate {
     fn from_expr(expr: Expr) -> Self {
         let metrics = expr.metrics();
@@ -31,17 +38,45 @@ impl Candidate {
 }
 
 pub fn optimize_request(request: &OptimizeRequest) -> Result<OptimizeResponse> {
-    let root_expr = graph_to_expr(&request.graph())?;
+    let prepared = prepare_benchmark(&request.graph(), &request.saturation_limits)?;
+    Ok(evaluate_prepared(
+        &prepared,
+        &request.mode,
+        &request.objective,
+        &request.weights,
+        &request.budgets,
+    ))
+}
+
+pub fn optimize_batch_request(request: &BatchOptimizeRequest) -> Result<BatchOptimizeResponse> {
+    let prepared = prepare_benchmark(&request.graph(), &request.saturation_limits)?;
+    let results = request
+        .queries
+        .iter()
+        .map(|query| evaluate_batch_query(&prepared, query))
+        .collect();
+
+    Ok(BatchOptimizeResponse {
+        benchmark_name: request.benchmark_name.clone(),
+        shared_stats: prepared.stats.clone(),
+        results,
+        message: None,
+    })
+}
+
+fn prepare_benchmark(
+    graph: &crate::ir::IrGraph,
+    limits: &SaturationLimits,
+) -> Result<PreparedBenchmark> {
+    let root_expr = graph_to_expr(graph)?;
     let expr = expr_to_recexpr(&root_expr);
 
     let started = Instant::now();
     let runner = Runner::<Math, MathAnalysis, ()>::default()
         .with_expr(&expr)
-        .with_iter_limit(request.saturation_limits.iter_limit)
-        .with_node_limit(request.saturation_limits.node_limit)
-        .with_time_limit(Duration::from_millis(
-            request.saturation_limits.time_limit_ms,
-        ))
+        .with_iter_limit(limits.iter_limit)
+        .with_node_limit(limits.node_limit)
+        .with_time_limit(Duration::from_millis(limits.time_limit_ms))
         .run(&datapath_rewrites());
 
     let eclasses = runner.egraph.classes().count();
@@ -59,28 +94,58 @@ pub fn optimize_request(request: &OptimizeRequest) -> Result<OptimizeResponse> {
 
     let root_id = runner.egraph.find(runner.roots[0]);
     let frontiers = extract_frontiers(&runner.egraph);
-    let Some(root_frontier) = frontiers.get(&root_id) else {
-        return Ok(OptimizeResponse {
-            feasible: false,
-            optimized_ir: None,
-            metrics: None,
-            score: None,
-            frontier: Vec::new(),
-            stats,
-            message: Some("no extraction candidates were produced".to_string()),
-        });
+    let root_frontier = frontiers.get(&root_id).cloned();
+
+    Ok(PreparedBenchmark {
+        root_frontier,
+        stats,
+    })
+}
+
+fn evaluate_prepared(
+    prepared: &PreparedBenchmark,
+    mode: &Mode,
+    objective: &Objective,
+    weights: &Weights,
+    budgets: &Budgets,
+) -> OptimizeResponse {
+    let stats = prepared.stats.clone();
+    let Some(root_frontier) = prepared.root_frontier.as_deref() else {
+        return missing_frontier_response(stats);
     };
 
-    match request.mode {
-        Mode::Weighted => Ok(weighted_response(root_frontier, &request.weights, stats)),
-        Mode::Constrained => Ok(constrained_response(
-            root_frontier,
-            &request.objective,
-            &request.weights,
-            &request.budgets,
-            stats,
-        )),
-        Mode::Pareto2d => Ok(pareto_response(root_frontier, stats)),
+    match mode {
+        Mode::Weighted => weighted_response(root_frontier, weights, stats),
+        Mode::Constrained => {
+            constrained_response(root_frontier, objective, weights, budgets, stats)
+        }
+        Mode::Pareto2d => pareto_response(root_frontier, stats),
+    }
+}
+
+fn evaluate_batch_query(prepared: &PreparedBenchmark, query: &BatchQuery) -> BatchQueryResponse {
+    BatchQueryResponse::from_optimize_response(
+        query.name.clone(),
+        query.label.clone(),
+        evaluate_prepared(
+            prepared,
+            &query.mode,
+            &query.objective,
+            &query.weights,
+            &query.budgets,
+        ),
+    )
+}
+
+fn missing_frontier_response(stats: RunStats) -> OptimizeResponse {
+    OptimizeResponse {
+        feasible: false,
+        optimized_ir: None,
+        metrics: None,
+        score: None,
+        frontier: Vec::new(),
+        stats,
+        message: Some("no extraction candidates were produced".to_string()),
     }
 }
 
@@ -283,12 +348,8 @@ fn combine_add(
     right_id: Id,
     frontiers: &HashMap<Id, Vec<Candidate>>,
 ) -> Vec<Candidate> {
-    let mut combined = combine_binary_variants(
-        left_id,
-        right_id,
-        frontiers,
-        &[make_add_lut, make_add_dsp],
-    );
+    let mut combined =
+        combine_binary_variants(left_id, right_id, frontiers, &[make_add_lut, make_add_dsp]);
     combined.extend(combine_mac_candidates(left_id, right_id, frontiers));
     combined
 }
@@ -503,7 +564,10 @@ fn candidate_cmp(left: &Candidate, right: &Candidate) -> Ordering {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ir::{IrGraph, IrNode, IrOp, OptimizeRequest, SaturationLimits, graph_to_expr};
+    use crate::ir::{
+        BatchOptimizeRequest, BatchQuery, IrGraph, IrNode, IrOp, OptimizeRequest, SaturationLimits,
+        graph_to_expr,
+    };
 
     struct TestIrBuilder {
         nodes: Vec<IrNode>,
@@ -600,6 +664,21 @@ mod tests {
             weights: Weights::default(),
             budgets,
             saturation_limits: test_limits(),
+        }
+    }
+
+    fn batch_request_from_nodes(
+        benchmark_name: &str,
+        nodes: Vec<IrNode>,
+        root: &str,
+        queries: Vec<BatchQuery>,
+    ) -> BatchOptimizeRequest {
+        BatchOptimizeRequest {
+            benchmark_name: benchmark_name.to_string(),
+            ir_nodes: nodes,
+            root: root.to_string(),
+            saturation_limits: test_limits(),
+            queries,
         }
     }
 
@@ -1019,7 +1098,12 @@ mod tests {
         assert_eq!(metrics.dsp_count, 1);
         assert_eq!(metrics.latency, 3);
         let optimized = response.optimized_ir.expect("optimized ir");
-        assert!(optimized.ir_nodes.iter().any(|node| node.op == IrOp::AddDsp));
+        assert!(
+            optimized
+                .ir_nodes
+                .iter()
+                .any(|node| node.op == IrOp::AddDsp)
+        );
     }
 
     #[test]
@@ -1093,6 +1177,180 @@ mod tests {
         assert_eq!(metrics.dsp_count, 1);
         assert!(metrics.latency < zero_dsp_metrics.latency);
         let optimized = response.optimized_ir.expect("optimized ir");
-        assert!(optimized.ir_nodes.iter().any(|node| node.op == IrOp::MacDsp));
+        assert!(
+            optimized
+                .ir_nodes
+                .iter()
+                .any(|node| node.op == IrOp::MacDsp)
+        );
+    }
+
+    #[test]
+    fn batch_matches_single_query_results() {
+        let (nodes, root) = build_fir8_nodes();
+        let single_weighted = optimize_request(&request_from_nodes(
+            "fir8_weighted_single",
+            nodes.clone(),
+            &root,
+            Mode::Weighted,
+            Objective::Weighted,
+            Budgets::default(),
+        ))
+        .expect("single weighted should succeed");
+        let single_area_capped = optimize_request(&request_from_nodes(
+            "fir8_area_single",
+            nodes.clone(),
+            &root,
+            Mode::Constrained,
+            Objective::Latency,
+            Budgets {
+                area_max: Some(55),
+                ..Budgets::default()
+            },
+        ))
+        .expect("single constrained should succeed");
+        let single_zero_dsp = optimize_request(&request_from_nodes(
+            "fir8_zero_dsp_single",
+            nodes.clone(),
+            &root,
+            Mode::Constrained,
+            Objective::Latency,
+            Budgets {
+                dsp_max: Some(0),
+                ..Budgets::default()
+            },
+        ))
+        .expect("single zero-dsp should succeed");
+        let single_pareto = optimize_request(&request_from_nodes(
+            "fir8_pareto_single",
+            nodes.clone(),
+            &root,
+            Mode::Pareto2d,
+            Objective::Latency,
+            Budgets::default(),
+        ))
+        .expect("single pareto should succeed");
+
+        let batch = optimize_batch_request(&batch_request_from_nodes(
+            "fir8_batch",
+            nodes,
+            &root,
+            vec![
+                BatchQuery {
+                    name: "weighted".into(),
+                    mode: Mode::Weighted,
+                    objective: Objective::Weighted,
+                    weights: Weights::default(),
+                    budgets: Budgets::default(),
+                    label: None,
+                },
+                BatchQuery {
+                    name: "latency_under_area".into(),
+                    mode: Mode::Constrained,
+                    objective: Objective::Latency,
+                    weights: Weights::default(),
+                    budgets: Budgets {
+                        area_max: Some(55),
+                        ..Budgets::default()
+                    },
+                    label: None,
+                },
+                BatchQuery {
+                    name: "latency_under_dsp".into(),
+                    mode: Mode::Constrained,
+                    objective: Objective::Latency,
+                    weights: Weights::default(),
+                    budgets: Budgets {
+                        dsp_max: Some(0),
+                        ..Budgets::default()
+                    },
+                    label: None,
+                },
+                BatchQuery {
+                    name: "pareto_2d".into(),
+                    mode: Mode::Pareto2d,
+                    objective: Objective::Latency,
+                    weights: Weights::default(),
+                    budgets: Budgets::default(),
+                    label: None,
+                },
+            ],
+        ))
+        .expect("batch optimization should succeed");
+
+        let weighted = batch
+            .results
+            .iter()
+            .find(|result| result.name == "weighted")
+            .expect("weighted batch result");
+        assert_eq!(weighted.metrics, single_weighted.metrics);
+        assert_eq!(weighted.optimized_ir, single_weighted.optimized_ir);
+
+        let area_capped = batch
+            .results
+            .iter()
+            .find(|result| result.name == "latency_under_area")
+            .expect("area-capped batch result");
+        assert_eq!(area_capped.metrics, single_area_capped.metrics);
+        assert_eq!(area_capped.optimized_ir, single_area_capped.optimized_ir);
+
+        let zero_dsp = batch
+            .results
+            .iter()
+            .find(|result| result.name == "latency_under_dsp")
+            .expect("zero-dsp batch result");
+        assert_eq!(zero_dsp.metrics, single_zero_dsp.metrics);
+        assert_eq!(zero_dsp.optimized_ir, single_zero_dsp.optimized_ir);
+
+        let pareto = batch
+            .results
+            .iter()
+            .find(|result| result.name == "pareto_2d")
+            .expect("pareto batch result");
+        assert_eq!(pareto.frontier, single_pareto.frontier);
+        assert_eq!(
+            batch.shared_stats.iterations,
+            single_weighted.stats.iterations
+        );
+        assert_eq!(batch.shared_stats.eclasses, single_weighted.stats.eclasses);
+        assert_eq!(batch.shared_stats.enodes, single_weighted.stats.enodes);
+        assert!(batch.shared_stats.runtime_ms > 0);
+    }
+
+    #[test]
+    fn batch_latency_unconstrained_matches_empty_budget_query() {
+        let (nodes, root) = build_fir8_nodes();
+        let single = optimize_request(&request_from_nodes(
+            "fir8_latency_single",
+            nodes.clone(),
+            &root,
+            Mode::Constrained,
+            Objective::Latency,
+            Budgets::default(),
+        ))
+        .expect("single unconstrained latency should succeed");
+
+        let batch = optimize_batch_request(&batch_request_from_nodes(
+            "fir8_latency_batch",
+            nodes,
+            &root,
+            vec![BatchQuery {
+                name: "latency_unconstrained".into(),
+                mode: Mode::Constrained,
+                objective: Objective::Latency,
+                weights: Weights::default(),
+                budgets: Budgets::default(),
+                label: None,
+            }],
+        ))
+        .expect("batch should succeed");
+
+        let result = batch.results.first().expect("batch result");
+        assert_eq!(result.metrics, single.metrics);
+        assert_eq!(result.optimized_ir, single.optimized_ir);
+        assert_eq!(batch.shared_stats.iterations, single.stats.iterations);
+        assert_eq!(batch.shared_stats.eclasses, single.stats.eclasses);
+        assert_eq!(batch.shared_stats.enodes, single.stats.enodes);
+        assert!(batch.shared_stats.runtime_ms > 0);
     }
 }
