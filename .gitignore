@@ -16,6 +16,7 @@ target/
 
 *.dot
 *.png
+!report/figures/*.png
 out/
 outputs/
 artifacts/
@@ -42,10 +43,13 @@ outputs/*
 !outputs/hls_validation/
 outputs/hls_validation/*
 !outputs/hls_validation/README.md
+!outputs/hls_validation/analysis/
+!outputs/hls_validation/analysis/**
 !outputs/hls_validation/metadata/
 !outputs/hls_validation/metadata/**
 !outputs/hls_validation/scripts/
 !outputs/hls_validation/scripts/**
+outputs/hls_validation/scripts/__pycache__/
 !outputs/hls_validation/src/
 !outputs/hls_validation/src/**
 !outputs/hls_validation/tests/

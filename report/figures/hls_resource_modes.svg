@@ -1,0 +1,59 @@
+<svg viewBox="0 0 880 430" xmlns="http://www.w3.org/2000/svg">
+<rect width="880" height="430" fill="white"/>
+<text x="440.0" y="28.0" text-anchor="middle" font-size="19" font-weight="700" fill="#102a43">Intel HLS Resource Estimates for dot16</text>
+<text x="440.0" y="50.0" text-anchor="middle" font-size="12" font-weight="400" fill="#486581">Grouped bars show ALUT estimates; labels above bars show estimated DSP blocks.</text>
+<line x1="68" y1="352.0" x2="850" y2="352.0" stroke="#e5e7eb"/>
+<text x="58.0" y="356.0" text-anchor="end" font-size="12" font-weight="400" fill="#486581">0</text>
+<line x1="68" y1="289.1" x2="850" y2="289.1" stroke="#e5e7eb"/>
+<text x="58.0" y="293.1" text-anchor="end" font-size="12" font-weight="400" fill="#486581">250</text>
+<line x1="68" y1="226.3" x2="850" y2="226.3" stroke="#e5e7eb"/>
+<text x="58.0" y="230.3" text-anchor="end" font-size="12" font-weight="400" fill="#486581">500</text>
+<line x1="68" y1="163.4" x2="850" y2="163.4" stroke="#e5e7eb"/>
+<text x="58.0" y="167.4" text-anchor="end" font-size="12" font-weight="400" fill="#486581">750</text>
+<line x1="68" y1="100.6" x2="850" y2="100.6" stroke="#e5e7eb"/>
+<text x="58.0" y="104.6" text-anchor="end" font-size="12" font-weight="400" fill="#486581">1000</text>
+<line x1="68" y1="352" x2="850" y2="352" stroke="#334e68"/>
+<line x1="68" y1="78" x2="68" y2="352" stroke="#334e68"/>
+<rect x="80.0" y="98.3" width="32.5" height="253.7" rx="2" fill="#2a9d8f"><title>original default: ALUT=1009, DSP=24.0</title></rect>
+<text x="96.3" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="115.5" y="98.3" width="32.5" height="253.7" rx="2" fill="#e76f51"><title>original prefer-dsp: ALUT=1009, DSP=24.0</title></rect>
+<text x="131.8" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="151.1" y="98.3" width="32.5" height="253.7" rx="2" fill="#457b9d"><title>original prefer-softlogic: ALUT=1009, DSP=24.0</title></rect>
+<text x="167.4" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<text x="133.3" y="372.0" text-anchor="middle" font-size="11" font-weight="400" fill="#243b53">Original</text>
+<rect x="236.4" y="98.3" width="32.5" height="253.7" rx="2" fill="#2a9d8f"><title>weighted default: ALUT=1009, DSP=24.0</title></rect>
+<text x="252.7" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="271.9" y="98.3" width="32.5" height="253.7" rx="2" fill="#e76f51"><title>weighted prefer-dsp: ALUT=1009, DSP=24.0</title></rect>
+<text x="288.2" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="307.5" y="98.3" width="32.5" height="253.7" rx="2" fill="#457b9d"><title>weighted prefer-softlogic: ALUT=1009, DSP=24.0</title></rect>
+<text x="323.8" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<text x="289.7" y="372.0" text-anchor="middle" font-size="11" font-weight="400" fill="#243b53">Weighted</text>
+<rect x="392.8" y="98.3" width="32.5" height="253.7" rx="2" fill="#2a9d8f"><title>power_unconstrained default: ALUT=1009, DSP=24.0</title></rect>
+<text x="409.1" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="428.3" y="98.3" width="32.5" height="253.7" rx="2" fill="#e76f51"><title>power_unconstrained prefer-dsp: ALUT=1009, DSP=24.0</title></rect>
+<text x="444.6" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="463.9" y="98.3" width="32.5" height="253.7" rx="2" fill="#457b9d"><title>power_unconstrained prefer-softlogic: ALUT=1009, DSP=24.0</title></rect>
+<text x="480.2" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<text x="446.1" y="372.0" text-anchor="middle" font-size="11" font-weight="400" fill="#243b53">Power-opt</text>
+<rect x="549.2" y="98.3" width="32.5" height="253.7" rx="2" fill="#2a9d8f"><title>latency_under_dsp default: ALUT=1009, DSP=24.0</title></rect>
+<text x="565.5" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="584.7" y="98.3" width="32.5" height="253.7" rx="2" fill="#e76f51"><title>latency_under_dsp prefer-dsp: ALUT=1009, DSP=24.0</title></rect>
+<text x="601.0" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="620.3" y="98.3" width="32.5" height="253.7" rx="2" fill="#457b9d"><title>latency_under_dsp prefer-softlogic: ALUT=1009, DSP=24.0</title></rect>
+<text x="636.6" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<text x="602.5" y="372.0" text-anchor="middle" font-size="11" font-weight="400" fill="#243b53">DSP cap</text>
+<rect x="705.6" y="98.3" width="32.5" height="253.7" rx="2" fill="#2a9d8f"><title>latency_unconstrained default: ALUT=1009, DSP=24.0</title></rect>
+<text x="721.9" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="741.1" y="98.3" width="32.5" height="253.7" rx="2" fill="#e76f51"><title>latency_unconstrained prefer-dsp: ALUT=1009, DSP=24.0</title></rect>
+<text x="757.4" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<rect x="776.7" y="98.3" width="32.5" height="253.7" rx="2" fill="#457b9d"><title>latency_unconstrained prefer-softlogic: ALUT=1009, DSP=24.0</title></rect>
+<text x="793.0" y="93.3" text-anchor="middle" font-size="10" font-weight="400" fill="#102a43">D24</text>
+<text x="758.9" y="372.0" text-anchor="middle" font-size="11" font-weight="400" fill="#243b53">Lat-opt</text>
+<rect x="98" y="62" width="12" height="12" fill="#2a9d8f" rx="2"/>
+<text x="116.0" y="72.0" text-anchor="start" font-size="12" font-weight="400" fill="#243b53">default</text>
+<rect x="228" y="62" width="12" height="12" fill="#e76f51" rx="2"/>
+<text x="246.0" y="72.0" text-anchor="start" font-size="12" font-weight="400" fill="#243b53">prefer-dsp</text>
+<rect x="358" y="62" width="12" height="12" fill="#457b9d" rx="2"/>
+<text x="376.0" y="72.0" text-anchor="start" font-size="12" font-weight="400" fill="#243b53">prefer-softlogic</text>
+<text x="20.0" y="215.0" text-anchor="middle" font-size="13" font-weight="600" fill="#102a43" transform="rotate(-90 20 215.0)">Estimated ALUTs</text>
+</svg>

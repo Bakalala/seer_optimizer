@@ -1,0 +1,8 @@
+| benchmark | variants | analytical dsp range | analytical lut range | hls original alut ff dsp cycles | unique hls estimates | interpretation |
+| --- | --- | --- | --- | --- | --- | --- |
+| conv3x3 | 6 | 0-10 | 3-20 | 316/102/0/4 | 1 | collapsed |
+| dot16 | 5 | 0-16 | 15-143 | 1009/654/24/8 | 1 | collapsed |
+| fir8 | 6 | 0-11 | 2-41 | 317/104/0/4 | 1 | collapsed |
+| gemm_blocked_k8 | 6 | 0-15 | 0-71 | 496/334/12/8 | 2 | minor ALUT variation |
+| gemm_k8 | 6 | 0-11 | 7-71 | 496/334/12/8 | 1 | collapsed |
+| stencil5 | 6 | 0-9 | 0-44 | 190/105/0/4 | 1 | collapsed |

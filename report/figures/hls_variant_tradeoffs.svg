@@ -1,0 +1,74 @@
+<svg viewBox="0 0 920 470" xmlns="http://www.w3.org/2000/svg">
+<rect width="920" height="470" fill="white"/>
+<text x="460.0" y="28.0" text-anchor="middle" font-size="19" font-weight="700" fill="#102a43">Default-Mode HLS Resource Tradeoffs</text>
+<text x="460.0" y="50.0" text-anchor="middle" font-size="12" font-weight="400" fill="#486581">Each point is one generated variant; x is estimated ALUTs and y is estimated DSP blocks.</text>
+<line x1="74.0" y1="82" x2="74.0" y2="386" stroke="#f1f5f9"/>
+<text x="74.0" y="408.0" text-anchor="middle" font-size="12" font-weight="400" fill="#486581">0</text>
+<line x1="261.7" y1="82" x2="261.7" y2="386" stroke="#f1f5f9"/>
+<text x="261.7" y="408.0" text-anchor="middle" font-size="12" font-weight="400" fill="#486581">250</text>
+<line x1="449.3" y1="82" x2="449.3" y2="386" stroke="#f1f5f9"/>
+<text x="449.3" y="408.0" text-anchor="middle" font-size="12" font-weight="400" fill="#486581">500</text>
+<line x1="637.0" y1="82" x2="637.0" y2="386" stroke="#f1f5f9"/>
+<text x="637.0" y="408.0" text-anchor="middle" font-size="12" font-weight="400" fill="#486581">750</text>
+<line x1="824.7" y1="82" x2="824.7" y2="386" stroke="#f1f5f9"/>
+<text x="824.7" y="408.0" text-anchor="middle" font-size="12" font-weight="400" fill="#486581">1000</text>
+<line x1="74" y1="386.0" x2="892" y2="386.0" stroke="#e5e7eb"/>
+<text x="62.0" y="390.0" text-anchor="end" font-size="12" font-weight="400" fill="#486581">0</text>
+<line x1="74" y1="297.9" x2="892" y2="297.9" stroke="#e5e7eb"/>
+<text x="62.0" y="301.9" text-anchor="end" font-size="12" font-weight="400" fill="#486581">8</text>
+<line x1="74" y1="209.8" x2="892" y2="209.8" stroke="#e5e7eb"/>
+<text x="62.0" y="213.8" text-anchor="end" font-size="12" font-weight="400" fill="#486581">16</text>
+<line x1="74" y1="121.7" x2="892" y2="121.7" stroke="#e5e7eb"/>
+<text x="62.0" y="125.7" text-anchor="end" font-size="12" font-weight="400" fill="#486581">24</text>
+<line x1="74" y1="386" x2="892" y2="386" stroke="#334e68"/>
+<line x1="74" y1="82" x2="74" y2="386" stroke="#334e68"/>
+<circle cx="306.7" cy="386.0" r="5.2" fill="#e76f51" fill-opacity="0.78"><title>conv3x3 latency_unconstrained: ALUT=316, DSP=0</title></circle>
+<circle cx="306.7" cy="386.0" r="5.2" fill="#f4a261" fill-opacity="0.78"><title>conv3x3 latency_under_dsp: ALUT=316, DSP=0</title></circle>
+<circle cx="306.7" cy="386.0" r="5.2" fill="#457b9d" fill-opacity="0.78"><title>conv3x3 latency_under_lut: ALUT=316, DSP=0</title></circle>
+<circle cx="306.7" cy="386.0" r="5.2" fill="#6b7280" fill-opacity="0.78"><title>conv3x3 original: ALUT=316, DSP=0</title></circle>
+<circle cx="306.7" cy="386.0" r="5.2" fill="#7b2cbf" fill-opacity="0.78"><title>conv3x3 power_unconstrained: ALUT=316, DSP=0</title></circle>
+<circle cx="306.7" cy="386.0" r="5.2" fill="#2a9d8f" fill-opacity="0.78"><title>conv3x3 weighted: ALUT=316, DSP=0</title></circle>
+<circle cx="828.7" cy="121.7" r="5.2" fill="#e76f51" fill-opacity="0.78"><title>dot16 latency_unconstrained: ALUT=1009, DSP=24</title></circle>
+<circle cx="828.7" cy="121.7" r="5.2" fill="#f4a261" fill-opacity="0.78"><title>dot16 latency_under_dsp: ALUT=1009, DSP=24</title></circle>
+<circle cx="828.7" cy="121.7" r="5.2" fill="#6b7280" fill-opacity="0.78"><title>dot16 original: ALUT=1009, DSP=24</title></circle>
+<circle cx="828.7" cy="121.7" r="5.2" fill="#7b2cbf" fill-opacity="0.78"><title>dot16 power_unconstrained: ALUT=1009, DSP=24</title></circle>
+<circle cx="828.7" cy="121.7" r="5.2" fill="#2a9d8f" fill-opacity="0.78"><title>dot16 weighted: ALUT=1009, DSP=24</title></circle>
+<circle cx="311.1" cy="386.0" r="5.2" fill="#e76f51" fill-opacity="0.78"><title>fir8 latency_unconstrained: ALUT=317, DSP=0</title></circle>
+<circle cx="311.1" cy="386.0" r="5.2" fill="#f4a261" fill-opacity="0.78"><title>fir8 latency_under_dsp: ALUT=317, DSP=0</title></circle>
+<circle cx="311.1" cy="386.0" r="5.2" fill="#457b9d" fill-opacity="0.78"><title>fir8 latency_under_lut: ALUT=317, DSP=0</title></circle>
+<circle cx="311.1" cy="386.0" r="5.2" fill="#6b7280" fill-opacity="0.78"><title>fir8 original: ALUT=317, DSP=0</title></circle>
+<circle cx="311.1" cy="386.0" r="5.2" fill="#7b2cbf" fill-opacity="0.78"><title>fir8 power_unconstrained: ALUT=317, DSP=0</title></circle>
+<circle cx="311.1" cy="386.0" r="5.2" fill="#2a9d8f" fill-opacity="0.78"><title>fir8 weighted: ALUT=317, DSP=0</title></circle>
+<circle cx="448.0" cy="253.8" r="5.2" fill="#e76f51" fill-opacity="0.78"><title>gemm_blocked_k8 latency_unconstrained: ALUT=497, DSP=12</title></circle>
+<circle cx="448.0" cy="253.8" r="5.2" fill="#f4a261" fill-opacity="0.78"><title>gemm_blocked_k8 latency_under_dsp: ALUT=497, DSP=12</title></circle>
+<circle cx="448.0" cy="253.8" r="5.2" fill="#457b9d" fill-opacity="0.78"><title>gemm_blocked_k8 latency_under_lut: ALUT=497, DSP=12</title></circle>
+<circle cx="447.2" cy="253.8" r="5.2" fill="#6b7280" fill-opacity="0.78"><title>gemm_blocked_k8 original: ALUT=496, DSP=12</title></circle>
+<circle cx="448.0" cy="253.8" r="5.2" fill="#7b2cbf" fill-opacity="0.78"><title>gemm_blocked_k8 power_unconstrained: ALUT=497, DSP=12</title></circle>
+<circle cx="448.0" cy="253.8" r="5.2" fill="#2a9d8f" fill-opacity="0.78"><title>gemm_blocked_k8 weighted: ALUT=497, DSP=12</title></circle>
+<circle cx="449.0" cy="253.8" r="5.2" fill="#e76f51" fill-opacity="0.78"><title>gemm_k8 latency_unconstrained: ALUT=496, DSP=12</title></circle>
+<circle cx="449.0" cy="253.8" r="5.2" fill="#f4a261" fill-opacity="0.78"><title>gemm_k8 latency_under_dsp: ALUT=496, DSP=12</title></circle>
+<circle cx="449.0" cy="253.8" r="5.2" fill="#457b9d" fill-opacity="0.78"><title>gemm_k8 latency_under_lut: ALUT=496, DSP=12</title></circle>
+<circle cx="449.0" cy="253.8" r="5.2" fill="#6b7280" fill-opacity="0.78"><title>gemm_k8 original: ALUT=496, DSP=12</title></circle>
+<circle cx="449.0" cy="253.8" r="5.2" fill="#7b2cbf" fill-opacity="0.78"><title>gemm_k8 power_unconstrained: ALUT=496, DSP=12</title></circle>
+<circle cx="449.0" cy="253.8" r="5.2" fill="#2a9d8f" fill-opacity="0.78"><title>gemm_k8 weighted: ALUT=496, DSP=12</title></circle>
+<circle cx="221.1" cy="386.0" r="5.2" fill="#e76f51" fill-opacity="0.78"><title>stencil5 latency_unconstrained: ALUT=190, DSP=0</title></circle>
+<circle cx="221.1" cy="386.0" r="5.2" fill="#f4a261" fill-opacity="0.78"><title>stencil5 latency_under_dsp: ALUT=190, DSP=0</title></circle>
+<circle cx="221.1" cy="386.0" r="5.2" fill="#457b9d" fill-opacity="0.78"><title>stencil5 latency_under_lut: ALUT=190, DSP=0</title></circle>
+<circle cx="221.1" cy="386.0" r="5.2" fill="#6b7280" fill-opacity="0.78"><title>stencil5 original: ALUT=190, DSP=0</title></circle>
+<circle cx="221.1" cy="386.0" r="5.2" fill="#7b2cbf" fill-opacity="0.78"><title>stencil5 power_unconstrained: ALUT=190, DSP=0</title></circle>
+<circle cx="221.1" cy="386.0" r="5.2" fill="#2a9d8f" fill-opacity="0.78"><title>stencil5 weighted: ALUT=190, DSP=0</title></circle>
+<circle cx="74" cy="436" r="5" fill="#6b7280" fill-opacity="0.8"/>
+<text x="83.0" y="440.0" text-anchor="start" font-size="11" font-weight="400" fill="#243b53">Original</text>
+<circle cx="204" cy="436" r="5" fill="#2a9d8f" fill-opacity="0.8"/>
+<text x="213.0" y="440.0" text-anchor="start" font-size="11" font-weight="400" fill="#243b53">Weighted</text>
+<circle cx="334" cy="436" r="5" fill="#e76f51" fill-opacity="0.8"/>
+<text x="343.0" y="440.0" text-anchor="start" font-size="11" font-weight="400" fill="#243b53">Lat-opt</text>
+<circle cx="464" cy="436" r="5" fill="#7b2cbf" fill-opacity="0.8"/>
+<text x="473.0" y="440.0" text-anchor="start" font-size="11" font-weight="400" fill="#243b53">Power-opt</text>
+<circle cx="594" cy="436" r="5" fill="#f4a261" fill-opacity="0.8"/>
+<text x="603.0" y="440.0" text-anchor="start" font-size="11" font-weight="400" fill="#243b53">DSP cap</text>
+<circle cx="724" cy="436" r="5" fill="#457b9d" fill-opacity="0.8"/>
+<text x="733.0" y="440.0" text-anchor="start" font-size="11" font-weight="400" fill="#243b53">LUT cap</text>
+<text x="460.0" y="458.0" text-anchor="middle" font-size="13" font-weight="600" fill="#102a43">Intel HLS estimated ALUTs</text>
+<text x="20.0" y="234.0" text-anchor="middle" font-size="13" font-weight="600" fill="#102a43" transform="rotate(-90 20 234.0)">Intel HLS estimated DSPs</text>
+</svg>

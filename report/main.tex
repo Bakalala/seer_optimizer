@@ -107,7 +107,7 @@ In execution terms, the Rust path has three phases. First, equality saturation b
 The benchmark harness, figure exporter, and report generator are implemented in Python 3.13.9. Python builds the arithmetic benchmark graphs, computes original baseline metrics from the same shared cost model, assembles batched query sets, invokes the Rust binary once per benchmark, and then flattens the results into CSV, HTML, and paper-ready figures. Batch mode is important because saturation and frontier construction are shared across all queries for one benchmark; only the final selector differs between weighted, constrained, and Pareto extraction. A single \texttt{cost\_model.json} file is shared across both sides so that baseline measurements, extracted measurements, CSV summaries, HTML output, and paper figures all use identical operator costs.
 
 \section{Experimental Setup}
-All experiments were run on a MacBook Pro with an Apple M4 CPU (10 cores: 4 performance and 6 efficiency) and 16\,GB memory, running macOS 26.3.1 on arm64. The evaluation used \texttt{rustc} 1.94.0, \texttt{cargo} 1.94.0, and Python 3.13.9. No FPGA simulator, vendor synthesis tool, or post-place-and-route backend was used; all measurements are derived from the shared analytical cost model described above.
+The analytical experiments were run on a MacBook Pro with an Apple M4 CPU (10 cores: 4 performance and 6 efficiency) and 16\,GB memory, running macOS 26.3.1 on arm64. The evaluation used \texttt{rustc} 1.94.0, \texttt{cargo} 1.94.0, and Python 3.13.9. A follow-up validation pass used Intel HLS Compiler 21.1 targeting Arria 10 component generation. That pass produced HLS resource estimates and RTL, not full Quartus fitter, timing, or power results; the primary optimization results therefore remain analytical.
 
 The benchmark suite contains six arithmetic kernels chosen to reflect the proposal's datapath focus: an 8-tap FIR accumulation (\texttt{fir8}), a 16-element dot product (\texttt{dot16}), two GEMM-style accumulations (\texttt{gemm\_k8} and \texttt{gemm\_blocked\_k8}), a single \texttt{conv3x3} window, and a 5-point stencil (\texttt{stencil5}). These kernels are represented directly as arithmetic graphs, which keeps the experiment focused on extraction rather than parsing or frontend lowering.
 
@@ -133,58 +133,14 @@ Benchmark & Kernel & Mul/Add & Base A/L/P/D/U & Caps A/L/P/D/U & Pareto \\
 }
 \end{table}
 
-\begin{table}[t]
-\caption{Query families used in evaluation.}
-\label{tab:queries}
-\centering
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{p{0.22\columnwidth}p{0.25\columnwidth}p{0.44\columnwidth}}
-\toprule
-Query & Objective & Purpose \\
-\midrule
-Weighted & minimize weighted score & default single-answer baseline \\
-Latency-opt. & minimize latency & fastest available datapath point \\
-Power-opt. & minimize power & test the explicit power objective \\
-min Lat $|$ Area cap & min latency under area cap & area-constrained speedup \\
-min Area $|$ Lat cap & min area under latency cap & performance-preserving compaction \\
-min Lat $|$ Power cap & min latency under power cap & power-constrained speedup \\
-min Power $|$ Lat cap & min power under latency cap & reduce power at baseline latency \\
-min Lat $|$ DSP=0 & min latency with DSP budget 0 & force LUT-only implementation \\
-min Lat $|$ LUT cap & min latency under LUT cap & expose feasibility boundary \\
-Pareto-2D & nondominated area/latency set & inspect tradeoffs directly \\
-\bottomrule
-\end{tabular}
-\end{table}
-
 Saturation limits were fixed to 12 iterations, 12{,}000 e-nodes, and 800\,ms per benchmark. For each benchmark, the harness executes one default weighted extraction, one unconstrained latency-minimizing query, one unconstrained power-oriented query, and four proposal-style constrained queries: latency-under-area, area-under-latency, latency-under-power, and power-under-latency. It also runs a zero-DSP query, a LUT-capped query, and an exact area--latency Pareto extraction. Because the evaluation is deterministic and analytical, one run per configuration is sufficient: there is no randomized search or measurement noise to average out. The original arithmetic graph serves as the baseline, default weighted extraction serves as the SEER-style single-answer comparison point, and the constrained modes test whether explicit extraction interfaces materially change the selected design.
-
-Table~\ref{tab:queries} shows that the workload is deliberately broader than a single optimization run. The evaluation is designed to test whether the same saturated e-graph can answer several different design questions without rebuilding the equivalence space, which is exactly the systems advantage that constraint-aware extraction is meant to add to a SEER-style workflow.
 
 The budget profiles are chosen to make the constrained queries interpretable against the original design rather than against an arbitrary external target. Table~\ref{tab:benchmarks} records these baseline ceilings explicitly. We write each constrained query as objective $|$ hard constraint. `min Lat $|$ Area cap' uses the original area as a hard ceiling and therefore asks whether latency can be improved without growing the implementation. `min Area $|$ Lat cap' and `min Power $|$ Lat cap' use the original latency as a ceiling and therefore ask whether the datapath can be compacted or de-powered without slowing it down. `min Lat $|$ Power cap' uses the original power proxy as a ceiling and asks whether the same power class can support a faster mapping. The remaining two profiles intentionally stress resource substitution: `min Lat $|$ DSP=0' forces a LUT-only implementation, while the benchmark-specific LUT caps expose whether a kernel can escape LUT-heavy weighted solutions at all.
 
 We also instrumented the Rust implementation to separate equality-saturation time, frontier-construction time, and query-selection time on synthetic FIR and dot-product size sweeps. Those measurements are useful for explaining the pipeline, but they are treated as supplementary diagnostics rather than as a main claim because absolute runtime is machine-dependent and small relative to the analytical optimization story developed here.
 
 \section{Evaluation}
-\begin{table}[t]
-\caption{Average change relative to the original baseline. Positive values denote reductions; negative values denote regressions. Per-benchmark DSP/LUT totals for these modes appear in Table~\ref{tab:main-results}.}
-\label{tab:avg-results}
-\centering
-\footnotesize
-\begin{tabular}{lrrr}
-\toprule
-Mode & $\Delta$Area & $\Delta$Lat. & $\Delta$Power \\
-\midrule
-Weighted & +40.9\% & -13.7\% & -44.6\% \\
-Latency-opt. & +14.3\% & +41.7\% & -31.5\% \\
-Power-opt. & +21.2\% & +1.9\% & +7.8\% \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Before considering individual kernels, Table~\ref{tab:avg-results} summarizes the main extraction behaviors over the whole suite. The averages already separate the roles of the different modes: weighted extraction is primarily an area-reduction heuristic, latency-optimal extraction is a performance-seeking mode, and power-optimal extraction is a conservative secondary objective that helps some kernels much more than others.
-
-Those averages are useful only as a first cut. In a systems paper, the more important question is whether the observed tradeoffs arise from a consistent mechanism. In this case they do: weighted extraction prefers LUT-heavy rewrites because the scalar cost compresses several resource questions into one number, while the constrained modes preserve the same equality-saturated search space but change the selection rule. The rest of the evaluation therefore focuses on whether that change in selector is enough to alter the chosen implementation qualitatively and whether the resulting infeasible cases line up with the intended resource restrictions.
+Across the suite, weighted extraction reduces analytical area by 40.9\% on average but regresses latency by 13.7\% and normalized power by 44.6\%. Latency-optimal extraction instead improves latency by 41.7\% on average, while power-optimal extraction is conservative and improves normalized power by 7.8\%. These averages separate the roles of the modes: weighted extraction is primarily an area heuristic, latency-optimal extraction is a performance-seeking mode, and power-optimal extraction is a secondary objective. The rest of the evaluation asks whether changing the selector changes the implementation qualitatively and whether infeasible cases line up with the intended resource restrictions.
 
 \begin{table*}[t]
 \caption{Cross-benchmark evidence for the constrained-extraction extension. Each result tuple is $A/L/P/D/U$, so the table reports total DSP and LUT use for the plotted weighted, latency-optimal, and power-optimal points.}
@@ -206,17 +162,10 @@ Benchmark & Weighted A/L/P/D/U & Lat-opt A/L/P/D/U & Pwr-opt A/L/P/D/U & Pareto 
 \end{tabular}
 \end{table*}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.98\textwidth]{figures/suite_objective_tradeoffs.png}
-\caption{Cross-benchmark objective tradeoffs. Bars report optimized/baseline ratio for area, latency, and power; values below 1.0 are better. Weighted extraction reduces area broadly, while latency-optimal and power-optimal extraction select different compromises. DSP/LUT totals for these same points are reported in Table~\ref{tab:main-results}.}
-\label{fig:suite-objectives}
-\end{figure*}
-
 \paragraph{Q1: Is default weighted extraction sufficient?}
-Table~\ref{tab:main-results} and Figure~\ref{fig:suite-objectives} show that the answer is no. Default weighted extraction reduces area on every benchmark and removes DSP use aggressively; Table~\ref{tab:main-results} shows that the weighted point uses zero DSPs on all six benchmarks while often increasing LUT count substantially. It improves latency and power together only on \texttt{conv3x3}. Across the suite it reduces area by 40.9\% on average while regressing latency by 13.7\% and normalized power by 44.6\%. The pattern is consistent with the cost model: the weighted point often trades DSP implementations for LUT-heavy arithmetic, which lowers the scalar area metric but lengthens the critical path and increases the power proxy.
+Table~\ref{tab:main-results} shows that the answer is no. Default weighted extraction reduces area on every benchmark and removes DSP use aggressively; the weighted point uses zero DSPs on all six benchmarks while often increasing LUT count substantially. It improves latency and power together only on \texttt{conv3x3}. Across the suite it reduces area by 40.9\% on average while regressing latency by 13.7\% and normalized power by 44.6\%. The pattern is consistent with the cost model: the weighted point often trades DSP implementations for LUT-heavy arithmetic, which lowers the scalar area metric but lengthens the critical path and increases the power proxy.
 
-The suite-level figure makes this failure mode easier to see benchmark by benchmark. \texttt{fir8} and \texttt{dot16} show the classic tension that motivated the project: the weighted point moves strongly downward in area, but not in latency or power. \texttt{gemm\_k8}, \texttt{gemm\_blocked\_k8}, and \texttt{stencil5} are even sharper cases, where the weighted point is clearly the wrong design if latency or power matters at all. \texttt{conv3x3} is the useful exception; it shows that when the rewrite space contains a genuinely better operating point, the framework can still exploit it. \textbf{This shows that a SEER-style single extracted point is not a reliable HLS answer once hardware constraints matter.}
+The per-benchmark rows make this failure mode concrete. \texttt{fir8} and \texttt{dot16} show the classic tension that motivated the project: the weighted point moves strongly downward in area, but not in latency or power. \texttt{gemm\_k8}, \texttt{gemm\_blocked\_k8}, and \texttt{stencil5} are sharper cases, where the weighted point is clearly wrong if latency or power matters. \texttt{conv3x3} is the useful exception; it shows that when the rewrite space contains a genuinely better operating point, the framework can still exploit it. \textbf{This shows that a SEER-style single extracted point is not a reliable HLS answer once hardware constraints matter.}
 
 \paragraph{Q2: Do explicit constraints and objectives change the chosen implementation?}
 \begin{figure}[t]
@@ -243,6 +192,38 @@ Figure~\ref{fig:constraint-sensitivity} summarizes how much the constrained quer
 The resource-oriented queries also clarify what kind of alternatives the retained frontier actually contains. The zero-DSP query remains feasible across the suite, but it predictably pushes the selected points toward slower LUT-only datapaths; this is precisely the behavior one would want from a hard resource budget rather than from a soft cost penalty. Conversely, the LUT-capped query either recovers a more DSP-heavy implementation or fails outright. The contrast between those two outcomes matters because it shows that the system is not merely toggling cosmetic operator labels. It is selecting among implementations with genuinely different binding patterns and exposing when those patterns do or do not fit the requested budget.
 
 Taken together, the three evaluation questions support a single interpretation of the project. Equality saturation is valuable because it keeps multiple arithmetic implementations alive simultaneously, but the course-level novelty here is that the same saturated graph can then be interrogated with several hardware questions. The evidence would be weaker if every constrained query simply reproduced the weighted answer, or if every profile always returned some feasible variant. Instead, the results show a richer behavior: some queries recover meaningfully better operating points, some return the baseline as the best constrained point, and some become infeasible. That is exactly the kind of extraction-level evidence needed to argue that the extension is about constrained selection rather than about generating equivalences for their own sake.
+
+\paragraph{Intel HLS validation.}
+To check whether the generated datapaths were usable outside the analytical model, the exporter emitted 35 C++ component variants with DSP- and softlogic-oriented helper calls. A deterministic C++ test harness compared every optimized variant against its original kernel on 1000 input vectors per benchmark; all variants passed. Intel HLS 21.1 then generated RTL and estimated resources for every variant under default, \texttt{prefer-dsp}, and \texttt{prefer-softlogic} modes, giving 105 HLS report rows.
+
+\begin{table}[t]
+\caption{Intel HLS component-generation validation. Analytical ranges vary across variants, but HLS estimates mostly collapse to one resource tuple per benchmark. HLS tuple is ALUT/FF/DSP/cycles for the original default-mode component.}
+\label{tab:hls-validation}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrr}
+\toprule
+Benchmark & Var. & Ana. DSP/LUT & HLS tuple & Unique \\
+\midrule
+\texttt{conv3x3} & 6 & 0--10 / 3--20 & 316/102/0/4 & 1 \\
+\texttt{dot16} & 5 & 0--16 / 15--143 & 1009/654/24/8 & 1 \\
+\texttt{fir8} & 6 & 0--11 / 2--41 & 317/104/0/4 & 1 \\
+\texttt{gemm\_blk} & 6 & 0--15 / 0--71 & 496/334/12/8 & 2 \\
+\texttt{gemm\_k8} & 6 & 0--11 / 7--71 & 496/334/12/8 & 1 \\
+\texttt{stencil5} & 6 & 0--9 / 0--44 & 190/105/0/4 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/hls_expected_vs_reported_dsp.png}
+\caption{Analytical DSP intent versus Intel HLS estimated DSPs across all 105 component-generation reports. The weak alignment is a negative result: this HLS pass validates functional C++ generation and report extraction, but it does not preserve the analytical DSP/LUT distinctions strongly enough to replace the analytical model.}
+\label{fig:hls-dsp}
+\end{figure}
+
+Table~\ref{tab:hls-validation} and Figure~\ref{fig:hls-dsp} show a useful limitation. Although the analytical variants span wide DSP/LUT ranges, Intel HLS usually reports identical estimated resources and schedule length for all variants of the same kernel; \texttt{gemm\_blocked\_k8} differs only by one ALUT in some variants. In addition, the generated \texttt{quartus.json} files report fitter resources and Fmax as \texttt{TBD}, so these results are HLS estimates rather than post-fit Quartus measurements. This strengthens the paper's scope statement: the optimizer is correct as a constrained extractor under its analytical model, while synthesis-calibrated resource binding remains future work.
 
 \section{Discussion}
 Relative to SEER, the project demonstrates one concrete point: equality saturation is a good way to generate HLS datapath alternatives, but constrained extraction is what makes those alternatives usable. The results are strongest where the weighted point is clearly not the right answer and where explicit budgets either recover a better implementation or expose infeasibility. That is why the negative \texttt{dot16} cases strengthen the paper rather than weaken it.
