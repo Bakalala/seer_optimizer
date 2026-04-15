@@ -6,6 +6,7 @@ IXX="${INTEL_HLS_CXX:-i++}"
 HLS_TARGET="${HLS_TARGET:-}"
 MODE_SET="${HLS_DSP_MODES:-default prefer-dsp prefer-softlogic}"
 SRC_GLOB="${HLS_SRC_GLOB:-*.cpp}"
+HLS_SIMULATOR="${HLS_SIMULATOR:-none}"
 
 if [[ -z "$HLS_TARGET" ]]; then
   echo "Set HLS_TARGET to your Intel FPGA target/part/family before running." >&2
@@ -38,10 +39,14 @@ for src in "${sources[@]}"; do
     echo "Building $name with mode=$mode"
     (
       cd "$build_dir"
+      simulator_args=()
+      if [[ -n "$HLS_SIMULATOR" ]]; then
+        simulator_args=(--simulator "$HLS_SIMULATOR")
+      fi
       if [[ "${#dsp_args[@]}" -gt 0 ]]; then
-        "$IXX" -march="$HLS_TARGET" "${dsp_args[@]}" "$src" -o "$name"           > build.log 2>&1
+        "$IXX" -march="$HLS_TARGET" "${simulator_args[@]}" "${dsp_args[@]}" "$src" -o "$name"           > build.log 2>&1
       else
-        "$IXX" -march="$HLS_TARGET" "$src" -o "$name"           > build.log 2>&1
+        "$IXX" -march="$HLS_TARGET" "${simulator_args[@]}" "$src" -o "$name"           > build.log 2>&1
       fi
     )
   done

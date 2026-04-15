@@ -8,6 +8,7 @@ export INTEL_HLS_ROOT="${INTEL_HLS_ROOT:-/opt/intelFPGA_pro/21.1/hls}"
 export INTEL_HLS_CXX="${INTEL_HLS_CXX:-$INTEL_HLS_ROOT/bin/i++}"
 export HLS_TARGET="${HLS_TARGET:-Arria10}"
 export HLS_DSP_MODES="${HLS_DSP_MODES:-default prefer-dsp prefer-softlogic}"
+export HLS_SIMULATOR="${HLS_SIMULATOR:-none}"
 
 if [[ -d "$INTEL_HLS_ROOT/bin" ]]; then
   export PATH="$INTEL_HLS_ROOT/bin:$PATH"
@@ -31,6 +32,7 @@ echo "Intel HLS root: $INTEL_HLS_ROOT"
 echo "Intel HLS compiler: $INTEL_HLS_CXX"
 echo "HLS target: $HLS_TARGET"
 echo "HLS DSP modes: $HLS_DSP_MODES"
+echo "HLS simulator: $HLS_SIMULATOR"
 echo "Python: $python_bin"
 
 if [[ ! -d "$HLS_DIR" ]]; then
