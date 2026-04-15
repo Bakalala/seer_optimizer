@@ -1,0 +1,225 @@
+{
+  "generated_from": {
+    "benchmark_results": "outputs/benchmark_results.json",
+    "size_sweep_results": "outputs/size_sweep_results.json"
+  },
+  "figure_count": 27,
+  "figures": [
+    {
+      "slug": "paper_suite_objective_tradeoffs",
+      "category": "paper",
+      "title": "Cross-Benchmark Objective Tradeoffs",
+      "caption": "Paper figure comparing optimized/baseline ratios for area, latency, and power across weighted, latency-optimal, and power-optimal extraction.",
+      "svg": "paper/paper_suite_objective_tradeoffs.svg",
+      "png": "paper/paper_suite_objective_tradeoffs.png"
+    },
+    {
+      "slug": "paper_suite_constraint_sensitivity",
+      "category": "paper",
+      "title": "Constraint Sensitivity Across Benchmarks",
+      "caption": "Paper figure showing target-metric improvement from constrained queries relative to weighted extraction, with infeasible cells highlighted.",
+      "svg": "paper/paper_suite_constraint_sensitivity.svg",
+      "png": "paper/paper_suite_constraint_sensitivity.png"
+    },
+    {
+      "slug": "paper_suite_dsp_scaling",
+      "category": "paper",
+      "title": "Latency Scaling Under Increasing DSP Budgets",
+      "caption": "Suite-level DSP budget curve showing best latency normalized to baseline latency as DSP budget increases.",
+      "svg": "paper/paper_suite_dsp_scaling.svg",
+      "png": "paper/paper_suite_dsp_scaling.png"
+    },
+    {
+      "slug": "paper_fir8_tradeoff",
+      "category": "paper",
+      "title": "fir8 Area-Latency Tradeoff",
+      "caption": "Representative paper figure showing weighted, latency-optimal, power-optimal, sampled weight-sweep, and Pareto points for fir8.",
+      "svg": "paper/paper_fir8_tradeoff.svg",
+      "png": "paper/paper_fir8_tradeoff.png"
+    },
+    {
+      "slug": "paper_fir8_dsp_scaling",
+      "category": "paper",
+      "title": "fir8 DSP Budget Scaling",
+      "caption": "Representative paper figure showing how the best fir8 latency changes as the allowed DSP budget increases.",
+      "svg": "paper/paper_fir8_dsp_scaling.svg",
+      "png": "paper/paper_fir8_dsp_scaling.png"
+    },
+    {
+      "slug": "html_area_comparison",
+      "category": "html_cross_benchmark",
+      "title": "Area Comparison",
+      "caption": "HTML report chart comparing baseline area against weighted extraction area across benchmarks.",
+      "svg": "html_cross_benchmark/html_area_comparison.svg",
+      "png": "html_cross_benchmark/html_area_comparison.png"
+    },
+    {
+      "slug": "html_latency_comparison",
+      "category": "html_cross_benchmark",
+      "title": "Latency Comparison",
+      "caption": "HTML report chart comparing baseline, weighted, and latency-optimal critical-path latency.",
+      "svg": "html_cross_benchmark/html_latency_comparison.svg",
+      "png": "html_cross_benchmark/html_latency_comparison.png"
+    },
+    {
+      "slug": "html_power_comparison",
+      "category": "html_cross_benchmark",
+      "title": "Power Comparison",
+      "caption": "HTML report chart comparing baseline, weighted, and power-optimal normalized power proxy.",
+      "svg": "html_cross_benchmark/html_power_comparison.svg",
+      "png": "html_cross_benchmark/html_power_comparison.png"
+    },
+    {
+      "slug": "html_dsp_comparison",
+      "category": "html_cross_benchmark",
+      "title": "DSP Comparison",
+      "caption": "HTML report chart showing how weighted extraction changes DSP use relative to baseline.",
+      "svg": "html_cross_benchmark/html_dsp_comparison.svg",
+      "png": "html_cross_benchmark/html_dsp_comparison.png"
+    },
+    {
+      "slug": "html_latency_under_component_budgets",
+      "category": "html_cross_benchmark",
+      "title": "Latency Under Component Budgets",
+      "caption": "HTML report chart comparing weighted latency with latency under power, zero-DSP, and LUT-cap constraints.",
+      "svg": "html_cross_benchmark/html_latency_under_component_budgets.svg",
+      "png": "html_cross_benchmark/html_latency_under_component_budgets.png"
+    },
+    {
+      "slug": "html_tradeoff_point_counts",
+      "category": "html_cross_benchmark",
+      "title": "Tradeoff Point Counts",
+      "caption": "HTML report chart comparing exact area-latency Pareto point counts with sampled weight-sweep point counts.",
+      "svg": "html_cross_benchmark/html_tradeoff_point_counts.svg",
+      "png": "html_cross_benchmark/html_tradeoff_point_counts.png"
+    },
+    {
+      "slug": "html_weighted_metric_change",
+      "category": "html_cross_benchmark",
+      "title": "Weighted Metric Change vs Original (%)",
+      "caption": "HTML report diverging bar chart summarizing area, latency, DSP, and power changes from weighted extraction.",
+      "svg": "html_cross_benchmark/html_weighted_metric_change.svg",
+      "png": "html_cross_benchmark/html_weighted_metric_change.png"
+    },
+    {
+      "slug": "html_weighted_runtime_ms",
+      "category": "html_cross_benchmark",
+      "title": "Weighted Runtime (ms)",
+      "caption": "HTML report chart showing weighted extraction runtime in milliseconds for each benchmark.",
+      "svg": "html_cross_benchmark/html_weighted_runtime_ms.svg",
+      "png": "html_cross_benchmark/html_weighted_runtime_ms.png"
+    },
+    {
+      "slug": "benchmark_fir8_dsp_scaling",
+      "category": "html_per_benchmark",
+      "title": "fir8: DSP Budget Scaling",
+      "caption": "HTML benchmark-detail plot showing best fir8 latency as the allowed DSP budget increases.",
+      "svg": "html_per_benchmark/benchmark_fir8_dsp_scaling.svg",
+      "png": "html_per_benchmark/benchmark_fir8_dsp_scaling.png"
+    },
+    {
+      "slug": "benchmark_fir8_area_latency_tradeoff",
+      "category": "html_per_benchmark",
+      "title": "fir8: Area-Latency Tradeoff",
+      "caption": "HTML benchmark-detail plot showing exact Pareto points and sampled weight-sweep points for fir8.",
+      "svg": "html_per_benchmark/benchmark_fir8_area_latency_tradeoff.svg",
+      "png": "html_per_benchmark/benchmark_fir8_area_latency_tradeoff.png"
+    },
+    {
+      "slug": "benchmark_dot16_dsp_scaling",
+      "category": "html_per_benchmark",
+      "title": "dot16: DSP Budget Scaling",
+      "caption": "HTML benchmark-detail plot showing best dot16 latency as the allowed DSP budget increases.",
+      "svg": "html_per_benchmark/benchmark_dot16_dsp_scaling.svg",
+      "png": "html_per_benchmark/benchmark_dot16_dsp_scaling.png"
+    },
+    {
+      "slug": "benchmark_dot16_area_latency_tradeoff",
+      "category": "html_per_benchmark",
+      "title": "dot16: Area-Latency Tradeoff",
+      "caption": "HTML benchmark-detail plot showing exact Pareto points and sampled weight-sweep points for dot16.",
+      "svg": "html_per_benchmark/benchmark_dot16_area_latency_tradeoff.svg",
+      "png": "html_per_benchmark/benchmark_dot16_area_latency_tradeoff.png"
+    },
+    {
+      "slug": "benchmark_gemm_k8_dsp_scaling",
+      "category": "html_per_benchmark",
+      "title": "gemm_k8: DSP Budget Scaling",
+      "caption": "HTML benchmark-detail plot showing best gemm_k8 latency as the allowed DSP budget increases.",
+      "svg": "html_per_benchmark/benchmark_gemm_k8_dsp_scaling.svg",
+      "png": "html_per_benchmark/benchmark_gemm_k8_dsp_scaling.png"
+    },
+    {
+      "slug": "benchmark_gemm_k8_area_latency_tradeoff",
+      "category": "html_per_benchmark",
+      "title": "gemm_k8: Area-Latency Tradeoff",
+      "caption": "HTML benchmark-detail plot showing exact Pareto points and sampled weight-sweep points for gemm_k8.",
+      "svg": "html_per_benchmark/benchmark_gemm_k8_area_latency_tradeoff.svg",
+      "png": "html_per_benchmark/benchmark_gemm_k8_area_latency_tradeoff.png"
+    },
+    {
+      "slug": "benchmark_gemm_blocked_k8_dsp_scaling",
+      "category": "html_per_benchmark",
+      "title": "gemm_blocked_k8: DSP Budget Scaling",
+      "caption": "HTML benchmark-detail plot showing best gemm_blocked_k8 latency as the allowed DSP budget increases.",
+      "svg": "html_per_benchmark/benchmark_gemm_blocked_k8_dsp_scaling.svg",
+      "png": "html_per_benchmark/benchmark_gemm_blocked_k8_dsp_scaling.png"
+    },
+    {
+      "slug": "benchmark_gemm_blocked_k8_area_latency_tradeoff",
+      "category": "html_per_benchmark",
+      "title": "gemm_blocked_k8: Area-Latency Tradeoff",
+      "caption": "HTML benchmark-detail plot showing exact Pareto points and sampled weight-sweep points for gemm_blocked_k8.",
+      "svg": "html_per_benchmark/benchmark_gemm_blocked_k8_area_latency_tradeoff.svg",
+      "png": "html_per_benchmark/benchmark_gemm_blocked_k8_area_latency_tradeoff.png"
+    },
+    {
+      "slug": "benchmark_conv3x3_dsp_scaling",
+      "category": "html_per_benchmark",
+      "title": "conv3x3: DSP Budget Scaling",
+      "caption": "HTML benchmark-detail plot showing best conv3x3 latency as the allowed DSP budget increases.",
+      "svg": "html_per_benchmark/benchmark_conv3x3_dsp_scaling.svg",
+      "png": "html_per_benchmark/benchmark_conv3x3_dsp_scaling.png"
+    },
+    {
+      "slug": "benchmark_conv3x3_area_latency_tradeoff",
+      "category": "html_per_benchmark",
+      "title": "conv3x3: Area-Latency Tradeoff",
+      "caption": "HTML benchmark-detail plot showing exact Pareto points and sampled weight-sweep points for conv3x3.",
+      "svg": "html_per_benchmark/benchmark_conv3x3_area_latency_tradeoff.svg",
+      "png": "html_per_benchmark/benchmark_conv3x3_area_latency_tradeoff.png"
+    },
+    {
+      "slug": "benchmark_stencil5_dsp_scaling",
+      "category": "html_per_benchmark",
+      "title": "stencil5: DSP Budget Scaling",
+      "caption": "HTML benchmark-detail plot showing best stencil5 latency as the allowed DSP budget increases.",
+      "svg": "html_per_benchmark/benchmark_stencil5_dsp_scaling.svg",
+      "png": "html_per_benchmark/benchmark_stencil5_dsp_scaling.png"
+    },
+    {
+      "slug": "benchmark_stencil5_area_latency_tradeoff",
+      "category": "html_per_benchmark",
+      "title": "stencil5: Area-Latency Tradeoff",
+      "caption": "HTML benchmark-detail plot showing exact Pareto points and sampled weight-sweep points for stencil5.",
+      "svg": "html_per_benchmark/benchmark_stencil5_area_latency_tradeoff.svg",
+      "png": "html_per_benchmark/benchmark_stencil5_area_latency_tradeoff.png"
+    },
+    {
+      "slug": "synthetic_size_sweep_frontier",
+      "category": "synthetic_size_sweep",
+      "title": "Synthetic Size Sweep Frontier Growth",
+      "caption": "Synthetic sweep plot showing retained Pareto frontier size against arithmetic operation count for FIR and dot-product families.",
+      "svg": "synthetic_size_sweep/synthetic_size_sweep_frontier.svg",
+      "png": "synthetic_size_sweep/synthetic_size_sweep_frontier.png"
+    },
+    {
+      "slug": "synthetic_size_sweep_scaling",
+      "category": "synthetic_size_sweep",
+      "title": "Synthetic Size Sweep Scaling",
+      "caption": "Synthetic sweep plot showing optimizer runtime and retained frontier behavior as benchmark size increases.",
+      "svg": "synthetic_size_sweep/synthetic_size_sweep_scaling.svg",
+      "png": "synthetic_size_sweep/synthetic_size_sweep_scaling.png"
+    }
+  ]
+}

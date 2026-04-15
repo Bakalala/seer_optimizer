@@ -1,0 +1,89 @@
+{
+  "metric_tuple": "A/L/P/D/U = area/latency/power/dsp_count/lut_count",
+  "rows": [
+    {
+      "benchmark": "fir8",
+      "baseline_a_l_p_d_u": "55/17/31/8/7",
+      "baseline_area": 55,
+      "baseline_latency": 17,
+      "baseline_power": 31,
+      "baseline_dsp": 8,
+      "baseline_lut": 7,
+      "area_cap": 55,
+      "latency_cap": 17,
+      "power_cap": 31,
+      "dsp_cap": 0,
+      "lut_cap": 7
+    },
+    {
+      "benchmark": "dot16",
+      "baseline_a_l_p_d_u": "111/33/63/16/15",
+      "baseline_area": 111,
+      "baseline_latency": 33,
+      "baseline_power": 63,
+      "baseline_dsp": 16,
+      "baseline_lut": 15,
+      "area_cap": 111,
+      "latency_cap": 33,
+      "power_cap": 63,
+      "dsp_cap": 0,
+      "lut_cap": 15
+    },
+    {
+      "benchmark": "gemm_k8",
+      "baseline_a_l_p_d_u": "55/17/31/8/7",
+      "baseline_area": 55,
+      "baseline_latency": 17,
+      "baseline_power": 31,
+      "baseline_dsp": 8,
+      "baseline_lut": 7,
+      "area_cap": 55,
+      "latency_cap": 17,
+      "power_cap": 31,
+      "dsp_cap": 0,
+      "lut_cap": 7
+    },
+    {
+      "benchmark": "gemm_blocked_k8",
+      "baseline_a_l_p_d_u": "55/11/31/8/7",
+      "baseline_area": 55,
+      "baseline_latency": 11,
+      "baseline_power": 31,
+      "baseline_dsp": 8,
+      "baseline_lut": 7,
+      "area_cap": 55,
+      "latency_cap": 11,
+      "power_cap": 31,
+      "dsp_cap": 0,
+      "lut_cap": 7
+    },
+    {
+      "benchmark": "conv3x3",
+      "baseline_a_l_p_d_u": "62/19/35/9/8",
+      "baseline_area": 62,
+      "baseline_latency": 19,
+      "baseline_power": 35,
+      "baseline_dsp": 9,
+      "baseline_lut": 8,
+      "area_cap": 62,
+      "latency_cap": 19,
+      "power_cap": 35,
+      "dsp_cap": 0,
+      "lut_cap": 8
+    },
+    {
+      "benchmark": "stencil5",
+      "baseline_a_l_p_d_u": "34/11/19/5/4",
+      "baseline_area": 34,
+      "baseline_latency": 11,
+      "baseline_power": 19,
+      "baseline_dsp": 5,
+      "baseline_lut": 4,
+      "area_cap": 34,
+      "latency_cap": 11,
+      "power_cap": 19,
+      "dsp_cap": 0,
+      "lut_cap": 4
+    }
+  ]
+}

@@ -24,3 +24,31 @@ run_artifacts/
 tmp/
 *.log
 *.jsonl
+
+# Portable generated artifacts used by the report and Intel HLS validation.
+# Keep local HLS/Quartus build products out of git; they are regenerated on
+# the server under outputs/hls_validation/reports/.
+!outputs/
+outputs/*
+!outputs/*.csv
+!outputs/*.html
+!outputs/*.json
+!outputs/*.md
+!outputs/*.pdf
+!outputs/figure_gallery/
+!outputs/figure_gallery/**
+!outputs/size_sweep_figures/
+!outputs/size_sweep_figures/**
+!outputs/hls_validation/
+outputs/hls_validation/*
+!outputs/hls_validation/README.md
+!outputs/hls_validation/metadata/
+!outputs/hls_validation/metadata/**
+!outputs/hls_validation/scripts/
+!outputs/hls_validation/scripts/**
+!outputs/hls_validation/src/
+!outputs/hls_validation/src/**
+!outputs/hls_validation/tests/
+!outputs/hls_validation/tests/**
+outputs/hls_validation/reports/
+outputs/hls_validation/reports/**

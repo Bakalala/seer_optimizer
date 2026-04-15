@@ -1,0 +1,121 @@
+{
+  "source": "/Users/aliseifeldin/Desktop/McGill_Masters/HLS/Project/seer_optimizer/cost_model.json",
+  "baseline_multiply_mapping_policy": "generic_mul_defaults_to_dsp_metrics",
+  "metric_formulas": {
+    "area": "sum(child.area) + op.area",
+    "latency": "max(child.latency) + op.latency",
+    "power": "sum(child.power) + op.power",
+    "dsp_count": "sum(child.dsp_count) + op.dsp_count",
+    "lut_count": "sum(child.lut_count) + op.lut_count"
+  },
+  "operations": [
+    {
+      "operation": "input",
+      "area": 0,
+      "latency": 0,
+      "power": 0,
+      "dsp_count": 0,
+      "lut_count": 0,
+      "role": "leaf value"
+    },
+    {
+      "operation": "const",
+      "area": 0,
+      "latency": 0,
+      "power": 0,
+      "dsp_count": 0,
+      "lut_count": 0,
+      "role": "leaf constant"
+    },
+    {
+      "operation": "add",
+      "area": 1,
+      "latency": 2,
+      "power": 1,
+      "dsp_count": 0,
+      "lut_count": 1,
+      "role": "generic add baseline"
+    },
+    {
+      "operation": "add_lut",
+      "area": 1,
+      "latency": 2,
+      "power": 1,
+      "dsp_count": 0,
+      "lut_count": 1,
+      "role": "LUT-bound add candidate"
+    },
+    {
+      "operation": "add_dsp",
+      "area": 2,
+      "latency": 1,
+      "power": 2,
+      "dsp_count": 1,
+      "lut_count": 0,
+      "role": "DSP-bound add candidate"
+    },
+    {
+      "operation": "sub",
+      "area": 1,
+      "latency": 2,
+      "power": 1,
+      "dsp_count": 0,
+      "lut_count": 1,
+      "role": "generic subtract baseline"
+    },
+    {
+      "operation": "sub_lut",
+      "area": 1,
+      "latency": 2,
+      "power": 1,
+      "dsp_count": 0,
+      "lut_count": 1,
+      "role": "LUT-bound subtract candidate"
+    },
+    {
+      "operation": "sub_dsp",
+      "area": 2,
+      "latency": 1,
+      "power": 2,
+      "dsp_count": 1,
+      "lut_count": 0,
+      "role": "DSP-bound subtract candidate"
+    },
+    {
+      "operation": "mul",
+      "area": 6,
+      "latency": 3,
+      "power": 3,
+      "dsp_count": 1,
+      "lut_count": 0,
+      "role": "generic multiply baseline"
+    },
+    {
+      "operation": "mul_lut",
+      "area": 4,
+      "latency": 6,
+      "power": 6,
+      "dsp_count": 0,
+      "lut_count": 8,
+      "role": "LUT-bound multiply candidate"
+    },
+    {
+      "operation": "mul_dsp",
+      "area": 6,
+      "latency": 3,
+      "power": 3,
+      "dsp_count": 1,
+      "lut_count": 0,
+      "role": "DSP-bound multiply candidate"
+    },
+    {
+      "operation": "mac_dsp",
+      "area": 7,
+      "latency": 3,
+      "power": 4,
+      "dsp_count": 1,
+      "lut_count": 0,
+      "role": "fused DSP multiply-accumulate candidate"
+    }
+  ]
+}
