@@ -26,8 +26,8 @@ tmp/
 *.jsonl
 
 # Portable generated artifacts used by the report and Intel HLS validation.
-# Keep local HLS/Quartus build products out of git; they are regenerated on
-# the server under outputs/hls_validation/reports/.
+# HLS/Quartus reports are intentionally trackable so server synthesis results
+# can be committed and analyzed later.
 !outputs/
 outputs/*
 !outputs/*.csv
@@ -50,5 +50,7 @@ outputs/hls_validation/*
 !outputs/hls_validation/src/**
 !outputs/hls_validation/tests/
 !outputs/hls_validation/tests/**
-outputs/hls_validation/reports/
-outputs/hls_validation/reports/**
+!outputs/hls_validation/reports/
+!outputs/hls_validation/reports/**
+outputs/hls_validation/reports/generated_datapaths_test
+outputs/hls_validation/reports/cpp_correctness.log
