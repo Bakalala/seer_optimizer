@@ -344,9 +344,32 @@ if [[ -z "$CXX" ]]; then
   fi
 fi
 
-"$CXX" -std=c++17 -O2 -Wall -Wextra -I"$ROOT_DIR/src" \
-  "$ROOT_DIR"/src/*.cpp "$ROOT_DIR/tests/test_generated_datapaths.cpp" \
-  -o "$REPORT_DIR/generated_datapaths_test"
+standards=()
+if [[ -n "${CXX_STD:-}" ]]; then
+  standards+=("$CXX_STD")
+fi
+standards+=(c++17 c++14 c++11 c++0x "")
+compile_ok=0
+for standard in "${standards[@]}"; do
+  std_arg=()
+  std_label="compiler default"
+  if [[ -n "$standard" ]]; then
+    std_arg=(-std="$standard")
+    std_label="-std=$standard"
+  fi
+  echo "Compiling generated datapath tests with $CXX $std_label"
+  if "$CXX" "${std_arg[@]}" -O2 -Wall -Wextra -I"$ROOT_DIR/src" \
+      "$ROOT_DIR"/src/*.cpp "$ROOT_DIR/tests/test_generated_datapaths.cpp" \
+      -o "$REPORT_DIR/generated_datapaths_test"; then
+    compile_ok=1
+    break
+  fi
+done
+
+if [[ "$compile_ok" -ne 1 ]]; then
+  echo "Failed to compile generated datapath tests. Set CXX=/path/to/newer/g++ or SKIP_CPP_TESTS=1 in the server runner." >&2
+  exit 1
+fi
 
 "$REPORT_DIR/generated_datapaths_test" | tee "$REPORT_DIR/cpp_correctness.log"
 """
@@ -360,6 +383,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 IXX="${INTEL_HLS_CXX:-i++}"
 HLS_TARGET="${HLS_TARGET:-}"
 MODE_SET="${HLS_DSP_MODES:-default prefer-dsp prefer-softlogic}"
+SRC_GLOB="${HLS_SRC_GLOB:-*.cpp}"
 
 if [[ -z "$HLS_TARGET" ]]; then
   echo "Set HLS_TARGET to your Intel FPGA target/part/family before running." >&2
@@ -367,7 +391,20 @@ if [[ -z "$HLS_TARGET" ]]; then
   exit 1
 fi
 
-for src in "$ROOT_DIR"/src/*.cpp; do
+if ! command -v "$IXX" >/dev/null 2>&1; then
+  echo "Intel HLS compiler not found: $IXX" >&2
+  echo "Set INTEL_HLS_CXX=/path/to/i++ or put i++ on PATH." >&2
+  exit 1
+fi
+
+shopt -s nullglob
+sources=("$ROOT_DIR"/src/$SRC_GLOB)
+if [[ "${#sources[@]}" -eq 0 ]]; then
+  echo "No sources matched HLS_SRC_GLOB=$SRC_GLOB under $ROOT_DIR/src" >&2
+  exit 1
+fi
+
+for src in "${sources[@]}"; do
   name="$(basename "$src" .cpp)"
   for mode in $MODE_SET; do
     build_dir="$ROOT_DIR/reports/hls/$name/$mode"

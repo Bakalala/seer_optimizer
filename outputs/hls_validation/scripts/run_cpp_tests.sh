@@ -17,6 +17,29 @@ if [[ -z "$CXX" ]]; then
   fi
 fi
 
-"$CXX" -std=c++17 -O2 -Wall -Wextra -I"$ROOT_DIR/src"   "$ROOT_DIR"/src/*.cpp "$ROOT_DIR/tests/test_generated_datapaths.cpp"   -o "$REPORT_DIR/generated_datapaths_test"
+standards=()
+if [[ -n "${CXX_STD:-}" ]]; then
+  standards+=("$CXX_STD")
+fi
+standards+=(c++17 c++14 c++11 c++0x "")
+compile_ok=0
+for standard in "${standards[@]}"; do
+  std_arg=()
+  std_label="compiler default"
+  if [[ -n "$standard" ]]; then
+    std_arg=(-std="$standard")
+    std_label="-std=$standard"
+  fi
+  echo "Compiling generated datapath tests with $CXX $std_label"
+  if "$CXX" "${std_arg[@]}" -O2 -Wall -Wextra -I"$ROOT_DIR/src"       "$ROOT_DIR"/src/*.cpp "$ROOT_DIR/tests/test_generated_datapaths.cpp"       -o "$REPORT_DIR/generated_datapaths_test"; then
+    compile_ok=1
+    break
+  fi
+done
+
+if [[ "$compile_ok" -ne 1 ]]; then
+  echo "Failed to compile generated datapath tests. Set CXX=/path/to/newer/g++ or SKIP_CPP_TESTS=1 in the server runner." >&2
+  exit 1
+fi
 
 "$REPORT_DIR/generated_datapaths_test" | tee "$REPORT_DIR/cpp_correctness.log"
