@@ -5,12 +5,19 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RTL_DIR="$REPO_ROOT/outputs/rtl_validation"
 
 export PATH="${QUARTUS_ROOT:-/opt/intelFPGA_pro/quartus_19.2.0b57/quartus}/bin:${PATH}"
+for modelsim_dir in /opt/intelFPGA_pro/*/modelsim_ase/bin /opt/intelFPGA/*/modelsim_ase/bin; do
+  if [[ -d "$modelsim_dir" ]]; then
+    export PATH="$modelsim_dir:$PATH"
+  fi
+done
 export QUARTUS_SH="${QUARTUS_SH:-quartus_sh}"
 export JOBS="${JOBS:-1}"
 
 echo "Repository: $REPO_ROOT"
 echo "RTL validation dir: $RTL_DIR"
 echo "Quartus compiler: $(command -v "$QUARTUS_SH" || true)"
+echo "ModelSim vlog: $(command -v vlog || true)"
+echo "ModelSim vsim: $(command -v vsim || true)"
 echo "Quartus jobs: $JOBS"
 if [[ -n "${RTL_ONLY:-}" ]]; then
   echo "RTL project filter: $RTL_ONLY"

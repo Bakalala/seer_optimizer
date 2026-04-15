@@ -346,6 +346,11 @@ mkdir -p "$REPORT_DIR/sim"
 
 SIM_TOOL="${SIM_TOOL:-}"
 if [[ -z "$SIM_TOOL" ]]; then
+  for modelsim_dir in /opt/intelFPGA_pro/*/modelsim_ase/bin /opt/intelFPGA/*/modelsim_ase/bin; do
+    if [[ -d "$modelsim_dir" ]]; then
+      export PATH="$modelsim_dir:$PATH"
+    fi
+  done
   if command -v vsim >/dev/null 2>&1 && command -v vlog >/dev/null 2>&1; then
     SIM_TOOL="modelsim"
   elif command -v iverilog >/dev/null 2>&1 && command -v vvp >/dev/null 2>&1; then
