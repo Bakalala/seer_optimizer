@@ -5,73 +5,85 @@
       "area": 0,
       "latency": 0,
       "dsp_count": 0,
-      "lut_count": 0
+      "lut_count": 0,
+      "power": 0
     },
     "const": {
       "area": 0,
       "latency": 0,
       "dsp_count": 0,
-      "lut_count": 0
+      "lut_count": 0,
+      "power": 0
     },
     "add": {
       "area": 1,
       "latency": 2,
       "dsp_count": 0,
-      "lut_count": 1
+      "lut_count": 1,
+      "power": 1
     },
     "add_dsp": {
       "area": 2,
       "latency": 1,
       "dsp_count": 1,
-      "lut_count": 0
+      "lut_count": 0,
+      "power": 2
     },
     "add_lut": {
       "area": 1,
       "latency": 2,
       "dsp_count": 0,
-      "lut_count": 1
+      "lut_count": 1,
+      "power": 1
     },
     "sub": {
       "area": 1,
       "latency": 2,
       "dsp_count": 0,
-      "lut_count": 1
+      "lut_count": 1,
+      "power": 1
     },
     "sub_dsp": {
       "area": 2,
       "latency": 1,
       "dsp_count": 1,
-      "lut_count": 0
+      "lut_count": 0,
+      "power": 2
     },
     "sub_lut": {
       "area": 1,
       "latency": 2,
       "dsp_count": 0,
-      "lut_count": 1
+      "lut_count": 1,
+      "power": 1
     },
     "mul": {
       "area": 6,
       "latency": 3,
       "dsp_count": 1,
-      "lut_count": 0
+      "lut_count": 0,
+      "power": 3
     },
     "mul_dsp": {
       "area": 6,
       "latency": 3,
       "dsp_count": 1,
-      "lut_count": 0
+      "lut_count": 0,
+      "power": 3
     },
     "mul_lut": {
       "area": 4,
       "latency": 6,
       "dsp_count": 0,
-      "lut_count": 8
+      "lut_count": 8,
+      "power": 6
     },
     "mac_dsp": {
       "area": 7,
       "latency": 3,
       "dsp_count": 1,
-      "lut_count": 0
+      "lut_count": 0,
+      "power": 4
     }
   }
 }

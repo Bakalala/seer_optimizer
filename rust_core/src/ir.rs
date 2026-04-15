@@ -8,6 +8,10 @@ fn default_weight() -> f64 {
     1.0
 }
 
+fn default_power_weight() -> f64 {
+    0.0
+}
+
 fn default_iter_limit() -> usize {
     30
 }
@@ -34,6 +38,7 @@ pub enum Mode {
 pub enum Objective {
     Area,
     Latency,
+    Power,
     Weighted,
 }
 
@@ -43,6 +48,8 @@ pub struct Weights {
     pub w_area: f64,
     #[serde(default = "default_weight")]
     pub w_latency: f64,
+    #[serde(default = "default_power_weight")]
+    pub w_power: f64,
 }
 
 impl Default for Weights {
@@ -50,6 +57,7 @@ impl Default for Weights {
         Self {
             w_area: default_weight(),
             w_latency: default_weight(),
+            w_power: default_power_weight(),
         }
     }
 }
@@ -82,6 +90,7 @@ fn combine_metrics(left_metrics: Metrics, right_metrics: Metrics, op: &Metrics) 
         latency: left_metrics.latency.max(right_metrics.latency) + op.latency,
         dsp_count: left_metrics.dsp_count + right_metrics.dsp_count + op.dsp_count,
         lut_count: left_metrics.lut_count + right_metrics.lut_count + op.lut_count,
+        power: left_metrics.power + right_metrics.power + op.power,
     }
 }
 
@@ -95,6 +104,8 @@ pub struct Budgets {
     pub area_max: Option<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub latency_max: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub power_max: Option<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub dsp_max: Option<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -218,16 +229,20 @@ pub struct Metrics {
     pub latency: u32,
     pub dsp_count: u32,
     pub lut_count: u32,
+    pub power: u32,
 }
 
 impl Metrics {
     pub fn weighted_score(&self, weights: &Weights) -> f64 {
-        (self.area as f64 * weights.w_area) + (self.latency as f64 * weights.w_latency)
+        (self.area as f64 * weights.w_area)
+            + (self.latency as f64 * weights.w_latency)
+            + (self.power as f64 * weights.w_power)
     }
 
     pub fn satisfies(&self, budgets: &Budgets) -> bool {
         budgets.area_max.is_none_or(|max| self.area <= max)
             && budgets.latency_max.is_none_or(|max| self.latency <= max)
+            && budgets.power_max.is_none_or(|max| self.power <= max)
             && budgets.dsp_max.is_none_or(|max| self.dsp_count <= max)
             && budgets.lut_max.is_none_or(|max| self.lut_count <= max)
     }
@@ -235,10 +250,12 @@ impl Metrics {
     pub fn dominates(&self, other: &Self) -> bool {
         let no_worse = self.area <= other.area
             && self.latency <= other.latency
+            && self.power <= other.power
             && self.dsp_count <= other.dsp_count
             && self.lut_count <= other.lut_count;
         let strictly_better = self.area < other.area
             || self.latency < other.latency
+            || self.power < other.power
             || self.dsp_count < other.dsp_count
             || self.lut_count < other.lut_count;
         no_worse && strictly_better
@@ -259,6 +276,12 @@ pub struct RunStats {
     pub eclasses: usize,
     pub enodes: usize,
     pub runtime_ms: u64,
+    #[serde(default)]
+    pub shared_runtime_us: u64,
+    #[serde(default)]
+    pub saturation_runtime_us: u64,
+    #[serde(default)]
+    pub frontier_runtime_us: u64,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -273,6 +296,8 @@ pub struct OptimizeResponse {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub frontier: Vec<FrontierPoint>,
     pub stats: RunStats,
+    #[serde(default)]
+    pub selection_runtime_us: u64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
 }
@@ -286,6 +311,7 @@ impl OptimizeResponse {
             score: None,
             frontier: Vec::new(),
             stats: RunStats::default(),
+            selection_runtime_us: 0,
             message: Some(message.into()),
         }
     }
@@ -305,6 +331,8 @@ pub struct BatchQueryResponse {
     pub score: Option<f64>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub frontier: Vec<FrontierPoint>,
+    #[serde(default)]
+    pub selection_runtime_us: u64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
 }
@@ -323,6 +351,7 @@ impl BatchQueryResponse {
             metrics: response.metrics,
             score: response.score,
             frontier: response.frontier,
+            selection_runtime_us: response.selection_runtime_us,
             message: response.message,
         }
     }
@@ -436,6 +465,10 @@ impl Expr {
                         + left_metrics.lut_count
                         + right_metrics.lut_count
                         + op_metrics("mac_dsp").lut_count,
+                    power: acc_metrics.power
+                        + left_metrics.power
+                        + right_metrics.power
+                        + op_metrics("mac_dsp").power,
                 }
             }
         }

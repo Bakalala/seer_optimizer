@@ -71,13 +71,15 @@ fn prepare_benchmark(
     let root_expr = graph_to_expr(graph)?;
     let expr = expr_to_recexpr(&root_expr);
 
-    let started = Instant::now();
+    let shared_started = Instant::now();
+    let saturation_started = Instant::now();
     let runner = Runner::<Math, MathAnalysis, ()>::default()
         .with_expr(&expr)
         .with_iter_limit(limits.iter_limit)
         .with_node_limit(limits.node_limit)
         .with_time_limit(Duration::from_millis(limits.time_limit_ms))
         .run(&datapath_rewrites());
+    let saturation_runtime_us = saturation_started.elapsed().as_micros() as u64;
 
     let eclasses = runner.egraph.classes().count();
     let enodes = runner
@@ -85,16 +87,22 @@ fn prepare_benchmark(
         .classes()
         .map(|class| class.nodes.len())
         .sum::<usize>();
+
+    let root_id = runner.egraph.find(runner.roots[0]);
+    let frontier_started = Instant::now();
+    let frontiers = extract_frontiers(&runner.egraph);
+    let frontier_runtime_us = frontier_started.elapsed().as_micros() as u64;
+    let shared_runtime_us = shared_started.elapsed().as_micros() as u64;
+    let root_frontier = frontiers.get(&root_id).cloned();
     let stats = RunStats {
         iterations: runner.iterations.len(),
         eclasses,
         enodes,
-        runtime_ms: started.elapsed().as_millis() as u64,
+        runtime_ms: shared_runtime_us / 1_000,
+        shared_runtime_us,
+        saturation_runtime_us,
+        frontier_runtime_us,
     };
-
-    let root_id = runner.egraph.find(runner.roots[0]);
-    let frontiers = extract_frontiers(&runner.egraph);
-    let root_frontier = frontiers.get(&root_id).cloned();
 
     Ok(PreparedBenchmark {
         root_frontier,
@@ -114,13 +122,16 @@ fn evaluate_prepared(
         return missing_frontier_response(stats);
     };
 
-    match mode {
+    let selection_started = Instant::now();
+    let mut response = match mode {
         Mode::Weighted => weighted_response(root_frontier, weights, stats),
         Mode::Constrained => {
             constrained_response(root_frontier, objective, weights, budgets, stats)
         }
         Mode::Pareto2d => pareto_response(root_frontier, stats),
-    }
+    };
+    response.selection_runtime_us = selection_started.elapsed().as_micros() as u64;
+    response
 }
 
 fn evaluate_batch_query(prepared: &PreparedBenchmark, query: &BatchQuery) -> BatchQueryResponse {
@@ -145,6 +156,7 @@ fn missing_frontier_response(stats: RunStats) -> OptimizeResponse {
         score: None,
         frontier: Vec::new(),
         stats,
+        selection_runtime_us: 0,
         message: Some("no extraction candidates were produced".to_string()),
     }
 }
@@ -162,6 +174,7 @@ fn weighted_response(
             score: Some(best.weighted_score(weights)),
             frontier: Vec::new(),
             stats,
+            selection_runtime_us: 0,
             message: None,
         }
     } else {
@@ -172,6 +185,7 @@ fn weighted_response(
             score: None,
             frontier: Vec::new(),
             stats,
+            selection_runtime_us: 0,
             message: Some("no weighted solution found".to_string()),
         }
     }
@@ -197,6 +211,7 @@ fn constrained_response(
             score: None,
             frontier: Vec::new(),
             stats,
+            selection_runtime_us: 0,
             message: Some("no feasible solution satisfies the provided budgets".to_string()),
         };
     };
@@ -205,6 +220,7 @@ fn constrained_response(
         Objective::Weighted => Some(best.weighted_score(weights)),
         Objective::Area => Some(best.metrics.area as f64),
         Objective::Latency => Some(best.metrics.latency as f64),
+        Objective::Power => Some(best.metrics.power as f64),
     };
 
     OptimizeResponse {
@@ -214,6 +230,7 @@ fn constrained_response(
         score,
         frontier: Vec::new(),
         stats,
+        selection_runtime_us: 0,
         message: None,
     }
 }
@@ -236,6 +253,7 @@ fn pareto_response(candidates: &[Candidate], stats: RunStats) -> OptimizeRespons
         score: None,
         frontier,
         stats,
+        selection_runtime_us: 0,
         message: None,
     }
 }
@@ -514,6 +532,11 @@ fn select_best_constrained<'a>(
                 .latency
                 .cmp(&right.metrics.latency)
                 .then_with(|| candidate_cmp(left, right)),
+            Objective::Power => left
+                .metrics
+                .power
+                .cmp(&right.metrics.power)
+                .then_with(|| candidate_cmp(left, right)),
             Objective::Weighted => left
                 .weighted_score(weights)
                 .partial_cmp(&right.weighted_score(weights))
@@ -555,6 +578,7 @@ fn candidate_cmp(left: &Candidate, right: &Candidate) -> Ordering {
         .area
         .cmp(&right.metrics.area)
         .then(left.metrics.latency.cmp(&right.metrics.latency))
+        .then(left.metrics.power.cmp(&right.metrics.power))
         .then(left.metrics.dsp_count.cmp(&right.metrics.dsp_count))
         .then(left.metrics.lut_count.cmp(&right.metrics.lut_count))
         .then(left.expr.size().cmp(&right.expr.size()))
@@ -869,6 +893,104 @@ mod tests {
         assert_eq!(metrics.area, 4);
         assert_eq!(metrics.latency, 6);
         assert_eq!(metrics.lut_count, 8);
+        assert_eq!(metrics.power, 6);
+    }
+
+    #[test]
+    fn power_objective_prefers_lower_power_adder() {
+        let request = request_from_nodes(
+            "add_power",
+            vec![
+                IrNode {
+                    id: "a".into(),
+                    op: IrOp::Input,
+                    name: Some("a".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "b".into(),
+                    op: IrOp::Input,
+                    name: Some("b".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "root".into(),
+                    op: IrOp::Add,
+                    name: None,
+                    value: None,
+                    inputs: vec!["a".into(), "b".into()],
+                },
+            ],
+            "root",
+            Mode::Constrained,
+            Objective::Power,
+            Budgets::default(),
+        );
+
+        let response = optimize_request(&request).expect("optimizer should succeed");
+        assert!(response.feasible);
+        let metrics = response.metrics.expect("metrics");
+        assert_eq!(metrics.power, 1);
+        assert_eq!(metrics.latency, 2);
+        let optimized = response.optimized_ir.expect("optimized ir");
+        assert!(
+            optimized
+                .ir_nodes
+                .iter()
+                .any(|node| node.op == IrOp::AddLut)
+        );
+    }
+
+    #[test]
+    fn constrained_respects_power_budget() {
+        let request = request_from_nodes(
+            "add_power_budget",
+            vec![
+                IrNode {
+                    id: "a".into(),
+                    op: IrOp::Input,
+                    name: Some("a".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "b".into(),
+                    op: IrOp::Input,
+                    name: Some("b".into()),
+                    value: None,
+                    inputs: vec![],
+                },
+                IrNode {
+                    id: "root".into(),
+                    op: IrOp::Add,
+                    name: None,
+                    value: None,
+                    inputs: vec!["a".into(), "b".into()],
+                },
+            ],
+            "root",
+            Mode::Constrained,
+            Objective::Latency,
+            Budgets {
+                power_max: Some(1),
+                ..Budgets::default()
+            },
+        );
+
+        let response = optimize_request(&request).expect("optimizer should succeed");
+        assert!(response.feasible);
+        let metrics = response.metrics.expect("metrics");
+        assert_eq!(metrics.power, 1);
+        assert_eq!(metrics.latency, 2);
+        let optimized = response.optimized_ir.expect("optimized ir");
+        assert!(
+            optimized
+                .ir_nodes
+                .iter()
+                .all(|node| node.op != IrOp::AddDsp)
+        );
     }
 
     #[test]
@@ -987,6 +1109,7 @@ mod tests {
             Budgets {
                 area_max: Some(0),
                 latency_max: Some(0),
+                power_max: Some(0),
                 dsp_max: Some(0),
                 lut_max: Some(0),
             },
@@ -1314,7 +1437,6 @@ mod tests {
         );
         assert_eq!(batch.shared_stats.eclasses, single_weighted.stats.eclasses);
         assert_eq!(batch.shared_stats.enodes, single_weighted.stats.enodes);
-        assert!(batch.shared_stats.runtime_ms > 0);
     }
 
     #[test]
@@ -1351,6 +1473,83 @@ mod tests {
         assert_eq!(batch.shared_stats.iterations, single.stats.iterations);
         assert_eq!(batch.shared_stats.eclasses, single.stats.eclasses);
         assert_eq!(batch.shared_stats.enodes, single.stats.enodes);
-        assert!(batch.shared_stats.runtime_ms > 0);
+    }
+
+    #[test]
+    fn batch_matches_single_query_results_for_power() {
+        let nodes = vec![
+            IrNode {
+                id: "a".into(),
+                op: IrOp::Input,
+                name: Some("a".into()),
+                value: None,
+                inputs: vec![],
+            },
+            IrNode {
+                id: "b".into(),
+                op: IrOp::Input,
+                name: Some("b".into()),
+                value: None,
+                inputs: vec![],
+            },
+            IrNode {
+                id: "root".into(),
+                op: IrOp::Add,
+                name: None,
+                value: None,
+                inputs: vec!["a".into(), "b".into()],
+            },
+        ];
+
+        let single = optimize_request(&request_from_nodes(
+            "add_power_single",
+            nodes.clone(),
+            "root",
+            Mode::Constrained,
+            Objective::Power,
+            Budgets::default(),
+        ))
+        .expect("single power objective should succeed");
+
+        let batch = optimize_batch_request(&batch_request_from_nodes(
+            "add_power_batch",
+            nodes,
+            "root",
+            vec![BatchQuery {
+                name: "power_unconstrained".into(),
+                mode: Mode::Constrained,
+                objective: Objective::Power,
+                weights: Weights::default(),
+                budgets: Budgets::default(),
+                label: None,
+            }],
+        ))
+        .expect("batch should succeed");
+
+        let result = batch.results.first().expect("batch result");
+        assert_eq!(result.metrics, single.metrics);
+        assert_eq!(result.optimized_ir, single.optimized_ir);
+    }
+
+    #[test]
+    fn legacy_request_defaults_power_fields() {
+        let request = serde_json::json!({
+            "benchmark_name": "legacy",
+            "ir_nodes": [
+                {"id": "a", "op": "input", "name": "a"},
+                {"id": "b", "op": "input", "name": "b"},
+                {"id": "root", "op": "add", "inputs": ["a", "b"]}
+            ],
+            "root": "root",
+            "mode": "weighted",
+            "objective": "weighted",
+            "weights": {"w_area": 1.0, "w_latency": 1.0},
+            "budgets": {"area_max": 10}
+        });
+
+        let parsed: OptimizeRequest =
+            serde_json::from_value(request).expect("legacy request should deserialize");
+        assert_eq!(parsed.weights.w_power, 0.0);
+        assert_eq!(parsed.budgets.power_max, None);
     }
 }

@@ -19,6 +19,11 @@
     },
     {
       "w_area": 1.0,
+      "w_latency": 1.0,
+      "w_power": 1.0
+    },
+    {
+      "w_area": 1.0,
       "w_latency": 4.0
     }
   ],
@@ -27,6 +32,12 @@
       "area_max_mode": "original_area"
     },
     "area_under_latency": {
+      "latency_max_mode": "original_latency"
+    },
+    "latency_under_power": {
+      "power_max_mode": "original_power"
+    },
+    "power_under_latency": {
       "latency_max_mode": "original_latency"
     },
     "latency_under_dsp": {

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
 
 import run_benchmarks
+from scripts import export_hls_cpp
 
 
 class BenchmarkHarnessTest(unittest.TestCase):
@@ -21,10 +23,20 @@ class BenchmarkHarnessTest(unittest.TestCase):
             for node in graph["ir_nodes"]:
                 self.assertIn(node["op"], allowed_ops)
 
+    def test_size_sweep_benchmark_families_include_requested_sizes(self) -> None:
+        families = run_benchmarks.build_size_sweep_benchmark_families()
+        self.assertEqual(sorted(families["fir"].keys()), [4, 8, 16, 32])
+        self.assertEqual(sorted(families["dot"].keys()), [8, 16, 32, 64])
+        self.assertEqual(run_benchmarks.arithmetic_op_count(families["fir"][4]), 7)
+        self.assertEqual(run_benchmarks.arithmetic_op_count(families["dot"][8]), 15)
+
     def test_python_metric_model_matches_mul_two(self) -> None:
         graph = run_benchmarks.build_smoke_cases()["mul_two"]
         metrics = run_benchmarks.graph_metrics(graph)
-        self.assertEqual(metrics, {"area": 6, "latency": 3, "dsp_count": 1, "lut_count": 0})
+        self.assertEqual(
+            metrics,
+            {"area": 6, "latency": 3, "dsp_count": 1, "lut_count": 0, "power": 3},
+        )
 
     def test_shared_cost_model_is_loaded_from_single_file(self) -> None:
         self.assertEqual(
@@ -33,11 +45,11 @@ class BenchmarkHarnessTest(unittest.TestCase):
         )
         self.assertEqual(
             run_benchmarks.SHARED_OP_METRICS["add_dsp"],
-            {"area": 2, "latency": 1, "dsp_count": 1, "lut_count": 0},
+            {"area": 2, "latency": 1, "dsp_count": 1, "lut_count": 0, "power": 2},
         )
         self.assertEqual(
             run_benchmarks.SHARED_OP_METRICS["mul_lut"],
-            {"area": 4, "latency": 6, "dsp_count": 0, "lut_count": 8},
+            {"area": 4, "latency": 6, "dsp_count": 0, "lut_count": 8, "power": 6},
         )
 
     def test_optimizer_runs_end_to_end_on_smoke_case(self) -> None:
@@ -179,6 +191,18 @@ class BenchmarkHarnessTest(unittest.TestCase):
             payload["dsp_budget_sweep"][-1]["metrics"]["latency"],
             payload["runs"]["latency_unconstrained"]["metrics"]["latency"],
         )
+
+    def test_power_runs_are_present(self) -> None:
+        config = run_benchmarks.load_benchmark_config()
+        results = run_benchmarks.run_suite(
+            {"fir8": run_benchmarks.build_acceptance_benchmarks()["fir8"]},
+            config,
+        )
+        payload = results["benchmarks"]["fir8"]
+        self.assertIn("power_unconstrained", payload["runs"])
+        self.assertIn("latency_under_power", payload["runs"])
+        self.assertIn("power_under_latency", payload["runs"])
+        self.assertIn("power", payload["runs"]["power_unconstrained"]["metrics"])
 
     def test_dsp_budget_sweep_is_monotone_and_improves_latency(self) -> None:
         config = run_benchmarks.load_benchmark_config()
@@ -623,6 +647,273 @@ class BenchmarkHarnessTest(unittest.TestCase):
             self.assertIn("Bigger FPGA, Faster Datapath?", Path(artifacts["report_path"]).read_text())
             self.assertIn("Latency-optimal (no budgets)", Path(artifacts["report_path"]).read_text())
             self.assertIn("Benchmark Analysis", Path(artifacts["analysis_path"]).read_text())
+
+    def test_paper_figures_are_generated(self) -> None:
+        config = run_benchmarks.load_benchmark_config()
+        results = run_benchmarks.run_suite(
+            {"fir8": run_benchmarks.build_acceptance_benchmarks()["fir8"]},
+            config,
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            figure_paths = run_benchmarks.write_paper_figures(
+                results,
+                output_dir=Path(tmpdir),
+            )
+            self.assertTrue(Path(figure_paths["fir8_tradeoff_svg"]).exists())
+            self.assertTrue(Path(figure_paths["fir8_tradeoff_png"]).exists())
+            self.assertTrue(Path(figure_paths["fir8_dsp_scaling_svg"]).exists())
+            self.assertTrue(Path(figure_paths["fir8_dsp_scaling_png"]).exists())
+
+    def test_run_size_sweep_suite_collects_runtime_and_pareto_points(self) -> None:
+        config = run_benchmarks.load_benchmark_config()
+
+        def fake_batch_response(request: dict) -> dict:
+            op_count = sum(
+                1
+                for node in request["ir_nodes"]
+                if node["op"] in {"add", "sub", "mul"}
+            )
+            benchmark_name = request["benchmark_name"]
+            frontier = [
+                {
+                    "optimized_ir": {
+                        "ir_nodes": request["ir_nodes"],
+                        "root": request["root"],
+                    },
+                    "metrics": {
+                        "area": op_count,
+                        "latency": max(1, op_count // 2),
+                        "dsp_count": 0,
+                        "lut_count": op_count,
+                        "power": op_count,
+                    },
+                }
+                for _ in range(max(1, op_count // 4))
+            ]
+            return {
+                "benchmark_name": benchmark_name,
+                "shared_stats": {
+                    "iterations": 2,
+                    "eclasses": op_count + 1,
+                    "enodes": op_count + 2,
+                    "runtime_ms": op_count * 3,
+                    "shared_runtime_us": op_count * 3000,
+                    "saturation_runtime_us": op_count * 2200,
+                    "frontier_runtime_us": op_count * 800,
+                },
+                "results": [
+                    {
+                        "name": "weighted",
+                        "feasible": True,
+                        "optimized_ir": {
+                            "ir_nodes": request["ir_nodes"],
+                            "root": request["root"],
+                        },
+                        "metrics": {
+                            "area": op_count,
+                            "latency": max(1, op_count // 2),
+                            "dsp_count": 0,
+                            "lut_count": op_count,
+                            "power": op_count,
+                        },
+                        "score": float(op_count),
+                        "selection_runtime_us": op_count * 40,
+                    },
+                    {
+                        "name": "latency_under_area",
+                        "feasible": True,
+                        "optimized_ir": {
+                            "ir_nodes": request["ir_nodes"],
+                            "root": request["root"],
+                        },
+                        "metrics": {
+                            "area": op_count,
+                            "latency": max(1, op_count // 3),
+                            "dsp_count": 0,
+                            "lut_count": op_count,
+                            "power": op_count,
+                        },
+                        "score": float(max(1, op_count // 3)),
+                        "selection_runtime_us": op_count * 25,
+                    },
+                    {
+                        "name": "pareto_2d",
+                        "feasible": True,
+                        "frontier": frontier,
+                        "selection_runtime_us": op_count * 10,
+                    },
+                ],
+            }
+
+        with mock.patch.object(
+            run_benchmarks,
+            "run_optimizer_batch",
+            side_effect=fake_batch_response,
+        ):
+            results = run_benchmarks.run_size_sweep_suite(config)
+
+        self.assertEqual(set(results["families"].keys()), {"fir", "dot"})
+        fir_entries = results["families"]["fir"]
+        dot_entries = results["families"]["dot"]
+        self.assertEqual([entry["problem_size"] for entry in fir_entries], [4, 8, 16, 32])
+        self.assertEqual([entry["problem_size"] for entry in dot_entries], [8, 16, 32, 64])
+        self.assertTrue(all(entry["shared_stats"]["runtime_ms"] > 0 for entry in fir_entries + dot_entries))
+        self.assertTrue(
+            all(
+                entry["latency_under_area"]["selection_runtime_us"] > 0
+                for entry in fir_entries + dot_entries
+            )
+        )
+        self.assertTrue(all(entry["pareto_points"] > 0 for entry in fir_entries + dot_entries))
+        summary = run_benchmarks.summarize_size_sweep_results(results)
+        self.assertEqual(summary["overview"]["family_count"], 2)
+        self.assertGreater(summary["overview"]["max_op_count"], 0)
+        self.assertTrue(
+            all(
+                len(summary["families"][family_name]["selection_runtime_ms"]) > 0
+                for family_name in summary["families"]
+            )
+        )
+
+    def test_size_sweep_figures_are_generated(self) -> None:
+        fake_results = {
+            "metadata": {"family_sizes": {"fir": [4, 8], "dot": [8, 16]}},
+            "families": {
+                "fir": [
+                    {
+                        "benchmark_name": "fir4",
+                        "family": "fir",
+                        "problem_size": 4,
+                        "op_count": 7,
+                        "shared_stats": {
+                            "runtime_ms": 12,
+                            "shared_runtime_us": 12000,
+                            "saturation_runtime_us": 9000,
+                            "frontier_runtime_us": 3000,
+                        },
+                        "latency_under_area": {"selection_runtime_us": 120},
+                        "pareto_points": 3,
+                    },
+                    {
+                        "benchmark_name": "fir8",
+                        "family": "fir",
+                        "problem_size": 8,
+                        "op_count": 15,
+                        "shared_stats": {
+                            "runtime_ms": 24,
+                            "shared_runtime_us": 24000,
+                            "saturation_runtime_us": 18000,
+                            "frontier_runtime_us": 6000,
+                        },
+                        "latency_under_area": {"selection_runtime_us": 180},
+                        "pareto_points": 6,
+                    },
+                ],
+                "dot": [
+                    {
+                        "benchmark_name": "dot8",
+                        "family": "dot",
+                        "problem_size": 8,
+                        "op_count": 15,
+                        "shared_stats": {
+                            "runtime_ms": 18,
+                            "shared_runtime_us": 18000,
+                            "saturation_runtime_us": 13500,
+                            "frontier_runtime_us": 4500,
+                        },
+                        "latency_under_area": {"selection_runtime_us": 150},
+                        "pareto_points": 4,
+                    },
+                    {
+                        "benchmark_name": "dot16",
+                        "family": "dot",
+                        "problem_size": 16,
+                        "op_count": 31,
+                        "shared_stats": {
+                            "runtime_ms": 44,
+                            "shared_runtime_us": 44000,
+                            "saturation_runtime_us": 33000,
+                            "frontier_runtime_us": 11000,
+                        },
+                        "latency_under_area": {"selection_runtime_us": 260},
+                        "pareto_points": 9,
+                    },
+                ],
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmpdir:
+            figure_paths = run_benchmarks.write_size_sweep_figures(
+                fake_results,
+                output_dir=Path(tmpdir),
+            )
+            self.assertTrue(Path(figure_paths["size_sweep_frontier_svg"]).exists())
+            self.assertTrue(Path(figure_paths["size_sweep_frontier_png"]).exists())
+            self.assertTrue(Path(figure_paths["size_sweep_scaling_svg"]).exists())
+            self.assertTrue(Path(figure_paths["size_sweep_scaling_png"]).exists())
+
+    def test_hls_cpp_export_generates_resource_annotated_sources(self) -> None:
+        fake_graph = {
+            "ir_nodes": [
+                {"id": "a", "op": "input", "name": "a"},
+                {"id": "b", "op": "input", "name": "b"},
+                {"id": "c", "op": "input", "name": "c"},
+                {"id": "m0", "op": "mul_dsp", "inputs": ["a", "b"]},
+                {"id": "m1", "op": "mul_lut", "inputs": ["m0", "c"]},
+                {"id": "r", "op": "add_dsp", "inputs": ["m1", "a"]},
+            ],
+            "root": "r",
+        }
+        fake_results = {
+            "benchmarks": {
+                "toy": {
+                    "original_ir": fake_graph,
+                    "original_metrics": {
+                        "area": 14,
+                        "latency": 10,
+                        "power": 10,
+                        "dsp_count": 2,
+                        "lut_count": 8,
+                    },
+                    "runs": {
+                        "weighted": {
+                            "feasible": True,
+                            "optimized_ir": fake_graph,
+                            "metrics": {
+                                "area": 14,
+                                "latency": 10,
+                                "power": 10,
+                                "dsp_count": 2,
+                                "lut_count": 8,
+                            },
+                        }
+                    },
+                }
+            }
+        }
+        with tempfile.TemporaryDirectory() as tmpdir:
+            results_path = Path(tmpdir) / "results.json"
+            results_path.write_text(json.dumps(fake_results))
+            out_dir = Path(tmpdir) / "hls"
+            export_hls_cpp.export_hls_cpp(
+                results_path=results_path,
+                output_dir=out_dir,
+                benchmarks=["toy"],
+                variants=["original", "weighted", "latency_under_lut"],
+                test_vectors=8,
+            )
+            source = (out_dir / "src" / "toy_weighted.cpp").read_text()
+            header = (out_dir / "src" / "generated_datapaths.hpp").read_text()
+            metadata = (out_dir / "metadata" / "generated_variants.json").read_text()
+            self.assertIn("dsp_mul", source)
+            self.assertIn("soft_mul", source)
+            self.assertIn("// op: mul_dsp", source)
+            self.assertIn("// op: mul_lut", source)
+            self.assertIn("math_dsp_control", header)
+            self.assertIn("latency_under_lut", metadata)
+            self.assertTrue((out_dir / "scripts" / "run_cpp_tests.sh").exists())
+            self.assertTrue((out_dir / "scripts" / "run_intel_hls.sh").exists())
+            self.assertTrue((out_dir / "scripts" / "parse_hls_reports.py").exists())
+            self.assertTrue((out_dir / "README.md").exists())
 
 
 if __name__ == "__main__":
