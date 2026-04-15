@@ -1,0 +1,445 @@
+{
+  "3886547160":
+  {
+    "nodes":
+    [
+      {
+        "name":"fir8_latency_under_lut.B0.runOnce"
+        , "id":3886586048
+        , "start":"0"
+        , "end":"2"
+        , "details":
+        [
+          {
+            "type":"table"
+          }
+        ]
+        , "type":"bb"
+        , "children":
+        [
+          {
+            "name":"?"
+            , "id":3889115248
+            , "start":"1"
+            , "end":"2"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Feedback Read"
+                , "Variable":"Unknown variable"
+                , "Start Cycle":"1"
+                , "Latency":"1"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/fir8_latency_under_lut.cpp"
+                  , "line":8
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+        ]
+      }
+      , {
+        "name":"fir8_latency_under_lut.B1.start"
+        , "id":3886555344
+        , "start":"2"
+        , "end":"4"
+        , "details":
+        [
+          {
+            "type":"table"
+          }
+        ]
+        , "type":"bb"
+        , "children":
+        [
+          {
+            "name":"Cluster 0"
+            , "id":3888454816
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Cluster Name":"i_sfc_s_c0_in_wt_entry_fir8_latency_under_luts_c0_enter1_fir8_latency_under_lut0"
+                , "Cluster Type":"Stall-Enable"
+                , "Cluster Start Cycle":"1"
+                , "Cluster Latency":"0"
+              }
+            ]
+            , "type":"cluster"
+            , "children":
+            [
+              {
+                "name":"Exit"
+                , "id":3892088304
+                , "start":"3"
+                , "end":"3"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Start Cycle":"1"
+                    , "Latency":"0"
+                  }
+                ]
+                , "type":"inst"
+              }
+            ]
+          }
+          , {
+            "name":"RD"
+            , "id":3888525952
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Stream Read"
+                , "Width":"256 bits"
+                , "Depth":"0"
+                , "Stream Name":"call.fir8_latency_under_lut"
+                , "Stall-free":"No"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/fir8_latency_under_lut.cpp"
+                  , "line":8
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":3892197840
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"<<"
+            , "id":3892149184
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Left Shift"
+                , "Constant Operand":"1 (0x1)"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":3892070944
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":3892197488
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"<<"
+            , "id":3892147568
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Left Shift"
+                , "Constant Operand":"2 (0x2)"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":3892193280
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":46
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":3892169616
+            , "start":"4"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"2"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":46
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":3892192928
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"<<"
+            , "id":3892223264
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Left Shift"
+                , "Constant Operand":"1 (0x1)"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":3892169264
+            , "start":"3"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"1"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":46
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":3892144624
+            , "start":"4"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"2"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":46
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"WR"
+            , "id":3892144976
+            , "start":"4"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Stream Write"
+                , "Width":"32 bits"
+                , "Depth":"0"
+                , "Stream Name":"return.fir8_latency_under_lut"
+                , "Stall-free":"No"
+                , "Start Cycle":"2"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/fir8_latency_under_lut.cpp"
+                  , "line":90
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+        ]
+      }
+    ]
+    , "links":
+    [
+      {
+        "from":3892144624
+        , "to":3892144976
+      }
+      , {
+        "from":3888525952
+        , "to":3892192928
+      }
+      , {
+        "from":3888525952
+        , "to":3892193280
+      }
+      , {
+        "from":3888525952
+        , "to":3892197488
+      }
+      , {
+        "from":3888525952
+        , "to":3892197840
+      }
+      , {
+        "from":3892197840
+        , "to":3892070944
+      }
+      , {
+        "from":3892197840
+        , "to":3892149184
+      }
+      , {
+        "from":3886586048
+        , "to":3886555344
+      }
+      , {
+        "from":3892192928
+        , "to":3892223264
+      }
+      , {
+        "from":3892169264
+        , "to":3892144624
+      }
+      , {
+        "from":3892149184
+        , "to":3892070944
+      }
+      , {
+        "from":3892070944
+        , "to":3892169616
+      }
+      , {
+        "from":3892223264
+        , "to":3892169264
+      }
+      , {
+        "from":3892197488
+        , "to":3892147568
+      }
+      , {
+        "from":3892147568
+        , "to":3892169264
+      }
+      , {
+        "from":3892193280
+        , "to":3892169616
+      }
+      , {
+        "from":3892169616
+        , "to":3892144624
+      }
+    ]
+  }
+}

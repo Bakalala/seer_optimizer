@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altera="http://www.altera.com/XMLSchema/Qsys/SystemTree">
+  <instanceKey xsi:type="xs:string">stencil5_latency_unconstrained</instanceKey>
+  <instanceData xsi:type="data">
+    <parameters></parameters>
+    <interconnectAssignments></interconnectAssignments>
+    <className>stencil5_latency_unconstrained</className>
+    <version>1.0</version>
+    <name>stencil5_latency_unconstrained</name>
+    <uniqueName>stencil5_latency_unconstrained</uniqueName>
+    <nonce>0</nonce>
+    <incidentConnections></incidentConnections>
+  </instanceData>
+  <children>
+    <node>
+      <instanceKey xsi:type="xs:string">stencil5_latency_unconstrained_internal_inst</instanceKey>
+      <instanceData xsi:type="data">
+        <parameters></parameters>
+        <interconnectAssignments></interconnectAssignments>
+        <className>stencil5_latency_unconstrained_internal</className>
+        <version>1.0</version>
+        <name>stencil5_latency_unconstrained_internal_inst</name>
+        <uniqueName>stencil5_latency_unconstrained_internal</uniqueName>
+        <fixedName>stencil5_latency_unconstrained_internal</fixedName>
+        <nonce>0</nonce>
+        <incidentConnections></incidentConnections>
+        <path>stencil5_latency_unconstrained.stencil5_latency_unconstrained_internal_inst</path>
+      </instanceData>
+      <children></children>
+    </node>
+  </children>
+</node>

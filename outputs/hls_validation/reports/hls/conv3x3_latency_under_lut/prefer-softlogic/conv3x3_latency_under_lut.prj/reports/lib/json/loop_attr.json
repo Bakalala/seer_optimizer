@@ -1,0 +1,74 @@
+{
+  "name":"loop_attributes"
+  , "id":4294967295
+  , "nodes":
+  [
+    {
+      "name":"conv3x3_latency_under_lut"
+      , "id":2301418176
+      , "clk":"No"
+      , "fmax":"240.00"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_latency_under_lut.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"conv3x3_latency_under_lut.B0.runOnce"
+          , "id":2299882320
+          , "af":"240.00"
+          , "br":"0"
+          , "ci":"0"
+          , "fo":"Disabled"
+          , "ii":"1"
+          , "ll":"1"
+          , "lt":"2.000000"
+          , "mi":"n/a"
+          , "pl":"Yes"
+          , "tc":"0"
+          , "tn":"1"
+          , "type":"bb"
+        }
+        , {
+          "name":"conv3x3_latency_under_lut.B1.start"
+          , "id":2299851488
+          , "af":"240.00"
+          , "br":"0"
+          , "ci":"1"
+          , "fo":"Disabled"
+          , "ii":"1"
+          , "ll":"1"
+          , "lt":"2.000000"
+          , "mi":"1"
+          , "pl":"Yes"
+          , "tc":"0"
+          , "tn":"1"
+          , "details":
+          [
+            {
+              "type":"text"
+              , "text":"Hyper-Optimized loop structure: n/a"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_latency_under_lut.cpp"
+                , "line":8
+              }
+            ]
+          ]
+          , "type":"loop"
+        }
+      ]
+    }
+  ]
+}

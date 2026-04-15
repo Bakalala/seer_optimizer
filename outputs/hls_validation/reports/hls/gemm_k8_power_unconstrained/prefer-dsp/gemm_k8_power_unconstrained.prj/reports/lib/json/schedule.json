@@ -1,0 +1,644 @@
+{
+  "1784472632":
+  {
+    "nodes":
+    [
+      {
+        "name":"gemm_k8_power_unconstrained.B0.runOnce"
+        , "id":1784512128
+        , "start":"0"
+        , "end":"2"
+        , "details":
+        [
+          {
+            "type":"table"
+          }
+        ]
+        , "type":"bb"
+        , "children":
+        [
+          {
+            "name":"?"
+            , "id":1786664736
+            , "start":"1"
+            , "end":"2"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Feedback Read"
+                , "Variable":"Unknown variable"
+                , "Start Cycle":"1"
+                , "Latency":"1"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                  , "line":8
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+        ]
+      }
+      , {
+        "name":"gemm_k8_power_unconstrained.B1.start"
+        , "id":1784481392
+        , "start":"2"
+        , "end":"8"
+        , "details":
+        [
+          {
+            "type":"table"
+          }
+        ]
+        , "type":"bb"
+        , "children":
+        [
+          {
+            "name":"RD"
+            , "id":1790795392
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Stream Read"
+                , "Width":"512 bits"
+                , "Depth":"0"
+                , "Stream Name":"call.gemm_k8_power_unconstrained"
+                , "Stall-free":"No"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                  , "line":8
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"Cluster 1"
+            , "id":1787014192
+            , "start":"3"
+            , "end":"8"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Cluster Name":"i_sfc_s_c1_in_wt_entry_gemm_k8_power_unconstraineds_c1_enter_gemm_k8_power_unconstrained3"
+                , "Cluster Type":"Stall-Enable"
+                , "Cluster Start Cycle":"1"
+                , "Cluster Latency":"5"
+              }
+            ]
+            , "type":"cluster"
+            , "children":
+            [
+              {
+                "name":"*"
+                , "id":1789529232
+                , "start":"3"
+                , "end":"6"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Multiply"
+                    , "Start Cycle":"1"
+                    , "Latency":"3"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":50
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"*"
+                , "id":1789528880
+                , "start":"3"
+                , "end":"6"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Multiply"
+                    , "Start Cycle":"1"
+                    , "Latency":"3"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":50
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"+"
+                , "id":1789495216
+                , "start":"7"
+                , "end":"7"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Add"
+                    , "Start Cycle":"5"
+                    , "Latency":"0"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":47
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"*"
+                , "id":1789528528
+                , "start":"3"
+                , "end":"6"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Multiply"
+                    , "Start Cycle":"1"
+                    , "Latency":"3"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":50
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"*"
+                , "id":1789373728
+                , "start":"3"
+                , "end":"6"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Multiply"
+                    , "Start Cycle":"1"
+                    , "Latency":"3"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":50
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"+"
+                , "id":1789495568
+                , "start":"7"
+                , "end":"7"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Add"
+                    , "Start Cycle":"5"
+                    , "Latency":"0"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":47
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"*"
+                , "id":1789373376
+                , "start":"3"
+                , "end":"6"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Multiply"
+                    , "Start Cycle":"1"
+                    , "Latency":"3"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":50
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"*"
+                , "id":1789373024
+                , "start":"3"
+                , "end":"6"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Multiply"
+                    , "Start Cycle":"1"
+                    , "Latency":"3"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":50
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"+"
+                , "id":1789495920
+                , "start":"7"
+                , "end":"7"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Add"
+                    , "Start Cycle":"5"
+                    , "Latency":"0"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":47
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"+"
+                , "id":1789778016
+                , "start":"7"
+                , "end":"7"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Add"
+                    , "Start Cycle":"5"
+                    , "Latency":"0"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":47
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"*"
+                , "id":1788543856
+                , "start":"3"
+                , "end":"6"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Multiply"
+                    , "Start Cycle":"1"
+                    , "Latency":"3"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":50
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"*"
+                , "id":1788543504
+                , "start":"3"
+                , "end":"6"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Multiply"
+                    , "Start Cycle":"1"
+                    , "Latency":"3"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":50
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"+"
+                , "id":1788544208
+                , "start":"7"
+                , "end":"7"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Add"
+                    , "Start Cycle":"5"
+                    , "Latency":"0"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":47
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"+"
+                , "id":1789777664
+                , "start":"7"
+                , "end":"7"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Add"
+                    , "Start Cycle":"5"
+                    , "Latency":"0"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":47
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"+"
+                , "id":1789778368
+                , "start":"8"
+                , "end":"8"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Instruction":"32-bit Integer Add"
+                    , "Start Cycle":"6"
+                    , "Latency":"0"
+                  }
+                ]
+                , "debug":
+                [
+                  [
+                    {
+                      "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                      , "line":47
+                    }
+                  ]
+                ]
+                , "type":"inst"
+              }
+              , {
+                "name":"Exit"
+                , "id":1787827120
+                , "start":"8"
+                , "end":"8"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Start Cycle":"6"
+                    , "Latency":"0"
+                  }
+                ]
+                , "type":"inst"
+              }
+            ]
+          }
+          , {
+            "name":"WR"
+            , "id":1790716000
+            , "start":"8"
+            , "end":"8"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Stream Write"
+                , "Width":"32 bits"
+                , "Depth":"0"
+                , "Stream Name":"return.gemm_k8_power_unconstrained"
+                , "Stall-free":"No"
+                , "Start Cycle":"6"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                  , "line":102
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"Cluster 0"
+            , "id":1786517968
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Cluster Name":"i_sfc_s_c0_in_wt_entry_gemm_k8_power_unconstraineds_c0_enter1_gemm_k8_power_unconstrained0"
+                , "Cluster Type":"Stall-Enable"
+                , "Cluster Start Cycle":"1"
+                , "Cluster Latency":"0"
+              }
+            ]
+            , "type":"cluster"
+            , "children":
+            [
+              {
+                "name":"Exit"
+                , "id":1789761472
+                , "start":"3"
+                , "end":"3"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Start Cycle":"1"
+                    , "Latency":"0"
+                  }
+                ]
+                , "type":"inst"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    , "links":
+    [
+      {
+        "from":1789778368
+        , "to":1787827120
+      }
+      , {
+        "from":1789777664
+        , "to":1789778368
+      }
+      , {
+        "from":1788544208
+        , "to":1789777664
+      }
+      , {
+        "from":1788543504
+        , "to":1788544208
+      }
+      , {
+        "from":1787014192
+        , "to":1790716000
+      }
+      , {
+        "from":1789529232
+        , "to":1789495216
+      }
+      , {
+        "from":1790795392
+        , "to":1787014192
+      }
+      , {
+        "from":1789528528
+        , "to":1789495568
+      }
+      , {
+        "from":1784512128
+        , "to":1784481392
+      }
+      , {
+        "from":1788543856
+        , "to":1788544208
+      }
+      , {
+        "from":1789373728
+        , "to":1789495568
+      }
+      , {
+        "from":1789528880
+        , "to":1789495216
+      }
+      , {
+        "from":1789495216
+        , "to":1789777664
+      }
+      , {
+        "from":1789373024
+        , "to":1789495920
+      }
+      , {
+        "from":1789495568
+        , "to":1789778016
+      }
+      , {
+        "from":1789373376
+        , "to":1789495920
+      }
+      , {
+        "from":1789495920
+        , "to":1789778016
+      }
+      , {
+        "from":1789778016
+        , "to":1789778368
+      }
+    ]
+  }
+}

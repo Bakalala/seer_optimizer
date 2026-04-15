@@ -1,0 +1,445 @@
+{
+  "1600331064":
+  {
+    "nodes":
+    [
+      {
+        "name":"fir8_original.B0.runOnce"
+        , "id":1600369856
+        , "start":"0"
+        , "end":"2"
+        , "details":
+        [
+          {
+            "type":"table"
+          }
+        ]
+        , "type":"bb"
+        , "children":
+        [
+          {
+            "name":"?"
+            , "id":1605949424
+            , "start":"1"
+            , "end":"2"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Feedback Read"
+                , "Variable":"Unknown variable"
+                , "Start Cycle":"1"
+                , "Latency":"1"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/fir8_original.cpp"
+                  , "line":8
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+        ]
+      }
+      , {
+        "name":"fir8_original.B1.start"
+        , "id":1600338992
+        , "start":"2"
+        , "end":"4"
+        , "details":
+        [
+          {
+            "type":"table"
+          }
+        ]
+        , "type":"bb"
+        , "children":
+        [
+          {
+            "name":"RD"
+            , "id":1605032912
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Stream Read"
+                , "Width":"256 bits"
+                , "Depth":"0"
+                , "Stream Name":"call.fir8_original"
+                , "Stall-free":"No"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/fir8_original.cpp"
+                  , "line":8
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":1604936208
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"<<"
+            , "id":1603157232
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Left Shift"
+                , "Constant Operand":"2 (0x2)"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":1603156880
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":47
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":1602307488
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"<<"
+            , "id":1602931456
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Left Shift"
+                , "Constant Operand":"1 (0x1)"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":1603082624
+            , "start":"3"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"1"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":47
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":1602307136
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"<<"
+            , "id":1603164192
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Left Shift"
+                , "Constant Operand":"1 (0x1)"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":1603135712
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":1603082976
+            , "start":"4"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"2"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":47
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"+"
+            , "id":1602921408
+            , "start":"4"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Add"
+                , "Start Cycle":"2"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":47
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"WR"
+            , "id":1602921760
+            , "start":"4"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Stream Write"
+                , "Width":"32 bits"
+                , "Depth":"0"
+                , "Stream Name":"return.fir8_original"
+                , "Stall-free":"No"
+                , "Start Cycle":"2"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/fir8_original.cpp"
+                  , "line":102
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"Cluster 0"
+            , "id":1602236080
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Cluster Name":"i_sfc_s_c0_in_wt_entry_fir8_originals_c0_enter1_fir8_original0"
+                , "Cluster Type":"Stall-Enable"
+                , "Cluster Start Cycle":"1"
+                , "Cluster Latency":"0"
+              }
+            ]
+            , "type":"cluster"
+            , "children":
+            [
+              {
+                "name":"Exit"
+                , "id":1605287472
+                , "start":"3"
+                , "end":"3"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Start Cycle":"1"
+                    , "Latency":"0"
+                  }
+                ]
+                , "type":"inst"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    , "links":
+    [
+      {
+        "from":1603157232
+        , "to":1603082624
+      }
+      , {
+        "from":1603082976
+        , "to":1602921408
+      }
+      , {
+        "from":1605032912
+        , "to":1602307136
+      }
+      , {
+        "from":1605032912
+        , "to":1602307488
+      }
+      , {
+        "from":1605032912
+        , "to":1603156880
+      }
+      , {
+        "from":1605032912
+        , "to":1604936208
+      }
+      , {
+        "from":1602921408
+        , "to":1602921760
+      }
+      , {
+        "from":1603135712
+        , "to":1603082976
+      }
+      , {
+        "from":1600369856
+        , "to":1600338992
+      }
+      , {
+        "from":1603156880
+        , "to":1603082976
+      }
+      , {
+        "from":1603082624
+        , "to":1602921408
+      }
+      , {
+        "from":1602307488
+        , "to":1602931456
+      }
+      , {
+        "from":1602931456
+        , "to":1603082624
+      }
+      , {
+        "from":1604936208
+        , "to":1603157232
+      }
+      , {
+        "from":1602307136
+        , "to":1603135712
+      }
+      , {
+        "from":1602307136
+        , "to":1603164192
+      }
+      , {
+        "from":1603164192
+        , "to":1603135712
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "nodes":
+  [
+    {
+      "name":"conv3x3_weighted"
+      , "id":1028374968
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"conv3x3_weighted.B1.start"
+          , "id":1028412560
+          , "type":"bb"
+          , "children":
+          [
+            {
+              "name":"Cluster 0"
+              , "id":1030305920
+              , "type":"cluster"
+            }
+          ]
+        }
+        , {
+          "name":"conv3x3_weighted.B0.runOnce"
+          , "id":1028412480
+          , "type":"bb"
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

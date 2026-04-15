@@ -1,0 +1,332 @@
+{
+  "69741768":
+  {
+    "nodes":
+    [
+      {
+        "name":"stencil5_latency_under_dsp.B0.runOnce"
+        , "id":69779360
+        , "start":"0"
+        , "end":"2"
+        , "details":
+        [
+          {
+            "type":"table"
+          }
+        ]
+        , "type":"bb"
+        , "children":
+        [
+          {
+            "name":"?"
+            , "id":74984208
+            , "start":"1"
+            , "end":"2"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Feedback Read"
+                , "Variable":"Unknown variable"
+                , "Start Cycle":"1"
+                , "Latency":"1"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/stencil5_latency_under_dsp.cpp"
+                  , "line":8
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+        ]
+      }
+      , {
+        "name":"stencil5_latency_under_dsp.B1.start"
+        , "id":69779440
+        , "start":"2"
+        , "end":"4"
+        , "details":
+        [
+          {
+            "type":"table"
+          }
+        ]
+        , "type":"bb"
+        , "children":
+        [
+          {
+            "name":"Cluster 0"
+            , "id":71607616
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Cluster Name":"i_sfc_s_c0_in_wt_entry_stencil5_latency_under_dsps_c0_enter1_stencil5_latency_under_dsp0"
+                , "Cluster Type":"Stall-Enable"
+                , "Cluster Start Cycle":"1"
+                , "Cluster Latency":"0"
+              }
+            ]
+            , "type":"cluster"
+            , "children":
+            [
+              {
+                "name":"Exit"
+                , "id":71560576
+                , "start":"3"
+                , "end":"3"
+                , "details":
+                [
+                  {
+                    "type":"table"
+                    , "Start Cycle":"1"
+                    , "Latency":"0"
+                  }
+                ]
+                , "type":"inst"
+              }
+            ]
+          }
+          , {
+            "name":"RD"
+            , "id":72567888
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Stream Read"
+                , "Width":"160 bits"
+                , "Depth":"0"
+                , "Stream Name":"call.stencil5_latency_under_dsp"
+                , "Stall-free":"No"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/stencil5_latency_under_dsp.cpp"
+                  , "line":8
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"<<"
+            , "id":71732992
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Left Shift"
+                , "Constant Operand":"2 (0x2)"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":51
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"-"
+            , "id":72973568
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Subtract"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":47
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"-"
+            , "id":72973920
+            , "start":"3"
+            , "end":"3"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Subtract"
+                , "Start Cycle":"1"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":47
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"-"
+            , "id":71863536
+            , "start":"4"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Subtract"
+                , "Start Cycle":"2"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":47
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"-"
+            , "id":71863888
+            , "start":"4"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"32-bit Integer Subtract"
+                , "Start Cycle":"2"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                  , "line":47
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+          , {
+            "name":"WR"
+            , "id":75052592
+            , "start":"4"
+            , "end":"4"
+            , "details":
+            [
+              {
+                "type":"table"
+                , "Instruction":"Stream Write"
+                , "Width":"32 bits"
+                , "Depth":"0"
+                , "Stream Name":"return.stencil5_latency_under_dsp"
+                , "Stall-free":"No"
+                , "Start Cycle":"2"
+                , "Latency":"0"
+              }
+            ]
+            , "debug":
+            [
+              [
+                {
+                  "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/stencil5_latency_under_dsp.cpp"
+                  , "line":66
+                }
+              ]
+            ]
+            , "type":"inst"
+          }
+        ]
+      }
+    ]
+    , "links":
+    [
+      {
+        "from":71863888
+        , "to":75052592
+      }
+      , {
+        "from":72973920
+        , "to":71863536
+      }
+      , {
+        "from":71863536
+        , "to":71863888
+      }
+      , {
+        "from":72973568
+        , "to":72973920
+      }
+      , {
+        "from":69779360
+        , "to":69779440
+      }
+      , {
+        "from":71732992
+        , "to":72973568
+      }
+      , {
+        "from":72567888
+        , "to":71732992
+      }
+      , {
+        "from":72567888
+        , "to":71863536
+      }
+      , {
+        "from":72567888
+        , "to":71863888
+      }
+      , {
+        "from":72567888
+        , "to":72973568
+      }
+      , {
+        "from":72567888
+        , "to":72973920
+      }
+    ]
+  }
+}

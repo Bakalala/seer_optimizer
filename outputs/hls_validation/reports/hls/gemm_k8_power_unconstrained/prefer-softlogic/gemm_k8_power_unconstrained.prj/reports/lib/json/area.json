@@ -1,0 +1,869 @@
+{
+  "columns":
+  ["", "ALUTs", "FFs", "RAMs", "DSPs", "MLABs", "Details"]
+  , "debug_enabled":"true"
+  , "type":"module"
+  , "total_percent":
+  [0.0704792, 0.0581695, 0.0195459, 0, 0.790514]
+  , "total":
+  [497, 334, 0, 12, 0]
+  , "name":"System"
+  , "max_resources":
+  [854400, 1708800, 2713, 1518, 42720]
+  , "children":
+  [
+    {
+      "name":"gemm_k8_power_unconstrained"
+      , "compute_units":1
+      , "type":"function"
+      , "total_percent":
+      [0.0704792, 0.0581695, 0.0195459, 0, 0.790514]
+      , "total_kernel_resources":
+      [497, 334, 0, 12, 0]
+      , "details":
+      [
+        {
+          "type":"text"
+          , "text":"Number of compute units: 1"
+        }
+        , {
+          "type":"brief"
+          , "text":"1 compute unit."
+        }
+      ]
+      , "children":
+      [
+        {
+          "name":"Component call"
+          , "type":"resource"
+          , "data":
+          [0, 0, 0, 0, 0]
+          , "details":
+          [
+            {
+              "type":"text"
+              , "text":"Stream implemented 512 bits wide with a buffer size of 0 elements."
+            }
+            , {
+              "type":"brief"
+              , "text":"512b wide with 0 elements."
+            }
+          ]
+        }
+        , {
+          "name":"Component return"
+          , "type":"resource"
+          , "data":
+          [0, 0, 0, 0, 0]
+          , "details":
+          [
+            {
+              "type":"text"
+              , "text":"Stream implemented 32 bits wide with a buffer size of 0 elements."
+            }
+            , {
+              "type":"brief"
+              , "text":"32b wide with 0 elements."
+            }
+          ]
+        }
+        , {
+          "name":"gemm_k8_power_unconstrained.B1.start"
+          , "type":"basicblock"
+          , "children":
+          [
+            {
+              "name":"State"
+              , "type":"resource"
+              , "data":
+              [2, 325, 0, 0, 0]
+              , "details":
+              [
+                {
+                  "type":"brief"
+                  , "text":"Live values and control logic"
+                }
+                , {
+                  "type":"text"
+                  , "text":"Resources for live values and control logic. To reduce this area:"
+                  , "details":
+                  [
+                    {
+                      "type":"text"
+                      , "text":"reduce size of local variables"
+                    }
+                    , {
+                      "type":"text"
+                      , "text":"reduce scope of local variables, localizing them as much as possible"
+                    }
+                    , {
+                      "type":"text"
+                      , "text":"reduce number of nested loops"
+                    }
+                  ]
+                }
+              ]
+              , "children":
+              [
+                {
+                  "name":"No Source Line"
+                  , "type":"resource"
+                  , "data":
+                  [2, 325, 0, 0, 0]
+                }
+              ]
+            }
+            , {
+              "name":"Feedback"
+              , "type":"resource"
+              , "data":
+              [7, 7, 0, 0, 0]
+              , "details":
+              [
+                {
+                  "type":"brief"
+                  , "text":"Loop-carried dependencies"
+                }
+                , {
+                  "type":"text"
+                  , "text":"Resources for loop-carried dependencies. To reduce this area:"
+                  , "details":
+                  [
+                    {
+                      "type":"text"
+                      , "text":"reduce number and size of loop-carried variables"
+                    }
+                  ]
+                }
+              ]
+              , "children":
+              [
+                {
+                  "name":"gemm_k8_power_unconstrained.cpp:8"
+                  , "type":"resource"
+                  , "data":
+                  [7, 7, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":8
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+            , {
+              "name":"Cluster logic"
+              , "type":"resource"
+              , "data":
+              [2, 0, 0, 0, 0]
+              , "details":
+              [
+                {
+                  "type":"brief"
+                  , "text":"Logic required to efficiently support sets of operations that do not stall"
+                }
+                , {
+                  "type":"text"
+                  , "text":"Logic required to efficiently support sets of operations that do not stall. This area cannot be affected directly."
+                }
+              ]
+            }
+            , {
+              "name":"Computation"
+              , "type":"resource"
+              , "children":
+              [
+                {
+                  "name":"gemm_k8_power_unconstrained.cpp:8"
+                  , "type":"resource"
+                  , "data":
+                  [3, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":8
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"Stream Read"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [3, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:16 > generated_datapaths.hpp:50 > \ngenerated_datapaths.hpp:28 > math_dsp_control.h:72 > \nmath_dsp_control.h:41 > generated_datapaths.hpp:28 > \ngenerated_datapaths.hpp:50"
+                  , "type":"resource"
+                  , "data":
+                  [32, 0, 0, 1.5, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":16
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [32, 0, 0, 1.5, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:25 > generated_datapaths.hpp:50 > \ngenerated_datapaths.hpp:28 > math_dsp_control.h:72 > \nmath_dsp_control.h:41 > generated_datapaths.hpp:28 > \ngenerated_datapaths.hpp:50"
+                  , "type":"resource"
+                  , "data":
+                  [32, 0, 0, 1.5, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":25
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [32, 0, 0, 1.5, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:34 > generated_datapaths.hpp:50 > \ngenerated_datapaths.hpp:28 > math_dsp_control.h:72 > \nmath_dsp_control.h:41 > generated_datapaths.hpp:28 > \ngenerated_datapaths.hpp:50"
+                  , "type":"resource"
+                  , "data":
+                  [32, 0, 0, 1.5, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":34
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [32, 0, 0, 1.5, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:43 > generated_datapaths.hpp:50 > \ngenerated_datapaths.hpp:28 > math_dsp_control.h:72 > \nmath_dsp_control.h:41 > generated_datapaths.hpp:28 > \ngenerated_datapaths.hpp:50"
+                  , "type":"resource"
+                  , "data":
+                  [32, 0, 0, 1.5, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":43
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [32, 0, 0, 1.5, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:52 > generated_datapaths.hpp:50 > \ngenerated_datapaths.hpp:28 > math_dsp_control.h:72 > \nmath_dsp_control.h:41 > generated_datapaths.hpp:28 > \ngenerated_datapaths.hpp:50"
+                  , "type":"resource"
+                  , "data":
+                  [32, 0, 0, 1.5, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":52
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [32, 0, 0, 1.5, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:61 > generated_datapaths.hpp:50 > \ngenerated_datapaths.hpp:28 > math_dsp_control.h:72 > \nmath_dsp_control.h:41 > generated_datapaths.hpp:28 > \ngenerated_datapaths.hpp:50"
+                  , "type":"resource"
+                  , "data":
+                  [32, 0, 0, 1.5, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":61
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [32, 0, 0, 1.5, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:70 > generated_datapaths.hpp:50 > \ngenerated_datapaths.hpp:28 > math_dsp_control.h:72 > \nmath_dsp_control.h:41 > generated_datapaths.hpp:28 > \ngenerated_datapaths.hpp:50"
+                  , "type":"resource"
+                  , "data":
+                  [32, 0, 0, 1.5, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":70
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [32, 0, 0, 1.5, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:79 > generated_datapaths.hpp:50 > \ngenerated_datapaths.hpp:28 > math_dsp_control.h:72 > \nmath_dsp_control.h:41 > generated_datapaths.hpp:28 > \ngenerated_datapaths.hpp:50"
+                  , "type":"resource"
+                  , "data":
+                  [32, 0, 0, 1.5, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":79
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":28
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":50
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [32, 0, 0, 1.5, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:82 > generated_datapaths.hpp:47 > \ngenerated_datapaths.hpp:39 > math_dsp_control.h:78 > \nmath_dsp_control.h:56 > generated_datapaths.hpp:39 > \ngenerated_datapaths.hpp:47"
+                  , "type":"resource"
+                  , "data":
+                  [13.7143, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":82
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Add"
+                      , "type":"resource"
+                      , "count":3
+                      , "data":
+                      [13.7143, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:85 > generated_datapaths.hpp:47 > \ngenerated_datapaths.hpp:39 > math_dsp_control.h:78 > \nmath_dsp_control.h:56 > generated_datapaths.hpp:39 > \ngenerated_datapaths.hpp:47"
+                  , "type":"resource"
+                  , "data":
+                  [19.0476, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":85
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Add"
+                      , "type":"resource"
+                      , "count":4
+                      , "data":
+                      [19.0476, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:88 > generated_datapaths.hpp:47 > \ngenerated_datapaths.hpp:39 > math_dsp_control.h:78 > \nmath_dsp_control.h:56 > generated_datapaths.hpp:39 > \ngenerated_datapaths.hpp:47"
+                  , "type":"resource"
+                  , "data":
+                  [19.0476, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":88
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Add"
+                      , "type":"resource"
+                      , "count":4
+                      , "data":
+                      [19.0476, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:91 > generated_datapaths.hpp:47 > \ngenerated_datapaths.hpp:39 > math_dsp_control.h:78 > \nmath_dsp_control.h:56 > generated_datapaths.hpp:39 > \ngenerated_datapaths.hpp:47"
+                  , "type":"resource"
+                  , "data":
+                  [35.0476, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":91
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Add"
+                      , "type":"resource"
+                      , "count":6
+                      , "data":
+                      [35.0476, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:94 > generated_datapaths.hpp:47 > \ngenerated_datapaths.hpp:39 > math_dsp_control.h:78 > \nmath_dsp_control.h:56 > generated_datapaths.hpp:39 > \ngenerated_datapaths.hpp:47"
+                  , "type":"resource"
+                  , "data":
+                  [35.0476, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":94
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Add"
+                      , "type":"resource"
+                      , "count":6
+                      , "data":
+                      [35.0476, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:97 > generated_datapaths.hpp:47 > \ngenerated_datapaths.hpp:39 > math_dsp_control.h:78 > \nmath_dsp_control.h:56 > generated_datapaths.hpp:39 > \ngenerated_datapaths.hpp:47"
+                  , "type":"resource"
+                  , "data":
+                  [51.0476, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":97
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Add"
+                      , "type":"resource"
+                      , "count":7
+                      , "data":
+                      [51.0476, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:100 > generated_datapaths.hpp:47 > \ngenerated_datapaths.hpp:39 > math_dsp_control.h:78 > \nmath_dsp_control.h:56 > generated_datapaths.hpp:39 > \ngenerated_datapaths.hpp:47"
+                  , "type":"resource"
+                  , "data":
+                  [51.0476, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":100
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":39
+                      }
+                      , {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/generated_datapaths.hpp"
+                        , "line":47
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Add"
+                      , "type":"resource"
+                      , "count":7
+                      , "data":
+                      [51.0476, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"gemm_k8_power_unconstrained.cpp:102"
+                  , "type":"resource"
+                  , "data":
+                  [3, 2, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                        , "line":102
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"Stream Write"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [3, 2, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

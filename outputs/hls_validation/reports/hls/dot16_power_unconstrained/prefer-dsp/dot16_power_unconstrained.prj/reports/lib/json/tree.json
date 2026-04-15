@@ -1,0 +1,39 @@
+{
+  "nodes":
+  [
+    {
+      "name":"dot16_power_unconstrained"
+      , "id":2504762424
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"dot16_power_unconstrained.B0.runOnce"
+          , "id":2504803024
+          , "type":"bb"
+        }
+        , {
+          "name":"dot16_power_unconstrained.B1.start"
+          , "id":2504771120
+          , "type":"bb"
+          , "children":
+          [
+            {
+              "name":"Cluster 0"
+              , "id":2507024544
+              , "type":"cluster"
+            }
+            , {
+              "name":"Cluster 1"
+              , "id":2507577568
+              , "type":"cluster"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

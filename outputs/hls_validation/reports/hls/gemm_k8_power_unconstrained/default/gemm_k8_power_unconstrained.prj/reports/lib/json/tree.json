@@ -1,0 +1,39 @@
+{
+  "nodes":
+  [
+    {
+      "name":"gemm_k8_power_unconstrained"
+      , "id":1313100856
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"gemm_k8_power_unconstrained.B1.start"
+          , "id":1313109616
+          , "type":"bb"
+          , "children":
+          [
+            {
+              "name":"Cluster 0"
+              , "id":1315146192
+              , "type":"cluster"
+            }
+            , {
+              "name":"Cluster 1"
+              , "id":1315642416
+              , "type":"cluster"
+            }
+          ]
+        }
+        , {
+          "name":"gemm_k8_power_unconstrained.B0.runOnce"
+          , "id":1313140352
+          , "type":"bb"
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

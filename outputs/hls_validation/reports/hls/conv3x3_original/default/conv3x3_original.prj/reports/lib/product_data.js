@@ -1,0 +1,1 @@
+var infoJSON={"compileInfo":{"nodes":[{"command":"i++ -march=Arria10 --simulator none /home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_original.cpp -o conv3x3_original","family":"Arria10, 10AX115U1F45I1SG","id":1,"name":"./conv3x3_original","product":"HLS","quartus":"19.2.0 Build 57 Pro","time":"Wed Apr 15 12:29:11 2026","version":"21.1.0 Build 173.3"}]}};

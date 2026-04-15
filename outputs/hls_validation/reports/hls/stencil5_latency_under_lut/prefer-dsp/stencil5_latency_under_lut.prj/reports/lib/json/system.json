@@ -1,0 +1,116 @@
+{
+  "nodes":
+  [
+    {
+      "name":"stencil5_latency_under_lut"
+      , "id":3777993768
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"Stream Read"
+          , "id":3778095904
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"stencil5_latency_under_lut.B1.start"
+              , "Width":"160 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/stencil5_latency_under_lut.cpp"
+                , "line":8
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+        , {
+          "name":"Stream Write"
+          , "id":3778097392
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"stencil5_latency_under_lut.B1.start"
+              , "Width":"32 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/stencil5_latency_under_lut.cpp"
+                , "line":66
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+      ]
+    }
+    , {
+      "name":"return.stencil5_latency_under_lut"
+      , "id":3777531648
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"32 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"32 bits"
+          , "Uses Packets":"No"
+          , "Uses Ready":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+    , {
+      "name":"call.stencil5_latency_under_lut"
+      , "id":3777681616
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"160 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"160 bits"
+          , "Uses Packets":"No"
+          , "Uses Valid":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+  ]
+  , "links":
+  [
+    {
+      "from":3778097392
+      , "to":3777531648
+    }
+    , {
+      "from":3777681616
+      , "to":3778095904
+    }
+    , {
+      "from":3778095904
+      , "to":3778097392
+    }
+  ]
+}

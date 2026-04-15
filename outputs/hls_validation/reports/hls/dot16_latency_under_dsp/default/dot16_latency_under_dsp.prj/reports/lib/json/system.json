@@ -1,0 +1,116 @@
+{
+  "nodes":
+  [
+    {
+      "name":"dot16_latency_under_dsp"
+      , "id":4165399496
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"Stream Write"
+          , "id":4165530240
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"dot16_latency_under_dsp.B1.start"
+              , "Width":"32 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/dot16_latency_under_dsp.cpp"
+                , "line":198
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+        , {
+          "name":"Stream Read"
+          , "id":4165531008
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"dot16_latency_under_dsp.B1.start"
+              , "Width":"1024 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/dot16_latency_under_dsp.cpp"
+                , "line":8
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+      ]
+    }
+    , {
+      "name":"return.dot16_latency_under_dsp"
+      , "id":4164937216
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"32 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"32 bits"
+          , "Uses Packets":"No"
+          , "Uses Ready":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+    , {
+      "name":"call.dot16_latency_under_dsp"
+      , "id":4164947968
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"1024 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"1024 bits"
+          , "Uses Packets":"No"
+          , "Uses Valid":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+  ]
+  , "links":
+  [
+    {
+      "from":4165530240
+      , "to":4164937216
+    }
+    , {
+      "from":4164947968
+      , "to":4165531008
+    }
+    , {
+      "from":4165531008
+      , "to":4165530240
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+	component gemm_k8_power_unconstrained is
+		port (
+			clock      : in  std_logic                     := 'X';             -- clk
+			resetn     : in  std_logic                     := 'X';             -- reset_n
+			start      : in  std_logic                     := 'X';             -- valid
+			busy       : out std_logic;                                        -- stall
+			done       : out std_logic;                                        -- valid
+			stall      : in  std_logic                     := 'X';             -- stall
+			returndata : out std_logic_vector(31 downto 0);                    -- data
+			in_A0      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_A1      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_A2      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_A3      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_A4      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_A5      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_A6      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_A7      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_B0      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_B1      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_B2      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_B3      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_B4      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_B5      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_B6      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_B7      : in  std_logic_vector(31 downto 0) := (others => 'X')  -- data
+		);
+	end component gemm_k8_power_unconstrained;
+

@@ -1,0 +1,39 @@
+{
+  "nodes":
+  [
+    {
+      "name":"dot16_weighted"
+      , "id":4267517736
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"dot16_weighted.B1.start"
+          , "id":4267988144
+          , "type":"bb"
+          , "children":
+          [
+            {
+              "name":"Cluster 0"
+              , "id":4270235376
+              , "type":"cluster"
+            }
+            , {
+              "name":"Cluster 1"
+              , "id":4270787632
+              , "type":"cluster"
+            }
+          ]
+        }
+        , {
+          "name":"dot16_weighted.B0.runOnce"
+          , "id":4268020096
+          , "type":"bb"
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

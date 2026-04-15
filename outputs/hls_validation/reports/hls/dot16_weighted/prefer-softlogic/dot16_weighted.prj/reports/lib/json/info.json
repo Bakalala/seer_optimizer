@@ -1,0 +1,1 @@
+{"compileInfo":{"nodes":[{"command":"i++ -march=Arria10 --simulator none --dsp-mode=prefer-softlogic /home/aseife2/seer_optimizer/outputs/hls_validation/src/dot16_weighted.cpp -o dot16_weighted","family":"Arria10, 10AX115U1F45I1SG","id":1,"name":"./dot16_weighted","product":"HLS","quartus":"19.2.0 Build 57 Pro","time":"Wed Apr 15 12:38:52 2026","version":"21.1.0 Build 173.3"}]}}

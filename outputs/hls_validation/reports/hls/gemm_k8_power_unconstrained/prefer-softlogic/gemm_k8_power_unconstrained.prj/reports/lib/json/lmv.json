@@ -1,0 +1,376 @@
+{
+  "nodes":
+  [
+    {
+      "type":"interface"
+      , "id":11
+      , "name":"in_A0"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":12
+      , "name":"in_A1"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":13
+      , "name":"in_A2"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":14
+      , "name":"in_A3"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":15
+      , "name":"in_A4"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":16
+      , "name":"in_A5"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":17
+      , "name":"in_A6"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":18
+      , "name":"in_A7"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":19
+      , "name":"in_B0"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":20
+      , "name":"in_B1"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":21
+      , "name":"in_B2"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":22
+      , "name":"in_B3"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":23
+      , "name":"in_B4"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":24
+      , "name":"in_B5"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":25
+      , "name":"in_B6"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":26
+      , "name":"in_B7"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_k8_power_unconstrained"
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

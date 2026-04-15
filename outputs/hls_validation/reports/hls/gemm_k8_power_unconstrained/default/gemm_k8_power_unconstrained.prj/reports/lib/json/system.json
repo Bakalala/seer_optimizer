@@ -1,0 +1,116 @@
+{
+  "nodes":
+  [
+    {
+      "name":"gemm_k8_power_unconstrained"
+      , "id":1313100856
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"Stream Read"
+          , "id":1313217760
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"gemm_k8_power_unconstrained.B1.start"
+              , "Width":"512 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                , "line":8
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+        , {
+          "name":"Stream Write"
+          , "id":1313122544
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"gemm_k8_power_unconstrained.B1.start"
+              , "Width":"32 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_k8_power_unconstrained.cpp"
+                , "line":102
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+      ]
+    }
+    , {
+      "name":"return.gemm_k8_power_unconstrained"
+      , "id":1312638496
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"32 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"32 bits"
+          , "Uses Packets":"No"
+          , "Uses Ready":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+    , {
+      "name":"call.gemm_k8_power_unconstrained"
+      , "id":1312649312
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"512 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"512 bits"
+          , "Uses Packets":"No"
+          , "Uses Valid":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+  ]
+  , "links":
+  [
+    {
+      "from":1313122544
+      , "to":1312638496
+    }
+    , {
+      "from":1312649312
+      , "to":1313217760
+    }
+    , {
+      "from":1313217760
+      , "to":1313122544
+    }
+  ]
+}

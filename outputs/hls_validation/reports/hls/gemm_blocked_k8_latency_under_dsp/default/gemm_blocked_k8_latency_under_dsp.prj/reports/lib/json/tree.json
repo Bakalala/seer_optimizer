@@ -1,0 +1,39 @@
+{
+  "nodes":
+  [
+    {
+      "name":"gemm_blocked_k8_latency_under_dsp"
+      , "id":2509731000
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"gemm_blocked_k8_latency_under_dsp.B1.start"
+          , "id":2509739616
+          , "type":"bb"
+          , "children":
+          [
+            {
+              "name":"Cluster 1"
+              , "id":2512273664
+              , "type":"cluster"
+            }
+            , {
+              "name":"Cluster 0"
+              , "id":2511777280
+              , "type":"cluster"
+            }
+          ]
+        }
+        , {
+          "name":"gemm_blocked_k8_latency_under_dsp.B0.runOnce"
+          , "id":2509770672
+          , "type":"bb"
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

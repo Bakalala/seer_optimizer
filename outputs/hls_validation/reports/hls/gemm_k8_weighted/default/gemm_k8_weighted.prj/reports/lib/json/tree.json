@@ -1,0 +1,39 @@
+{
+  "nodes":
+  [
+    {
+      "name":"gemm_k8_weighted"
+      , "id":394835752
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"gemm_k8_weighted.B1.start"
+          , "id":395337312
+          , "type":"bb"
+          , "children":
+          [
+            {
+              "name":"Cluster 1"
+              , "id":397837856
+              , "type":"cluster"
+            }
+            , {
+              "name":"Cluster 0"
+              , "id":397342176
+              , "type":"cluster"
+            }
+          ]
+        }
+        , {
+          "name":"gemm_k8_weighted.B0.runOnce"
+          , "id":395337232
+          , "type":"bb"
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

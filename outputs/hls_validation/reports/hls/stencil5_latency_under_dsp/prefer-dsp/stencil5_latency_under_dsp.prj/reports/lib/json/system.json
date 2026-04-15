@@ -1,0 +1,116 @@
+{
+  "nodes":
+  [
+    {
+      "name":"stencil5_latency_under_dsp"
+      , "id":1408785608
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"Stream Read"
+          , "id":1408887872
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"stencil5_latency_under_dsp.B1.start"
+              , "Width":"160 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/stencil5_latency_under_dsp.cpp"
+                , "line":8
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+        , {
+          "name":"Stream Write"
+          , "id":1408889360
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"stencil5_latency_under_dsp.B1.start"
+              , "Width":"32 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/stencil5_latency_under_dsp.cpp"
+                , "line":66
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+      ]
+    }
+    , {
+      "name":"call.stencil5_latency_under_dsp"
+      , "id":1408473296
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"160 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"160 bits"
+          , "Uses Packets":"No"
+          , "Uses Valid":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+    , {
+      "name":"return.stencil5_latency_under_dsp"
+      , "id":1408473424
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"32 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"32 bits"
+          , "Uses Packets":"No"
+          , "Uses Ready":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+  ]
+  , "links":
+  [
+    {
+      "from":1408473296
+      , "to":1408887872
+    }
+    , {
+      "from":1408889360
+      , "to":1408473424
+    }
+    , {
+      "from":1408887872
+      , "to":1408889360
+    }
+  ]
+}

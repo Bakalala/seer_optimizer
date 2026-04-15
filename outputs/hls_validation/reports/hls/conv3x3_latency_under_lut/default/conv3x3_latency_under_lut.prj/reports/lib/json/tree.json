@@ -1,0 +1,34 @@
+{
+  "nodes":
+  [
+    {
+      "name":"conv3x3_latency_under_lut"
+      , "id":635732808
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"conv3x3_latency_under_lut.B0.runOnce"
+          , "id":635771728
+          , "type":"bb"
+        }
+        , {
+          "name":"conv3x3_latency_under_lut.B1.start"
+          , "id":635740896
+          , "type":"bb"
+          , "children":
+          [
+            {
+              "name":"Cluster 0"
+              , "id":637672704
+              , "type":"cluster"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

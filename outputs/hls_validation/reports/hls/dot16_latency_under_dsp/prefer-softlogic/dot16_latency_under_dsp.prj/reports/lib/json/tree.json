@@ -1,0 +1,39 @@
+{
+  "nodes":
+  [
+    {
+      "name":"dot16_latency_under_dsp"
+      , "id":3204232136
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"dot16_latency_under_dsp.B0.runOnce"
+          , "id":3204272720
+          , "type":"bb"
+        }
+        , {
+          "name":"dot16_latency_under_dsp.B1.start"
+          , "id":3204240928
+          , "type":"bb"
+          , "children":
+          [
+            {
+              "name":"Cluster 0"
+              , "id":3206488784
+              , "type":"cluster"
+            }
+            , {
+              "name":"Cluster 1"
+              , "id":3207041536
+              , "type":"cluster"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

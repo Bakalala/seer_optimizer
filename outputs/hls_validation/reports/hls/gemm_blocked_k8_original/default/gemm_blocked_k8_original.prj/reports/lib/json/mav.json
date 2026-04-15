@@ -1,0 +1,682 @@
+{
+  "nodes":
+  [
+    {
+      "type":"component"
+      , "id":2
+      , "name":"gemm_blocked_k8_original"
+      , "children":
+      [
+        {
+          "type":"bb"
+          , "id":3
+          , "name":"gemm_blocked_k8_original.B0.runOnce"
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Latency":"2"
+            }
+          ]
+        }
+        , {
+          "type":"bb"
+          , "id":4
+          , "name":"gemm_blocked_k8_original.B1.start"
+          , "children":
+          [
+            {
+              "type":"inst"
+              , "id":5
+              , "name":"Stream Read"
+              , "debug":
+              [
+                [
+                  {
+                    "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+                    , "line":8
+                  }
+                ]
+              ]
+              , "details":
+              [
+                {
+                  "type":"table"
+                  , "Width":"512 bits"
+                  , "Depth":"0"
+                  , "Stall-free":"No"
+                  , "Start Cycle":"1"
+                  , "Latency":"0"
+                  , "Reference":
+                  [
+                    {
+                      "type":"text"
+                      , "text":"See %L for more information"
+                      , "links":
+                      [
+                        {
+                          "guide":"Reference Manual"
+                          , "link":"https://www.intel.com/content/www/us/en/programmable/documentation/ewa1462824960255.html"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            , {
+              "type":"inst"
+              , "id":7
+              , "name":"Stream Write"
+              , "debug":
+              [
+                [
+                  {
+                    "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+                    , "line":102
+                  }
+                ]
+              ]
+              , "details":
+              [
+                {
+                  "type":"table"
+                  , "Width":"32 bits"
+                  , "Depth":"0"
+                  , "Stall-free":"No"
+                  , "Start Cycle":"6"
+                  , "Latency":"0"
+                  , "Reference":
+                  [
+                    {
+                      "type":"text"
+                      , "text":"See %L for more information"
+                      , "links":
+                      [
+                        {
+                          "guide":"Reference Manual"
+                          , "link":"https://www.intel.com/content/www/us/en/programmable/documentation/ewa1462824960255.html"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            , {
+              "type":"inst"
+              , "id":9
+              , "name":"Loop Input"
+              , "debug":
+              [
+                [
+                  {
+                    "filename":""
+                    , "line":0
+                  }
+                ]
+              ]
+              , "details":
+              [
+                {
+                  "type":"table"
+                  , "Start Cycle":"0"
+                  , "Latency":"1"
+                  , "Loops To":"10"
+                }
+              ]
+            }
+            , {
+              "type":"inst"
+              , "id":10
+              , "name":"Loop End"
+              , "details":
+              [
+                {
+                  "type":"table"
+                  , "Start Cycle":"1"
+                  , "Latency":"1"
+                }
+              ]
+            }
+          ]
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Latency":"1"
+              , "II":"1"
+              , "Subloops":"No"
+              , "Pipelined":"Yes"
+              , "Fmax Bottlenecks":"No"
+              , "Loop Info":""
+            }
+          ]
+        }
+      ]
+    }
+    , {
+      "type":"stream"
+      , "id":6
+      , "name":"call.gemm_blocked_k8_original"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"512 bits"
+          , "Depth":"0"
+          , "Bits per symbol":"512 bits"
+          , "Uses Packets":"No"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+          , "Uses Valid":"Yes"
+          , "Ready Latency":"0"
+        }
+      ]
+    }
+    , {
+      "type":"stream"
+      , "id":8
+      , "name":"return.gemm_blocked_k8_original"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"32 bits"
+          , "Depth":"0"
+          , "Bits per symbol":"32 bits"
+          , "Uses Packets":"No"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+          , "Uses Ready":"Yes"
+          , "Ready Latency":"0"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":11
+      , "name":"in_BA0"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":12
+      , "name":"in_BA1"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":13
+      , "name":"in_BA2"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":14
+      , "name":"in_BA3"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":15
+      , "name":"in_BA4"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":16
+      , "name":"in_BA5"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":17
+      , "name":"in_BA6"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":18
+      , "name":"in_BA7"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":19
+      , "name":"in_BB0"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":20
+      , "name":"in_BB1"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":21
+      , "name":"in_BB2"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":22
+      , "name":"in_BB3"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":23
+      , "name":"in_BB4"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":24
+      , "name":"in_BB5"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":25
+      , "name":"in_BB6"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":26
+      , "name":"in_BB7"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_original.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"gemm_blocked_k8_original"
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+    {
+      "from":6
+      , "to":5
+    }
+    , {
+      "from":7
+      , "to":8
+    }
+    , {
+      "from":11
+      , "to":5
+    }
+    , {
+      "from":12
+      , "to":5
+    }
+    , {
+      "from":13
+      , "to":5
+    }
+    , {
+      "from":14
+      , "to":5
+    }
+    , {
+      "from":15
+      , "to":5
+    }
+    , {
+      "from":16
+      , "to":5
+    }
+    , {
+      "from":17
+      , "to":5
+    }
+    , {
+      "from":18
+      , "to":5
+    }
+    , {
+      "from":19
+      , "to":5
+    }
+    , {
+      "from":20
+      , "to":5
+    }
+    , {
+      "from":21
+      , "to":5
+    }
+    , {
+      "from":22
+      , "to":5
+    }
+    , {
+      "from":23
+      , "to":5
+    }
+    , {
+      "from":24
+      , "to":5
+    }
+    , {
+      "from":25
+      , "to":5
+    }
+    , {
+      "from":26
+      , "to":5
+    }
+    , {
+      "from":10
+      , "to":9
+    }
+    , {
+      "from":3
+      , "to":9
+    }
+    , {
+      "from":5
+      , "to":10
+    }
+    , {
+      "from":7
+      , "to":10
+    }
+    , {
+      "from":9
+      , "to":5
+    }
+    , {
+      "from":5
+      , "to":7
+    }
+  ]
+}

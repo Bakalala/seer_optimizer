@@ -1,0 +1,44 @@
+	component dot16_power_unconstrained is
+		port (
+			clock      : in  std_logic                     := 'X';             -- clk
+			resetn     : in  std_logic                     := 'X';             -- reset_n
+			start      : in  std_logic                     := 'X';             -- valid
+			busy       : out std_logic;                                        -- stall
+			done       : out std_logic;                                        -- valid
+			stall      : in  std_logic                     := 'X';             -- stall
+			returndata : out std_logic_vector(31 downto 0);                    -- data
+			in_a0      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a1      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a10     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a11     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a12     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a13     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a14     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a15     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a2      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a3      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a4      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a5      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a6      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a7      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a8      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_a9      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b0      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b1      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b10     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b11     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b12     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b13     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b14     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b15     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b2      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b3      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b4      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b5      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b6      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b7      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b8      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_b9      : in  std_logic_vector(31 downto 0) := (others => 'X')  -- data
+		);
+	end component dot16_power_unconstrained;
+

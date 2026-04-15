@@ -1,0 +1,215 @@
+{
+  "nodes":
+  [
+    {
+      "type":"interface"
+      , "id":11
+      , "name":"in_p00"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_weighted.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"conv3x3_weighted"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":12
+      , "name":"in_p01"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_weighted.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"conv3x3_weighted"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":13
+      , "name":"in_p02"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_weighted.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"conv3x3_weighted"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":14
+      , "name":"in_p10"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_weighted.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"conv3x3_weighted"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":15
+      , "name":"in_p11"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_weighted.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"conv3x3_weighted"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":16
+      , "name":"in_p12"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_weighted.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"conv3x3_weighted"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":17
+      , "name":"in_p20"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_weighted.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"conv3x3_weighted"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":18
+      , "name":"in_p21"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_weighted.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"conv3x3_weighted"
+        }
+      ]
+    }
+    , {
+      "type":"interface"
+      , "id":19
+      , "name":"in_p22"
+      , "debug":
+      [
+        [
+          {
+            "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/conv3x3_weighted.cpp"
+            , "line":8
+          }
+        ]
+      ]
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Stable":"No"
+          , "Width":"32 bits"
+          , "Component":"conv3x3_weighted"
+        }
+      ]
+    }
+  ]
+  , "links":
+  [
+  ]
+}

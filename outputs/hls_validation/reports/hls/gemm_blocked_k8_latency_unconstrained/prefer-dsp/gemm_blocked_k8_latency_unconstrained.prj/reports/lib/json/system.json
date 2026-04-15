@@ -1,0 +1,116 @@
+{
+  "nodes":
+  [
+    {
+      "name":"gemm_blocked_k8_latency_unconstrained"
+      , "id":2750145720
+      , "type":"component"
+      , "children":
+      [
+        {
+          "name":"Stream Read"
+          , "id":2750262720
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"gemm_blocked_k8_latency_unconstrained.B1.start"
+              , "Width":"512 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_latency_unconstrained.cpp"
+                , "line":8
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+        , {
+          "name":"Stream Write"
+          , "id":2750167488
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"gemm_blocked_k8_latency_unconstrained.B1.start"
+              , "Width":"32 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"/home/aseife2/seer_optimizer/outputs/hls_validation/src/gemm_blocked_k8_latency_unconstrained.cpp"
+                , "line":102
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
+      ]
+    }
+    , {
+      "name":"call.gemm_blocked_k8_latency_unconstrained"
+      , "id":2749693984
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"512 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"512 bits"
+          , "Uses Packets":"No"
+          , "Uses Valid":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+    , {
+      "name":"return.gemm_blocked_k8_latency_unconstrained"
+      , "id":2749694112
+      , "details":
+      [
+        {
+          "type":"table"
+          , "Width":"32 bits"
+          , "Depth":"0"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"32 bits"
+          , "Uses Packets":"No"
+          , "Uses Ready":"Yes"
+          , "Uses Empty":"No"
+          , "First symbol in high order bits":"No"
+        }
+      ]
+      , "type":"stream"
+    }
+  ]
+  , "links":
+  [
+    {
+      "from":2749693984
+      , "to":2750262720
+    }
+    , {
+      "from":2750167488
+      , "to":2749694112
+    }
+    , {
+      "from":2750262720
+      , "to":2750167488
+    }
+  ]
+}

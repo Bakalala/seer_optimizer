@@ -1,0 +1,20 @@
+	component fir8_latency_under_lut is
+		port (
+			clock      : in  std_logic                     := 'X';             -- clk
+			resetn     : in  std_logic                     := 'X';             -- reset_n
+			start      : in  std_logic                     := 'X';             -- valid
+			busy       : out std_logic;                                        -- stall
+			done       : out std_logic;                                        -- valid
+			stall      : in  std_logic                     := 'X';             -- stall
+			returndata : out std_logic_vector(31 downto 0);                    -- data
+			in_x0      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_x1      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_x2      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_x3      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_x4      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_x5      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_x6      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- data
+			in_x7      : in  std_logic_vector(31 downto 0) := (others => 'X')  -- data
+		);
+	end component fir8_latency_under_lut;
+
