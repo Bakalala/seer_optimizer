@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="$(cd "$ROOT_DIR/../.." && pwd)"
+QUARTUS_SH="${QUARTUS_SH:-quartus_sh}"
+JOBS="${JOBS:-1}"
+ONLY="${RTL_ONLY:-}"
+
+if ! command -v "$QUARTUS_SH" >/dev/null 2>&1; then
+  echo "quartus_sh not found. Load Quartus or set QUARTUS_SH=/path/to/quartus_sh." >&2
+  exit 1
+fi
+
+mapfile -t projects < <(find "$ROOT_DIR/quartus" -mindepth 2 -maxdepth 2 -name '*.qpf' | sort)
+if [[ -n "$ONLY" ]]; then
+  mapfile -t projects < <(printf '%s\n' "${projects[@]}" | grep -E "$ONLY" || true)
+fi
+if [[ "${#projects[@]}" -eq 0 ]]; then
+  echo "No Quartus projects matched." >&2
+  exit 1
+fi
+
+run_one() {
+  local qpf="$1"
+  local dir name log
+  dir="$(dirname "$qpf")"
+  name="$(basename "$qpf" .qpf)"
+  log="$ROOT_DIR/reports/quartus/${name}.log"
+  mkdir -p "$(dirname "$log")"
+  echo "Compiling $name"
+  (cd "$dir" && "$QUARTUS_SH" --flow compile "$name") > "$log" 2>&1
+}
+
+export -f run_one
+export ROOT_DIR QUARTUS_SH
+
+if [[ "$JOBS" -le 1 ]]; then
+  for qpf in "${projects[@]}"; do
+    run_one "$qpf"
+  done
+else
+  printf '%s\n' "${projects[@]}" | xargs -n1 -P "$JOBS" bash -c 'run_one "$0"'
+fi
+
+python3 "$ROOT_DIR/scripts/parse_quartus_reports.py" \
+  --root "$ROOT_DIR" \
+  --metadata "$ROOT_DIR/metadata/generated_variants.json" \
+  --out "$ROOT_DIR/reports/rtl_quartus_summary.csv"
+
+python3 "$ROOT_DIR/scripts/analyze_rtl_reports.py" \
+  --root "$ROOT_DIR" \
+  --summary "$ROOT_DIR/reports/rtl_quartus_summary.csv"

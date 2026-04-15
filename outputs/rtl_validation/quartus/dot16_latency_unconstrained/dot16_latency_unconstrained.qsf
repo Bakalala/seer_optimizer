@@ -1,0 +1,12 @@
+set_global_assignment -name FAMILY "Arria10"
+set_global_assignment -name DEVICE 10AX115U1F45I1SG
+set_global_assignment -name TOP_LEVEL_ENTITY dot16_latency_unconstrained_top
+set_global_assignment -name SYSTEMVERILOG_FILE ../../src/rtl_validation_ops.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../src/dot16_latency_unconstrained.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../quartus/dot16_latency_unconstrained/dot16_latency_unconstrained_top.sv
+set_global_assignment -name SDC_FILE dot16_latency_unconstrained.sdc
+set_global_assignment -name FLOW_DISABLE_ASSEMBLER ON
+set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE PERFORMANCE"
+set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC ON
+set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_DUPLICATION ON
+set_instance_assignment -name VIRTUAL_PIN ON -to *

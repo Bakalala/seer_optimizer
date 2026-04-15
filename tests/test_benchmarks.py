@@ -8,6 +8,7 @@ from unittest import mock
 
 import run_benchmarks
 from scripts import export_hls_cpp
+from scripts import export_rtl_validation
 
 
 class BenchmarkHarnessTest(unittest.TestCase):
@@ -914,6 +915,76 @@ class BenchmarkHarnessTest(unittest.TestCase):
             self.assertTrue((out_dir / "scripts" / "run_intel_hls.sh").exists())
             self.assertTrue((out_dir / "scripts" / "parse_hls_reports.py").exists())
             self.assertTrue((out_dir / "README.md").exists())
+
+    def test_rtl_export_generates_quartus_validation_flow(self) -> None:
+        builder = run_benchmarks.IrBuilder()
+        a = builder.input("a")
+        b = builder.input("b")
+        original_root = builder.mul(a, b)
+        fake_graph = builder.graph(original_root)
+        weighted_graph = {
+            "ir_nodes": [
+                {"id": "n0", "op": "input", "name": "a"},
+                {"id": "n1", "op": "input", "name": "b"},
+                {"id": "n2", "op": "mul_dsp", "inputs": ["n0", "n1"]},
+                {"id": "n3", "op": "input", "name": "c"},
+                {"id": "n4", "op": "mul_lut", "inputs": ["n2", "n3"]},
+            ],
+            "root": "n4",
+        }
+        fake_results = {
+            "benchmarks": {
+                "toy": {
+                    "original_ir": fake_graph,
+                    "original_metrics": {
+                        "area": 6,
+                        "latency": 3,
+                        "power": 3,
+                        "dsp_count": 1,
+                        "lut_count": 0,
+                    },
+                    "runs": {
+                        "weighted": {
+                            "feasible": True,
+                            "optimized_ir": weighted_graph,
+                            "metrics": {
+                                "area": 10,
+                                "latency": 9,
+                                "power": 9,
+                                "dsp_count": 2,
+                                "lut_count": 8,
+                            },
+                        }
+                    },
+                }
+            }
+        }
+        with tempfile.TemporaryDirectory() as tmpdir:
+            results_path = Path(tmpdir) / "results.json"
+            results_path.write_text(json.dumps(fake_results))
+            out_dir = Path(tmpdir) / "rtl"
+            export_rtl_validation.export_rtl_validation(
+                results_path=results_path,
+                output_dir=out_dir,
+                benchmarks=["toy"],
+                variants=["original", "weighted"],
+                family="Arria10",
+                device="10AX115U1F45I1SG",
+                clock_ns=2.0,
+                test_vectors=4,
+            )
+            source = (out_dir / "src" / "toy_weighted.sv").read_text()
+            metadata = json.loads((out_dir / "metadata" / "generated_variants.json").read_text())
+            weighted = next(item for item in metadata["variants"] if item["variant"] == "weighted")
+            self.assertIn('(* multstyle = "dsp" *)', source)
+            self.assertIn("soft_mul32", source)
+            self.assertEqual(weighted["rtl_intended_dsp_count"], 1)
+            self.assertEqual(weighted["rtl_intended_logic_mul_count"], 1)
+            self.assertTrue((out_dir / "tests" / "tb_toy.sv").exists())
+            self.assertTrue((out_dir / "quartus" / "toy_weighted" / "toy_weighted.qsf").exists())
+            self.assertTrue((out_dir / "scripts" / "run_functional_sim.sh").exists())
+            self.assertTrue((out_dir / "scripts" / "run_quartus_compile.sh").exists())
+            self.assertTrue((out_dir / "scripts" / "parse_quartus_reports.py").exists())
 
 
 if __name__ == "__main__":
