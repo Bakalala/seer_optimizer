@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620">
+<rect width="100%" height="100%" fill="#fff"/>
+<text x="550.0" y="28.0" font-size="18" text-anchor="middle" fill="#111">Operation mix by benchmark variant</text>
+<line x1="70" y1="510" x2="1080" y2="510" stroke="#333"/>
+<line x1="70" y1="60" x2="70" y2="510" stroke="#333"/>
+<rect x="73.4" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>fir8/original add: 7</title></rect>
+<rect x="73.4" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>fir8/original sub: 0</title></rect>
+<rect x="73.4" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>fir8/original mul: 8</title></rect>
+<rect x="73.4" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>fir8/original mac: 0</title></rect>
+<text x="83.7" y="526" font-size="8" text-anchor="end" transform="rotate(-55 83.7 526)" fill="#111">fir8/original</text>
+<rect x="102.0" y="379.4" width="20.6" height="130.6" fill="#4e79a7"><title>fir8/weighted add: 9</title></rect>
+<rect x="102.0" y="379.4" width="20.6" height="0.0" fill="#59a14f"><title>fir8/weighted sub: 0</title></rect>
+<rect x="102.0" y="321.3" width="20.6" height="58.1" fill="#f28e2b"><title>fir8/weighted mul: 4</title></rect>
+<rect x="102.0" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>fir8/weighted mac: 0</title></rect>
+<rect x="130.6" y="379.4" width="20.6" height="130.6" fill="#4e79a7"><title>fir8/latency_unconstrained add: 9</title></rect>
+<rect x="130.6" y="379.4" width="20.6" height="0.0" fill="#59a14f"><title>fir8/latency_unconstrained sub: 0</title></rect>
+<rect x="130.6" y="321.3" width="20.6" height="58.1" fill="#f28e2b"><title>fir8/latency_unconstrained mul: 4</title></rect>
+<rect x="130.6" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>fir8/latency_unconstrained mac: 0</title></rect>
+<text x="140.9" y="526" font-size="8" text-anchor="end" transform="rotate(-55 140.9 526)" fill="#111">fir8/latency_unconstrained</text>
+<rect x="159.1" y="379.4" width="20.6" height="130.6" fill="#4e79a7"><title>fir8/latency_under_dsp add: 9</title></rect>
+<rect x="159.1" y="379.4" width="20.6" height="0.0" fill="#59a14f"><title>fir8/latency_under_dsp sub: 0</title></rect>
+<rect x="159.1" y="321.3" width="20.6" height="58.1" fill="#f28e2b"><title>fir8/latency_under_dsp mul: 4</title></rect>
+<rect x="159.1" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>fir8/latency_under_dsp mac: 0</title></rect>
+<rect x="187.7" y="379.4" width="20.6" height="130.6" fill="#4e79a7"><title>fir8/latency_under_lut add: 9</title></rect>
+<rect x="187.7" y="379.4" width="20.6" height="0.0" fill="#59a14f"><title>fir8/latency_under_lut sub: 0</title></rect>
+<rect x="187.7" y="321.3" width="20.6" height="58.1" fill="#f28e2b"><title>fir8/latency_under_lut mul: 4</title></rect>
+<rect x="187.7" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>fir8/latency_under_lut mac: 0</title></rect>
+<text x="198.0" y="526" font-size="8" text-anchor="end" transform="rotate(-55 198.0 526)" fill="#111">fir8/latency_under_lut</text>
+<rect x="216.3" y="379.4" width="20.6" height="130.6" fill="#4e79a7"><title>fir8/power_unconstrained add: 9</title></rect>
+<rect x="216.3" y="379.4" width="20.6" height="0.0" fill="#59a14f"><title>fir8/power_unconstrained sub: 0</title></rect>
+<rect x="216.3" y="321.3" width="20.6" height="58.1" fill="#f28e2b"><title>fir8/power_unconstrained mul: 4</title></rect>
+<rect x="216.3" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>fir8/power_unconstrained mac: 0</title></rect>
+<rect x="244.9" y="292.3" width="20.6" height="217.7" fill="#4e79a7"><title>dot16/original add: 15</title></rect>
+<rect x="244.9" y="292.3" width="20.6" height="0.0" fill="#59a14f"><title>dot16/original sub: 0</title></rect>
+<rect x="244.9" y="60.0" width="20.6" height="232.3" fill="#f28e2b"><title>dot16/original mul: 16</title></rect>
+<rect x="244.9" y="60.0" width="20.6" height="0.0" fill="#e15759"><title>dot16/original mac: 0</title></rect>
+<text x="255.1" y="526" font-size="8" text-anchor="end" transform="rotate(-55 255.1 526)" fill="#111">dot16/original</text>
+<rect x="273.4" y="292.3" width="20.6" height="217.7" fill="#4e79a7"><title>dot16/weighted add: 15</title></rect>
+<rect x="273.4" y="292.3" width="20.6" height="0.0" fill="#59a14f"><title>dot16/weighted sub: 0</title></rect>
+<rect x="273.4" y="60.0" width="20.6" height="232.3" fill="#f28e2b"><title>dot16/weighted mul: 16</title></rect>
+<rect x="273.4" y="60.0" width="20.6" height="0.0" fill="#e15759"><title>dot16/weighted mac: 0</title></rect>
+<rect x="302.0" y="292.3" width="20.6" height="217.7" fill="#4e79a7"><title>dot16/latency_unconstrained add: 15</title></rect>
+<rect x="302.0" y="292.3" width="20.6" height="0.0" fill="#59a14f"><title>dot16/latency_unconstrained sub: 0</title></rect>
+<rect x="302.0" y="60.0" width="20.6" height="232.3" fill="#f28e2b"><title>dot16/latency_unconstrained mul: 16</title></rect>
+<rect x="302.0" y="60.0" width="20.6" height="0.0" fill="#e15759"><title>dot16/latency_unconstrained mac: 0</title></rect>
+<text x="312.3" y="526" font-size="8" text-anchor="end" transform="rotate(-55 312.3 526)" fill="#111">dot16/latency_unconstrained</text>
+<rect x="330.6" y="292.3" width="20.6" height="217.7" fill="#4e79a7"><title>dot16/latency_under_dsp add: 15</title></rect>
+<rect x="330.6" y="292.3" width="20.6" height="0.0" fill="#59a14f"><title>dot16/latency_under_dsp sub: 0</title></rect>
+<rect x="330.6" y="60.0" width="20.6" height="232.3" fill="#f28e2b"><title>dot16/latency_under_dsp mul: 16</title></rect>
+<rect x="330.6" y="60.0" width="20.6" height="0.0" fill="#e15759"><title>dot16/latency_under_dsp mac: 0</title></rect>
+<rect x="359.1" y="292.3" width="20.6" height="217.7" fill="#4e79a7"><title>dot16/power_unconstrained add: 15</title></rect>
+<rect x="359.1" y="292.3" width="20.6" height="0.0" fill="#59a14f"><title>dot16/power_unconstrained sub: 0</title></rect>
+<rect x="359.1" y="60.0" width="20.6" height="232.3" fill="#f28e2b"><title>dot16/power_unconstrained mul: 16</title></rect>
+<rect x="359.1" y="60.0" width="20.6" height="0.0" fill="#e15759"><title>dot16/power_unconstrained mac: 0</title></rect>
+<text x="369.4" y="526" font-size="8" text-anchor="end" transform="rotate(-55 369.4 526)" fill="#111">dot16/power_unconstrained</text>
+<rect x="387.7" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_k8/original add: 7</title></rect>
+<rect x="387.7" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_k8/original sub: 0</title></rect>
+<rect x="387.7" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_k8/original mul: 8</title></rect>
+<rect x="387.7" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_k8/original mac: 0</title></rect>
+<rect x="416.3" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_k8/weighted add: 7</title></rect>
+<rect x="416.3" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_k8/weighted sub: 0</title></rect>
+<rect x="416.3" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_k8/weighted mul: 8</title></rect>
+<rect x="416.3" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_k8/weighted mac: 0</title></rect>
+<text x="426.6" y="526" font-size="8" text-anchor="end" transform="rotate(-55 426.6 526)" fill="#111">gemm_k8/weighted</text>
+<rect x="444.9" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_k8/latency_unconstrained add: 7</title></rect>
+<rect x="444.9" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_k8/latency_unconstrained sub: 0</title></rect>
+<rect x="444.9" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_k8/latency_unconstrained mul: 8</title></rect>
+<rect x="444.9" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_k8/latency_unconstrained mac: 0</title></rect>
+<rect x="473.4" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_k8/latency_under_dsp add: 7</title></rect>
+<rect x="473.4" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_k8/latency_under_dsp sub: 0</title></rect>
+<rect x="473.4" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_k8/latency_under_dsp mul: 8</title></rect>
+<rect x="473.4" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_k8/latency_under_dsp mac: 0</title></rect>
+<text x="483.7" y="526" font-size="8" text-anchor="end" transform="rotate(-55 483.7 526)" fill="#111">gemm_k8/latency_under_dsp</text>
+<rect x="502.0" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_k8/latency_under_lut add: 7</title></rect>
+<rect x="502.0" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_k8/latency_under_lut sub: 0</title></rect>
+<rect x="502.0" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_k8/latency_under_lut mul: 8</title></rect>
+<rect x="502.0" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_k8/latency_under_lut mac: 0</title></rect>
+<rect x="530.6" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_k8/power_unconstrained add: 7</title></rect>
+<rect x="530.6" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_k8/power_unconstrained sub: 0</title></rect>
+<rect x="530.6" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_k8/power_unconstrained mul: 8</title></rect>
+<rect x="530.6" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_k8/power_unconstrained mac: 0</title></rect>
+<text x="540.9" y="526" font-size="8" text-anchor="end" transform="rotate(-55 540.9 526)" fill="#111">gemm_k8/power_unconstrained</text>
+<rect x="559.1" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_blocked_k8/original add: 7</title></rect>
+<rect x="559.1" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_blocked_k8/original sub: 0</title></rect>
+<rect x="559.1" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_blocked_k8/original mul: 8</title></rect>
+<rect x="559.1" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_blocked_k8/original mac: 0</title></rect>
+<rect x="587.7" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_blocked_k8/weighted add: 7</title></rect>
+<rect x="587.7" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_blocked_k8/weighted sub: 0</title></rect>
+<rect x="587.7" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_blocked_k8/weighted mul: 8</title></rect>
+<rect x="587.7" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_blocked_k8/weighted mac: 0</title></rect>
+<text x="598.0" y="526" font-size="8" text-anchor="end" transform="rotate(-55 598.0 526)" fill="#111">gemm_blocked_k8/weighted</text>
+<rect x="616.3" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_blocked_k8/latency_unconstrained add: 7</title></rect>
+<rect x="616.3" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_blocked_k8/latency_unconstrained sub: 0</title></rect>
+<rect x="616.3" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_blocked_k8/latency_unconstrained mul: 8</title></rect>
+<rect x="616.3" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_blocked_k8/latency_unconstrained mac: 0</title></rect>
+<rect x="644.9" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_blocked_k8/latency_under_dsp add: 7</title></rect>
+<rect x="644.9" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_blocked_k8/latency_under_dsp sub: 0</title></rect>
+<rect x="644.9" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_blocked_k8/latency_under_dsp mul: 8</title></rect>
+<rect x="644.9" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_blocked_k8/latency_under_dsp mac: 0</title></rect>
+<text x="655.1" y="526" font-size="8" text-anchor="end" transform="rotate(-55 655.1 526)" fill="#111">gemm_blocked_k8/latency_under_dsp</text>
+<rect x="673.4" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_blocked_k8/latency_under_lut add: 7</title></rect>
+<rect x="673.4" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_blocked_k8/latency_under_lut sub: 0</title></rect>
+<rect x="673.4" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_blocked_k8/latency_under_lut mul: 8</title></rect>
+<rect x="673.4" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_blocked_k8/latency_under_lut mac: 0</title></rect>
+<rect x="702.0" y="408.4" width="20.6" height="101.6" fill="#4e79a7"><title>gemm_blocked_k8/power_unconstrained add: 7</title></rect>
+<rect x="702.0" y="408.4" width="20.6" height="0.0" fill="#59a14f"><title>gemm_blocked_k8/power_unconstrained sub: 0</title></rect>
+<rect x="702.0" y="292.3" width="20.6" height="116.1" fill="#f28e2b"><title>gemm_blocked_k8/power_unconstrained mul: 8</title></rect>
+<rect x="702.0" y="292.3" width="20.6" height="0.0" fill="#e15759"><title>gemm_blocked_k8/power_unconstrained mac: 0</title></rect>
+<text x="712.3" y="526" font-size="8" text-anchor="end" transform="rotate(-55 712.3 526)" fill="#111">gemm_blocked_k8/power_unconstrained</text>
+<rect x="730.6" y="393.9" width="20.6" height="116.1" fill="#4e79a7"><title>conv3x3/original add: 8</title></rect>
+<rect x="730.6" y="393.9" width="20.6" height="0.0" fill="#59a14f"><title>conv3x3/original sub: 0</title></rect>
+<rect x="730.6" y="263.2" width="20.6" height="130.6" fill="#f28e2b"><title>conv3x3/original mul: 9</title></rect>
+<rect x="730.6" y="263.2" width="20.6" height="0.0" fill="#e15759"><title>conv3x3/original mac: 0</title></rect>
+<rect x="759.1" y="335.8" width="20.6" height="174.2" fill="#4e79a7"><title>conv3x3/weighted add: 12</title></rect>
+<rect x="759.1" y="335.8" width="20.6" height="0.0" fill="#59a14f"><title>conv3x3/weighted sub: 0</title></rect>
+<rect x="759.1" y="321.3" width="20.6" height="14.5" fill="#f28e2b"><title>conv3x3/weighted mul: 1</title></rect>
+<rect x="759.1" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>conv3x3/weighted mac: 0</title></rect>
+<text x="769.4" y="526" font-size="8" text-anchor="end" transform="rotate(-55 769.4 526)" fill="#111">conv3x3/weighted</text>
+<rect x="787.7" y="335.8" width="20.6" height="174.2" fill="#4e79a7"><title>conv3x3/latency_unconstrained add: 12</title></rect>
+<rect x="787.7" y="335.8" width="20.6" height="0.0" fill="#59a14f"><title>conv3x3/latency_unconstrained sub: 0</title></rect>
+<rect x="787.7" y="321.3" width="20.6" height="14.5" fill="#f28e2b"><title>conv3x3/latency_unconstrained mul: 1</title></rect>
+<rect x="787.7" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>conv3x3/latency_unconstrained mac: 0</title></rect>
+<rect x="816.3" y="335.8" width="20.6" height="174.2" fill="#4e79a7"><title>conv3x3/latency_under_dsp add: 12</title></rect>
+<rect x="816.3" y="335.8" width="20.6" height="0.0" fill="#59a14f"><title>conv3x3/latency_under_dsp sub: 0</title></rect>
+<rect x="816.3" y="321.3" width="20.6" height="14.5" fill="#f28e2b"><title>conv3x3/latency_under_dsp mul: 1</title></rect>
+<rect x="816.3" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>conv3x3/latency_under_dsp mac: 0</title></rect>
+<text x="826.6" y="526" font-size="8" text-anchor="end" transform="rotate(-55 826.6 526)" fill="#111">conv3x3/latency_under_dsp</text>
+<rect x="844.9" y="335.8" width="20.6" height="174.2" fill="#4e79a7"><title>conv3x3/latency_under_lut add: 12</title></rect>
+<rect x="844.9" y="335.8" width="20.6" height="0.0" fill="#59a14f"><title>conv3x3/latency_under_lut sub: 0</title></rect>
+<rect x="844.9" y="321.3" width="20.6" height="14.5" fill="#f28e2b"><title>conv3x3/latency_under_lut mul: 1</title></rect>
+<rect x="844.9" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>conv3x3/latency_under_lut mac: 0</title></rect>
+<rect x="873.4" y="335.8" width="20.6" height="174.2" fill="#4e79a7"><title>conv3x3/power_unconstrained add: 12</title></rect>
+<rect x="873.4" y="335.8" width="20.6" height="0.0" fill="#59a14f"><title>conv3x3/power_unconstrained sub: 0</title></rect>
+<rect x="873.4" y="321.3" width="20.6" height="14.5" fill="#f28e2b"><title>conv3x3/power_unconstrained mul: 1</title></rect>
+<rect x="873.4" y="321.3" width="20.6" height="0.0" fill="#e15759"><title>conv3x3/power_unconstrained mac: 0</title></rect>
+<text x="883.7" y="526" font-size="8" text-anchor="end" transform="rotate(-55 883.7 526)" fill="#111">conv3x3/power_unconstrained</text>
+<rect x="902.0" y="451.9" width="20.6" height="58.1" fill="#4e79a7"><title>stencil5/original add: 4</title></rect>
+<rect x="902.0" y="451.9" width="20.6" height="0.0" fill="#59a14f"><title>stencil5/original sub: 0</title></rect>
+<rect x="902.0" y="379.4" width="20.6" height="72.6" fill="#f28e2b"><title>stencil5/original mul: 5</title></rect>
+<rect x="902.0" y="379.4" width="20.6" height="0.0" fill="#e15759"><title>stencil5/original mac: 0</title></rect>
+<rect x="930.6" y="451.9" width="20.6" height="58.1" fill="#4e79a7"><title>stencil5/weighted add: 4</title></rect>
+<rect x="930.6" y="451.9" width="20.6" height="0.0" fill="#59a14f"><title>stencil5/weighted sub: 0</title></rect>
+<rect x="930.6" y="379.4" width="20.6" height="72.6" fill="#f28e2b"><title>stencil5/weighted mul: 5</title></rect>
+<rect x="930.6" y="379.4" width="20.6" height="0.0" fill="#e15759"><title>stencil5/weighted mac: 0</title></rect>
+<text x="940.9" y="526" font-size="8" text-anchor="end" transform="rotate(-55 940.9 526)" fill="#111">stencil5/weighted</text>
+<rect x="959.1" y="451.9" width="20.6" height="58.1" fill="#4e79a7"><title>stencil5/latency_unconstrained add: 4</title></rect>
+<rect x="959.1" y="451.9" width="20.6" height="0.0" fill="#59a14f"><title>stencil5/latency_unconstrained sub: 0</title></rect>
+<rect x="959.1" y="379.4" width="20.6" height="72.6" fill="#f28e2b"><title>stencil5/latency_unconstrained mul: 5</title></rect>
+<rect x="959.1" y="379.4" width="20.6" height="0.0" fill="#e15759"><title>stencil5/latency_unconstrained mac: 0</title></rect>
+<rect x="987.7" y="451.9" width="20.6" height="58.1" fill="#4e79a7"><title>stencil5/latency_under_dsp add: 4</title></rect>
+<rect x="987.7" y="451.9" width="20.6" height="0.0" fill="#59a14f"><title>stencil5/latency_under_dsp sub: 0</title></rect>
+<rect x="987.7" y="379.4" width="20.6" height="72.6" fill="#f28e2b"><title>stencil5/latency_under_dsp mul: 5</title></rect>
+<rect x="987.7" y="379.4" width="20.6" height="0.0" fill="#e15759"><title>stencil5/latency_under_dsp mac: 0</title></rect>
+<text x="998.0" y="526" font-size="8" text-anchor="end" transform="rotate(-55 998.0 526)" fill="#111">stencil5/latency_under_dsp</text>
+<rect x="1016.3" y="451.9" width="20.6" height="58.1" fill="#4e79a7"><title>stencil5/latency_under_lut add: 4</title></rect>
+<rect x="1016.3" y="451.9" width="20.6" height="0.0" fill="#59a14f"><title>stencil5/latency_under_lut sub: 0</title></rect>
+<rect x="1016.3" y="379.4" width="20.6" height="72.6" fill="#f28e2b"><title>stencil5/latency_under_lut mul: 5</title></rect>
+<rect x="1016.3" y="379.4" width="20.6" height="0.0" fill="#e15759"><title>stencil5/latency_under_lut mac: 0</title></rect>
+<rect x="1044.9" y="451.9" width="20.6" height="58.1" fill="#4e79a7"><title>stencil5/power_unconstrained add: 4</title></rect>
+<rect x="1044.9" y="451.9" width="20.6" height="0.0" fill="#59a14f"><title>stencil5/power_unconstrained sub: 0</title></rect>
+<rect x="1044.9" y="379.4" width="20.6" height="72.6" fill="#f28e2b"><title>stencil5/power_unconstrained mul: 5</title></rect>
+<rect x="1044.9" y="379.4" width="20.6" height="0.0" fill="#e15759"><title>stencil5/power_unconstrained mac: 0</title></rect>
+<text x="1055.1" y="526" font-size="8" text-anchor="end" transform="rotate(-55 1055.1 526)" fill="#111">stencil5/power_unconstrained</text>
+<rect x="70" y="578" width="14" height="14" fill="#4e79a7"/>
+<text x="112.0" y="590.0" font-size="11" text-anchor="middle" fill="#111">add</text>
+<rect x="160" y="578" width="14" height="14" fill="#59a14f"/>
+<text x="202.0" y="590.0" font-size="11" text-anchor="middle" fill="#111">sub</text>
+<rect x="250" y="578" width="14" height="14" fill="#f28e2b"/>
+<text x="292.0" y="590.0" font-size="11" text-anchor="middle" fill="#111">mul</text>
+<rect x="340" y="578" width="14" height="14" fill="#e15759"/>
+<text x="382.0" y="590.0" font-size="11" text-anchor="middle" fill="#111">mac</text>
+</svg>

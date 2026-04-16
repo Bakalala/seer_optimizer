@@ -1,0 +1,7 @@
+benchmark,status,optimized_variants,test_vectors,log_path
+conv3x3,pass,5,200,/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/sim/conv3x3.log
+dot16,pass,4,200,/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/sim/dot16.log
+fir8,pass,5,200,/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/sim/fir8.log
+gemm_blocked_k8,pass,5,200,/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/sim/gemm_blocked_k8.log
+gemm_k8,pass,5,200,/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/sim/gemm_k8.log
+stencil5,pass,5,200,/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/sim/stencil5.log

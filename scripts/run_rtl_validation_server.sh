@@ -38,8 +38,8 @@ fi
 
 echo
 echo "== Quartus fit and timing =="
-if [[ "${SKIP_QUARTUS:-0}" == "1" ]]; then
-  echo "Skipping Quartus because SKIP_QUARTUS=1"
+if [[ "${SKIP_QUARTUS:-0}" == "1" || "${SKIP_RTL_QUARTUS:-0}" == "1" ]]; then
+  echo "Skipping Quartus because SKIP_QUARTUS=1 or SKIP_RTL_QUARTUS=1"
 else
   (cd "$RTL_DIR" && ./scripts/run_quartus_compile.sh)
 fi
