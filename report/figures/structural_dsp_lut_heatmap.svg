@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="360" viewBox="0 0 700 360">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172638}.axis{font-size:15px;font-weight:700}.cell{font-size:17px;font-weight:700}.note{font-size:12px;fill:#465a70}</style>
+<text x="172.5" y="39" text-anchor="middle" class="axis">Weighted</text>
+<text x="307.5" y="39" text-anchor="middle" class="axis">Lat-opt</text>
+<text x="442.5" y="39" text-anchor="middle" class="axis">Power-opt</text>
+<text x="577.5" y="39" text-anchor="middle" class="axis">LUT-cap</text>
+<text x="93" y="81.5" text-anchor="end" class="axis">fir8</text>
+<rect x="105" y="55" width="130" height="38" rx="6" fill="#f7fcb9" stroke="#ffffff" stroke-width="2"/>
+<text x="170.5" y="82.5" text-anchor="middle" class="cell" style="fill:#102033">0/41</text>
+<rect x="240" y="55" width="130" height="38" rx="6" fill="#92beb8" stroke="#ffffff" stroke-width="2"/>
+<text x="305.5" y="82.5" text-anchor="middle" class="cell" style="fill:#102033">10/10</text>
+<rect x="375" y="55" width="130" height="38" rx="6" fill="#b9d6b9" stroke="#ffffff" stroke-width="2"/>
+<text x="440.5" y="82.5" text-anchor="middle" class="cell" style="fill:#102033">4/9</text>
+<rect x="510" y="55" width="130" height="38" rx="6" fill="#4b92b8" stroke="#ffffff" stroke-width="2"/>
+<text x="575.5" y="82.5" text-anchor="middle" class="cell" style="fill:white">11/2</text>
+<text x="93" y="124.5" text-anchor="end" class="axis">dot16</text>
+<rect x="105" y="98" width="130" height="38" rx="6" fill="#f7fcb9" stroke="#ffffff" stroke-width="2"/>
+<text x="170.5" y="125.5" text-anchor="middle" class="cell" style="fill:#102033">0/143</text>
+<rect x="240" y="98" width="130" height="38" rx="6" fill="#e2efb9" stroke="#ffffff" stroke-width="2"/>
+<text x="305.5" y="125.5" text-anchor="middle" class="cell" style="fill:#102033">15/128</text>
+<rect x="375" y="98" width="130" height="38" rx="6" fill="#e8f3b9" stroke="#ffffff" stroke-width="2"/>
+<text x="440.5" y="125.5" text-anchor="middle" class="cell" style="fill:#102033">7/87</text>
+<rect x="510" y="98" width="130" height="38" rx="6" fill="#eeeeee" stroke="#ffffff" stroke-width="2"/>
+<text x="575.5" y="125.5" text-anchor="middle" class="cell" style="fill:#9b1c1c">inf</text>
+<text x="93" y="167.5" text-anchor="end" class="axis">gemm-k8</text>
+<rect x="105" y="141" width="130" height="38" rx="6" fill="#f7fcb9" stroke="#ffffff" stroke-width="2"/>
+<text x="170.5" y="168.5" text-anchor="middle" class="cell" style="fill:#102033">0/71</text>
+<rect x="240" y="141" width="130" height="38" rx="6" fill="#c3dcb9" stroke="#ffffff" stroke-width="2"/>
+<text x="305.5" y="168.5" text-anchor="middle" class="cell" style="fill:#102033">11/32</text>
+<rect x="375" y="141" width="130" height="38" rx="6" fill="#8bb9b8" stroke="#ffffff" stroke-width="2"/>
+<text x="440.5" y="168.5" text-anchor="middle" class="cell" style="fill:#102033">8/7</text>
+<rect x="510" y="141" width="130" height="38" rx="6" fill="#8bb9b8" stroke="#ffffff" stroke-width="2"/>
+<text x="575.5" y="168.5" text-anchor="middle" class="cell" style="fill:#102033">8/7</text>
+<text x="93" y="210.5" text-anchor="end" class="axis">blocked-k8</text>
+<rect x="105" y="184" width="130" height="38" rx="6" fill="#f7fcb9" stroke="#ffffff" stroke-width="2"/>
+<text x="170.5" y="211.5" text-anchor="middle" class="cell" style="fill:#102033">0/71</text>
+<rect x="240" y="184" width="130" height="38" rx="6" fill="#2c7fb8" stroke="#ffffff" stroke-width="2"/>
+<text x="305.5" y="211.5" text-anchor="middle" class="cell" style="fill:white">15/0</text>
+<rect x="375" y="184" width="130" height="38" rx="6" fill="#8bb9b8" stroke="#ffffff" stroke-width="2"/>
+<text x="440.5" y="211.5" text-anchor="middle" class="cell" style="fill:#102033">8/7</text>
+<rect x="510" y="184" width="130" height="38" rx="6" fill="#2c7fb8" stroke="#ffffff" stroke-width="2"/>
+<text x="575.5" y="211.5" text-anchor="middle" class="cell" style="fill:white">15/0</text>
+<text x="93" y="253.5" text-anchor="end" class="axis">conv3x3</text>
+<rect x="105" y="227" width="130" height="38" rx="6" fill="#f7fcb9" stroke="#ffffff" stroke-width="2"/>
+<text x="170.5" y="254.5" text-anchor="middle" class="cell" style="fill:#102033">0/20</text>
+<rect x="240" y="227" width="130" height="38" rx="6" fill="#5b9cb8" stroke="#ffffff" stroke-width="2"/>
+<text x="305.5" y="254.5" text-anchor="middle" class="cell" style="fill:white">10/3</text>
+<rect x="375" y="227" width="130" height="38" rx="6" fill="#e7f2b9" stroke="#ffffff" stroke-width="2"/>
+<text x="440.5" y="254.5" text-anchor="middle" class="cell" style="fill:#102033">1/12</text>
+<rect x="510" y="227" width="130" height="38" rx="6" fill="#5b9cb8" stroke="#ffffff" stroke-width="2"/>
+<text x="575.5" y="254.5" text-anchor="middle" class="cell" style="fill:white">10/3</text>
+<text x="93" y="296.5" text-anchor="end" class="axis">stencil5</text>
+<rect x="105" y="270" width="130" height="38" rx="6" fill="#f7fcb9" stroke="#ffffff" stroke-width="2"/>
+<text x="170.5" y="297.5" text-anchor="middle" class="cell" style="fill:#102033">0/44</text>
+<rect x="240" y="270" width="130" height="38" rx="6" fill="#92beb8" stroke="#ffffff" stroke-width="2"/>
+<text x="305.5" y="297.5" text-anchor="middle" class="cell" style="fill:#102033">8/8</text>
+<rect x="375" y="270" width="130" height="38" rx="6" fill="#86b7b8" stroke="#ffffff" stroke-width="2"/>
+<text x="440.5" y="297.5" text-anchor="middle" class="cell" style="fill:#102033">5/4</text>
+<rect x="510" y="270" width="130" height="38" rx="6" fill="#2c7fb8" stroke="#ffffff" stroke-width="2"/>
+<text x="575.5" y="297.5" text-anchor="middle" class="cell" style="fill:white">9/0</text>
+<text x="105" y="335" class="note">Cell = DSP/LUT intent. Darker cells have higher DSP share; grey inf is infeasible.</text>
+</svg>

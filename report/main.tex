@@ -107,7 +107,7 @@ In execution terms, the Rust path has three phases. First, equality saturation b
 The benchmark harness, figure exporter, and report generator are implemented in Python 3.13.9. Python builds the arithmetic benchmark graphs, computes original baseline metrics from the same shared cost model, assembles batched query sets, invokes the Rust binary once per benchmark, and then flattens the results into CSV, HTML, and paper-ready figures. Batch mode is important because saturation and frontier construction are shared across all queries for one benchmark; only the final selector differs between weighted, constrained, and Pareto extraction. A single \texttt{cost\_model.json} file is shared across both sides so that baseline measurements, extracted measurements, CSV summaries, HTML output, and paper figures all use identical operator costs.
 
 \section{Experimental Setup}
-The analytical experiments were run on a MacBook Pro with an Apple M4 CPU (10 cores: 4 performance and 6 efficiency) and 16\,GB memory, running macOS 26.3.1 on arm64. The evaluation used \texttt{rustc} 1.94.0, \texttt{cargo} 1.94.0, and Python 3.13.9. A follow-up validation pass used Intel HLS Compiler 21.1 targeting Arria 10 component generation. That pass produced HLS resource estimates and RTL, not full Quartus fitter, timing, or power results; the primary optimization results therefore remain analytical.
+The analytical experiments were run on a MacBook Pro with an Apple M4 CPU (10 cores: 4 performance and 6 efficiency) and 16\,GB memory, running macOS 26.3.1 on arm64. The evaluation used \texttt{rustc} 1.94.0, \texttt{cargo} 1.94.0, and Python 3.13.9. A follow-up validation pass used generated RTL and ModelSim on a Linux server to check functional equivalence of extracted variants. Intel HLS and Quartus were also explored, but the available server environment did not produce full fitter, timing, or power results; the primary optimization results therefore remain analytical.
 
 The benchmark suite contains six arithmetic kernels chosen to reflect the proposal's datapath focus: an 8-tap FIR accumulation (\texttt{fir8}), a 16-element dot product (\texttt{dot16}), two GEMM-style accumulations (\texttt{gemm\_k8} and \texttt{gemm\_blocked\_k8}), a single \texttt{conv3x3} window, and a 5-point stencil (\texttt{stencil5}). These kernels are represented directly as arithmetic graphs, which keeps the experiment focused on extraction rather than parsing or frontend lowering.
 
@@ -180,50 +180,47 @@ Figure~\ref{fig:fir8-tradeoff} and Table~\ref{tab:main-results} show that the ad
 The per-benchmark behavior reinforces that interpretation. On \texttt{fir8}, the power objective discovers a middle point between the weighted and latency-optimal extremes. On \texttt{gemm\_k8}, \texttt{gemm\_blocked\_k8}, and \texttt{stencil5}, the power-oriented solution returns to the baseline mapping, which is still informative because it means the extractor can represent ``leave the design unchanged'' as the best power choice. On \texttt{conv3x3}, all three extraction modes improve on the original graph in different ways, which indicates that the framework is not biased toward negative tradeoffs only.
 
 \paragraph{Q3: Do constraints reveal meaningful boundaries of the design space?}
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/suite_constraint_sensitivity.png}
-\caption{Constraint sensitivity across the benchmark suite. Column labels use objective $|$ hard constraint. Each cell reports improvement in the constrained query's target metric relative to default weighted extraction; red cells denote infeasible queries. Baseline ceilings and resource caps are shown in Table~\ref{tab:benchmarks}.}
-\label{fig:constraint-sensitivity}
-\end{figure}
-
-Figure~\ref{fig:constraint-sensitivity} summarizes how much the constrained queries change the answer relative to default weighted extraction. Most `min Lat $|$ Area cap' and `min Lat $|$ Power cap' queries improve their target metric substantially, which indicates that explicit budgets are active selectors rather than cosmetic post-processing. The strongest negative result is \texttt{dot16}: both `min Lat $|$ Power cap' and `min Lat $|$ LUT cap' are infeasible. This is useful evidence, not a failure of presentation. It means the extractor respects the budgets strongly enough to expose genuine impossibility under the retained frontier and rewrite set, instead of always returning a superficially different answer. \textbf{This shows that constraints reveal real boundaries of the design space and are therefore the key delta beyond SEER's equivalence-generation story.}
+Table~\ref{tab:main-results} summarizes how much the constrained queries change the answer relative to default weighted extraction. Most `min Lat $|$ Area cap' and `min Lat $|$ Power cap' queries improve their target metric substantially, which indicates that explicit budgets are active selectors rather than cosmetic post-processing. The strongest negative result is \texttt{dot16}: both `min Lat $|$ Power cap' and `min Lat $|$ LUT cap' are infeasible. This is useful evidence, not a failure of presentation. It means the extractor respects the budgets strongly enough to expose genuine impossibility under the retained frontier and rewrite set, instead of always returning a superficially different answer. \textbf{This shows that constraints reveal real boundaries of the design space and are therefore the key delta beyond SEER's equivalence-generation story.}
 
 The resource-oriented queries also clarify what kind of alternatives the retained frontier actually contains. The zero-DSP query remains feasible across the suite, but it predictably pushes the selected points toward slower LUT-only datapaths; this is precisely the behavior one would want from a hard resource budget rather than from a soft cost penalty. Conversely, the LUT-capped query either recovers a more DSP-heavy implementation or fails outright. The contrast between those two outcomes matters because it shows that the system is not merely toggling cosmetic operator labels. It is selecting among implementations with genuinely different binding patterns and exposing when those patterns do or do not fit the requested budget.
 
 Taken together, the three evaluation questions support a single interpretation of the project. Equality saturation is valuable because it keeps multiple arithmetic implementations alive simultaneously, but the course-level novelty here is that the same saturated graph can then be interrogated with several hardware questions. The evidence would be weaker if every constrained query simply reproduced the weighted answer, or if every profile always returned some feasible variant. Instead, the results show a richer behavior: some queries recover meaningfully better operating points, some return the baseline as the best constrained point, and some become infeasible. That is exactly the kind of extraction-level evidence needed to argue that the extension is about constrained selection rather than about generating equivalences for their own sake.
 
-\paragraph{Intel HLS validation.}
-To check whether the generated datapaths were usable outside the analytical model, the exporter emitted 35 C++ component variants with DSP- and softlogic-oriented helper calls. A deterministic C++ test harness compared every optimized variant against its original kernel on 1000 input vectors per benchmark; all variants passed. Intel HLS 21.1 then generated RTL and estimated resources for every variant under default, \texttt{prefer-dsp}, and \texttt{prefer-softlogic} modes, giving 105 HLS report rows.
+\paragraph{Structural and RTL validation.}
+The analytical results also correspond to different generated datapaths, not only different scores attached to the same expression. The RTL exporter emitted Verilog variants for each feasible extraction result, using DSP-oriented multiplier attributes for \texttt{mul}/\texttt{mul\_dsp}/\texttt{mac\_dsp} and logic-oriented attributes for \texttt{mul\_lut}. Generated RTL variants were tested against the original RTL on 200 deterministic vectors per benchmark; all 29 optimized variants passed, so the extracted variants preserve functional equivalence on the validation suite.
 
 \begin{table}[t]
-\caption{Intel HLS component-generation validation. Analytical ranges vary across variants, but HLS estimates mostly collapse to one resource tuple per benchmark. HLS tuple is ALUT/FF/DSP/cycles for the original default-mode component.}
-\label{tab:hls-validation}
+\caption{Representative structural validation. Each row is one generated RTL variant. $A/L/P$ is the analytical objective tuple; $D/U$ is total DSP/LUT intent; $M_D/M_U$ is DSP-intended versus LUT-intended multiplier/MAC count.}
+\label{tab:structural-validation}
 \centering
 \scriptsize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{lrrrr}
+\begin{tabular}{l l r r r}
 \toprule
-Benchmark & Var. & Ana. DSP/LUT & HLS tuple & Unique \\
+Benchmark & Variant & A/L/P & D/U & $M_D/M_U$ \\
 \midrule
-\texttt{conv3x3} & 6 & 0--10 / 3--20 & 316/102/0/4 & 1 \\
-\texttt{dot16} & 5 & 0--16 / 15--143 & 1009/654/24/8 & 1 \\
-\texttt{fir8} & 6 & 0--11 / 2--41 & 317/104/0/4 & 1 \\
-\texttt{gemm\_blk} & 6 & 0--15 / 0--71 & 496/334/12/8 & 2 \\
-\texttt{gemm\_k8} & 6 & 0--11 / 7--71 & 496/334/12/8 & 1 \\
-\texttt{stencil5} & 6 & 0--9 / 0--44 & 190/105/0/4 & 1 \\
+\texttt{fir8} & weighted & 25/18/33 & 0/41 & 0/4 \\
+\texttt{fir8} & lat-opt & 38/9/31 & 10/10 & 3/1 \\
+\texttt{fir8} & pwr-opt & 33/16/21 & 4/9 & 4/0 \\
+\texttt{dot16} & weighted & 79/36/111 & 0/143 & 0/16 \\
+\texttt{dot16} & lat-opt & 94/21/126 & 15/128 & 0/16 \\
+\texttt{dot16} & pwr-opt & 93/33/90 & 7/87 & 7/9 \\
+\texttt{conv3x3} & weighted & 16/18/18 & 0/20 & 0/1 \\
+\texttt{conv3x3} & lat-opt & 27/9/24 & 10/3 & 1/0 \\
+\texttt{stencil5} & weighted & 24/14/34 & 0/44 & 0/5 \\
+\texttt{stencil5} & LUT cap & 38/7/23 & 9/0 & 5/0 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{figures/hls_expected_vs_reported_dsp.png}
-\caption{Analytical DSP intent versus Intel HLS estimated DSPs across all 105 component-generation reports. The weak alignment is a negative result: this HLS pass validates functional C++ generation and report extraction, but it does not preserve the analytical DSP/LUT distinctions strongly enough to replace the analytical model.}
-\label{fig:hls-dsp}
+\includegraphics[width=\columnwidth]{figures/structural_dsp_lut_heatmap.png}
+\caption{Structural DSP/LUT intent in generated variants. Cell text is total DSP/LUT intent and color is the DSP share. Weighted selections are LUT-heavy, while latency- and LUT-capped selections often move toward DSP-intended datapaths.}
+\label{fig:structural-intent}
 \end{figure}
 
-Table~\ref{tab:hls-validation} and Figure~\ref{fig:hls-dsp} show a useful limitation. Although the analytical variants span wide DSP/LUT ranges, Intel HLS usually reports identical estimated resources and schedule length for all variants of the same kernel; \texttt{gemm\_blocked\_k8} differs only by one ALUT in some variants. In addition, the generated \texttt{quartus.json} files report fitter resources and Fmax as \texttt{TBD}, so these results are HLS estimates rather than post-fit Quartus measurements. This strengthens the paper's scope statement: the optimizer is correct as a constrained extractor under its analytical model, while synthesis-calibrated resource binding remains future work.
+Table~\ref{tab:structural-validation} and Figure~\ref{fig:structural-intent} show the most useful implementation-level evidence available in this environment. The area-oriented weighted point is structurally different from latency-oriented and LUT-capped points: for example, \texttt{fir8} moves from 0 DSP / 41 LUT intent in the weighted variant to 10 DSP / 10 LUT intent in the latency-optimal variant, and \texttt{stencil5} moves from 0 DSP / 44 LUT intent to 9 DSP / 0 LUT intent under the LUT cap. This supports the claim that constraints select different datapath structures. It does not claim post-fit FPGA speed or power. Quartus fit/STA was unavailable on the server: Quartus 19.2 crashed on a trivial Verilog sanity project with an internal \texttt{is\_legal\_device()} error, and Quartus 21.1 rejected the available Arria 10 family license. Intel HLS component generation also produced mostly collapsed resource estimates across variants. These tool results are therefore treated as a limitation, while the analytical extractor and functional RTL simulation provide the report's main evidence.
 
 \section{Discussion}
 Relative to SEER, the project demonstrates one concrete point: equality saturation is a good way to generate HLS datapath alternatives, but constrained extraction is what makes those alternatives usable. The results are strongest where the weighted point is clearly not the right answer and where explicit budgets either recover a better implementation or expose infeasibility. That is why the negative \texttt{dot16} cases strengthen the paper rather than weaken it.
