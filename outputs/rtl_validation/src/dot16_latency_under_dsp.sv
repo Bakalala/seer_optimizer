@@ -6,40 +6,73 @@
 // rtl intended multiplier/MAC DSPs: 0
 // expression: ((a15 *lut b15) +lut ((a14 *lut b14) +lut ((a13 *lut b13) +lut ((a12 *lut b12) +lut ((a11 *lut b11) +lut ((a10 *lut b10) +lut ((a9 *lut b9) +lut ((a8 *lut b8) +lut ((a7 *lut b7) +lut ((a6 *lut b6) +lut ((a5 *lut b5) +lut ((a4 *lut b4) +lut ((a3 *lut b3) +lut ((a2 *lut b2) +lut ((a0 *lut b0) +lut (a1 *lut b1))))))))))))))))
 module dot16_latency_under_dsp(
-    input  logic signed [31:0] in_a0,
-    input  logic signed [31:0] in_a1,
-    input  logic signed [31:0] in_a10,
-    input  logic signed [31:0] in_a11,
-    input  logic signed [31:0] in_a12,
-    input  logic signed [31:0] in_a13,
-    input  logic signed [31:0] in_a14,
-    input  logic signed [31:0] in_a15,
-    input  logic signed [31:0] in_a2,
-    input  logic signed [31:0] in_a3,
-    input  logic signed [31:0] in_a4,
-    input  logic signed [31:0] in_a5,
-    input  logic signed [31:0] in_a6,
-    input  logic signed [31:0] in_a7,
-    input  logic signed [31:0] in_a8,
-    input  logic signed [31:0] in_a9,
-    input  logic signed [31:0] in_b0,
-    input  logic signed [31:0] in_b1,
-    input  logic signed [31:0] in_b10,
-    input  logic signed [31:0] in_b11,
-    input  logic signed [31:0] in_b12,
-    input  logic signed [31:0] in_b13,
-    input  logic signed [31:0] in_b14,
-    input  logic signed [31:0] in_b15,
-    input  logic signed [31:0] in_b2,
-    input  logic signed [31:0] in_b3,
-    input  logic signed [31:0] in_b4,
-    input  logic signed [31:0] in_b5,
-    input  logic signed [31:0] in_b6,
-    input  logic signed [31:0] in_b7,
-    input  logic signed [31:0] in_b8,
-    input  logic signed [31:0] in_b9,
-    output logic signed [31:0] out
+    in_a0,
+    in_a1,
+    in_a10,
+    in_a11,
+    in_a12,
+    in_a13,
+    in_a14,
+    in_a15,
+    in_a2,
+    in_a3,
+    in_a4,
+    in_a5,
+    in_a6,
+    in_a7,
+    in_a8,
+    in_a9,
+    in_b0,
+    in_b1,
+    in_b10,
+    in_b11,
+    in_b12,
+    in_b13,
+    in_b14,
+    in_b15,
+    in_b2,
+    in_b3,
+    in_b4,
+    in_b5,
+    in_b6,
+    in_b7,
+    in_b8,
+    in_b9,
+    out
 );
+    input  wire signed [31:0] in_a0;
+    input  wire signed [31:0] in_a1;
+    input  wire signed [31:0] in_a10;
+    input  wire signed [31:0] in_a11;
+    input  wire signed [31:0] in_a12;
+    input  wire signed [31:0] in_a13;
+    input  wire signed [31:0] in_a14;
+    input  wire signed [31:0] in_a15;
+    input  wire signed [31:0] in_a2;
+    input  wire signed [31:0] in_a3;
+    input  wire signed [31:0] in_a4;
+    input  wire signed [31:0] in_a5;
+    input  wire signed [31:0] in_a6;
+    input  wire signed [31:0] in_a7;
+    input  wire signed [31:0] in_a8;
+    input  wire signed [31:0] in_a9;
+    input  wire signed [31:0] in_b0;
+    input  wire signed [31:0] in_b1;
+    input  wire signed [31:0] in_b10;
+    input  wire signed [31:0] in_b11;
+    input  wire signed [31:0] in_b12;
+    input  wire signed [31:0] in_b13;
+    input  wire signed [31:0] in_b14;
+    input  wire signed [31:0] in_b15;
+    input  wire signed [31:0] in_b2;
+    input  wire signed [31:0] in_b3;
+    input  wire signed [31:0] in_b4;
+    input  wire signed [31:0] in_b5;
+    input  wire signed [31:0] in_b6;
+    input  wire signed [31:0] in_b7;
+    input  wire signed [31:0] in_b8;
+    input  wire signed [31:0] in_b9;
+    output wire signed [31:0] out;
     import rtl_validation_ops::*;
 
     // op=input analytical area=0 latency=0 power=0 dsp=0 lut=0

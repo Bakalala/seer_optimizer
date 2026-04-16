@@ -6,18 +6,24 @@
 // rtl intended multiplier/MAC DSPs: 5
 // expression: ((-1 *dsp west) +dsp ((-1 *dsp east) +dsp ((-1 *dsp south) +dsp ((-1 *dsp north) +dsp (4 *dsp center)))))
 module stencil5_latency_under_lut(
-    input  logic signed [31:0] in_center,
-    input  logic signed [31:0] in_east,
-    input  logic signed [31:0] in_north,
-    input  logic signed [31:0] in_south,
-    input  logic signed [31:0] in_west,
-    output logic signed [31:0] out
+    in_center,
+    in_east,
+    in_north,
+    in_south,
+    in_west,
+    out
 );
+    input  wire signed [31:0] in_center;
+    input  wire signed [31:0] in_east;
+    input  wire signed [31:0] in_north;
+    input  wire signed [31:0] in_south;
+    input  wire signed [31:0] in_west;
+    output wire signed [31:0] out;
     import rtl_validation_ops::*;
 
     // op=const analytical area=0 latency=0 power=0 dsp=0 lut=0
     logic signed [31:0] n0;
-    assign n0 = 32'sd-1;
+    assign n0 = -32'sd1;
 
     // op=input analytical area=0 latency=0 power=0 dsp=0 lut=0
     logic signed [31:0] n1;
@@ -31,7 +37,7 @@ module stencil5_latency_under_lut(
 
     // op=const analytical area=0 latency=0 power=0 dsp=0 lut=0
     logic signed [31:0] n3;
-    assign n3 = 32'sd-1;
+    assign n3 = -32'sd1;
 
     // op=input analytical area=0 latency=0 power=0 dsp=0 lut=0
     logic signed [31:0] n4;
@@ -45,7 +51,7 @@ module stencil5_latency_under_lut(
 
     // op=const analytical area=0 latency=0 power=0 dsp=0 lut=0
     logic signed [31:0] n6;
-    assign n6 = 32'sd-1;
+    assign n6 = -32'sd1;
 
     // op=input analytical area=0 latency=0 power=0 dsp=0 lut=0
     logic signed [31:0] n7;
@@ -59,7 +65,7 @@ module stencil5_latency_under_lut(
 
     // op=const analytical area=0 latency=0 power=0 dsp=0 lut=0
     logic signed [31:0] n9;
-    assign n9 = 32'sd-1;
+    assign n9 = -32'sd1;
 
     // op=input analytical area=0 latency=0 power=0 dsp=0 lut=0
     logic signed [31:0] n10;

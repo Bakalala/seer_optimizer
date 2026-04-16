@@ -6,13 +6,19 @@
 // rtl intended multiplier/MAC DSPs: 5
 // expression: (((((4 * center) + (-1 * north)) + (-1 * south)) + (-1 * east)) + (-1 * west))
 module stencil5_original(
-    input  logic signed [31:0] in_center,
-    input  logic signed [31:0] in_east,
-    input  logic signed [31:0] in_north,
-    input  logic signed [31:0] in_south,
-    input  logic signed [31:0] in_west,
-    output logic signed [31:0] out
+    in_center,
+    in_east,
+    in_north,
+    in_south,
+    in_west,
+    out
 );
+    input  wire signed [31:0] in_center;
+    input  wire signed [31:0] in_east;
+    input  wire signed [31:0] in_north;
+    input  wire signed [31:0] in_south;
+    input  wire signed [31:0] in_west;
+    output wire signed [31:0] out;
     import rtl_validation_ops::*;
 
     // op=input analytical area=0 latency=0 power=0 dsp=0 lut=0
@@ -41,7 +47,7 @@ module stencil5_original(
 
     // op=const analytical area=0 latency=0 power=0 dsp=0 lut=0
     logic signed [31:0] n6;
-    assign n6 = 32'sd-1;
+    assign n6 = -32'sd1;
 
     // op=mul analytical area=6 latency=3 power=3 dsp=1 lut=0
     (* multstyle = "dsp" *) logic signed [63:0] n7_full;

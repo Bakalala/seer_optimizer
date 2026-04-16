@@ -97,7 +97,7 @@ module tb_conv3x3;
         int raw;
         begin
             raw = ((vec * 17) + (input_idx * 31) + 7) % 33;
-            signed_value = 32'sd-16 + raw;
+            signed_value = -32'sd16 + raw;
         end
     endfunction
 

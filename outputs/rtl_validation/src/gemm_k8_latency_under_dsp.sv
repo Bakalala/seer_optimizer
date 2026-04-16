@@ -6,24 +6,41 @@
 // rtl intended multiplier/MAC DSPs: 0
 // expression: ((A7 *lut B7) +lut ((A6 *lut B6) +lut ((A5 *lut B5) +lut ((A4 *lut B4) +lut ((A3 *lut B3) +lut ((A2 *lut B2) +lut ((A0 *lut B0) +lut (A1 *lut B1))))))))
 module gemm_k8_latency_under_dsp(
-    input  logic signed [31:0] in_A0,
-    input  logic signed [31:0] in_A1,
-    input  logic signed [31:0] in_A2,
-    input  logic signed [31:0] in_A3,
-    input  logic signed [31:0] in_A4,
-    input  logic signed [31:0] in_A5,
-    input  logic signed [31:0] in_A6,
-    input  logic signed [31:0] in_A7,
-    input  logic signed [31:0] in_B0,
-    input  logic signed [31:0] in_B1,
-    input  logic signed [31:0] in_B2,
-    input  logic signed [31:0] in_B3,
-    input  logic signed [31:0] in_B4,
-    input  logic signed [31:0] in_B5,
-    input  logic signed [31:0] in_B6,
-    input  logic signed [31:0] in_B7,
-    output logic signed [31:0] out
+    in_A0,
+    in_A1,
+    in_A2,
+    in_A3,
+    in_A4,
+    in_A5,
+    in_A6,
+    in_A7,
+    in_B0,
+    in_B1,
+    in_B2,
+    in_B3,
+    in_B4,
+    in_B5,
+    in_B6,
+    in_B7,
+    out
 );
+    input  wire signed [31:0] in_A0;
+    input  wire signed [31:0] in_A1;
+    input  wire signed [31:0] in_A2;
+    input  wire signed [31:0] in_A3;
+    input  wire signed [31:0] in_A4;
+    input  wire signed [31:0] in_A5;
+    input  wire signed [31:0] in_A6;
+    input  wire signed [31:0] in_A7;
+    input  wire signed [31:0] in_B0;
+    input  wire signed [31:0] in_B1;
+    input  wire signed [31:0] in_B2;
+    input  wire signed [31:0] in_B3;
+    input  wire signed [31:0] in_B4;
+    input  wire signed [31:0] in_B5;
+    input  wire signed [31:0] in_B6;
+    input  wire signed [31:0] in_B7;
+    output wire signed [31:0] out;
     import rtl_validation_ops::*;
 
     // op=input analytical area=0 latency=0 power=0 dsp=0 lut=0

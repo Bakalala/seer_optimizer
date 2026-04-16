@@ -6,16 +6,25 @@
 // rtl intended multiplier/MAC DSPs: 0
 // expression: ((((3 *lut x5) +lut ((4 *lut x4) +lut ((4 *lut x3) +lut ((3 *lut x2) +lut ((x1 +lut x1) +lut x0))))) +lut (x6 +lut x6)) +lut x7)
 module fir8_latency_under_dsp(
-    input  logic signed [31:0] in_x0,
-    input  logic signed [31:0] in_x1,
-    input  logic signed [31:0] in_x2,
-    input  logic signed [31:0] in_x3,
-    input  logic signed [31:0] in_x4,
-    input  logic signed [31:0] in_x5,
-    input  logic signed [31:0] in_x6,
-    input  logic signed [31:0] in_x7,
-    output logic signed [31:0] out
+    in_x0,
+    in_x1,
+    in_x2,
+    in_x3,
+    in_x4,
+    in_x5,
+    in_x6,
+    in_x7,
+    out
 );
+    input  wire signed [31:0] in_x0;
+    input  wire signed [31:0] in_x1;
+    input  wire signed [31:0] in_x2;
+    input  wire signed [31:0] in_x3;
+    input  wire signed [31:0] in_x4;
+    input  wire signed [31:0] in_x5;
+    input  wire signed [31:0] in_x6;
+    input  wire signed [31:0] in_x7;
+    output wire signed [31:0] out;
     import rtl_validation_ops::*;
 
     // op=const analytical area=0 latency=0 power=0 dsp=0 lut=0

@@ -1,21 +1,35 @@
 `default_nettype none
 
 module conv3x3_latency_under_lut_top(
-    input  logic clk,
-    input  logic resetn,
-    input  logic valid_in,
-    input  logic signed [31:0] in_p00,
-    input  logic signed [31:0] in_p01,
-    input  logic signed [31:0] in_p02,
-    input  logic signed [31:0] in_p10,
-    input  logic signed [31:0] in_p11,
-    input  logic signed [31:0] in_p12,
-    input  logic signed [31:0] in_p20,
-    input  logic signed [31:0] in_p21,
-    input  logic signed [31:0] in_p22,
-    output logic valid_out,
-    output logic signed [31:0] out
+    clk,
+    resetn,
+    valid_in,
+    in_p00,
+    in_p01,
+    in_p02,
+    in_p10,
+    in_p11,
+    in_p12,
+    in_p20,
+    in_p21,
+    in_p22,
+    valid_out,
+    out
 );
+    input  wire clk;
+    input  wire resetn;
+    input  wire valid_in;
+    input  wire signed [31:0] in_p00;
+    input  wire signed [31:0] in_p01;
+    input  wire signed [31:0] in_p02;
+    input  wire signed [31:0] in_p10;
+    input  wire signed [31:0] in_p11;
+    input  wire signed [31:0] in_p12;
+    input  wire signed [31:0] in_p20;
+    input  wire signed [31:0] in_p21;
+    input  wire signed [31:0] in_p22;
+    output logic valid_out;
+    output logic signed [31:0] out;
     logic signed [31:0] in_p00_r;
     logic signed [31:0] in_p01_r;
     logic signed [31:0] in_p02_r;

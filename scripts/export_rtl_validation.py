@@ -76,6 +76,12 @@ def sv_input_port(name: str) -> str:
     return f"in_{sv_name(name)}"
 
 
+def sv_const(value: int) -> str:
+    if value < 0:
+        return f"-32'sd{abs(value)}"
+    return f"32'sd{value}"
+
+
 def repo_relative(path: Path) -> str:
     try:
         return str(path.relative_to(ROOT))
@@ -92,8 +98,9 @@ def render_datapath_module(
     metrics: dict,
     input_names: list[str],
 ) -> str:
-    ports = [f"    input  logic signed [31:0] {sv_input_port(name)}" for name in input_names]
-    ports.append("    output logic signed [31:0] out")
+    port_names = [sv_input_port(name) for name in input_names] + ["out"]
+    port_decls = [f"    input  wire signed [31:0] {sv_input_port(name)};" for name in input_names]
+    port_decls.append("    output wire signed [31:0] out;")
     lines = [
         "`default_nettype none",
         "",
@@ -108,8 +115,9 @@ def render_datapath_module(
         f"// rtl intended multiplier/MAC DSPs: {rtl_intended_dsp_count(graph)}",
         f"// expression: {run_benchmarks.graph_to_expr_text(graph)}",
         f"module {module_name}(",
-        ",\n".join(ports),
+        ",\n".join(f"    {name}" for name in port_names),
         ");",
+        *port_decls,
         "    import rtl_validation_ops::*;",
         "",
     ]
@@ -131,7 +139,7 @@ def render_datapath_module(
             lines.append(f"    assign {var} = {sv_input_port(node['name'])};")
         elif op == "const":
             lines.append(f"    logic signed [31:0] {var};")
-            lines.append(f"    assign {var} = 32'sd{int(node['value'])};")
+            lines.append(f"    assign {var} = {sv_const(int(node['value']))};")
         elif op in {"add", "add_lut", "add_dsp"}:
             lines.append(f"    logic signed [31:0] {var};")
             lines.append(f"    assign {var} = {inputs[0]} + {inputs[1]};")
@@ -199,16 +207,19 @@ endpackage
 
 
 def render_wrapper(module_name: str, top_name: str, input_names: list[str]) -> str:
-    ports = [
-        "    input  logic clk",
-        "    input  logic resetn",
-        "    input  logic valid_in",
+    port_names = ["clk", "resetn", "valid_in"]
+    port_names.extend(sv_input_port(name) for name in input_names)
+    port_names.extend(["valid_out", "out"])
+    port_decls = [
+        "    input  wire clk;",
+        "    input  wire resetn;",
+        "    input  wire valid_in;",
     ]
-    ports.extend(f"    input  logic signed [31:0] {sv_input_port(name)}" for name in input_names)
-    ports.extend(
+    port_decls.extend(f"    input  wire signed [31:0] {sv_input_port(name)};" for name in input_names)
+    port_decls.extend(
         [
-            "    output logic valid_out",
-            "    output logic signed [31:0] out",
+            "    output logic valid_out;",
+            "    output logic signed [31:0] out;",
         ]
     )
     reg_decls = []
@@ -224,8 +235,9 @@ def render_wrapper(module_name: str, top_name: str, input_names: list[str]) -> s
     return f"""`default_nettype none
 
 module {top_name}(
-{',\n'.join(ports)}
+{',\n'.join(f'    {name}' for name in port_names)}
 );
+{chr(10).join(port_decls)}
 {input_regs}
     logic signed [31:0] datapath_out;
 
@@ -292,7 +304,7 @@ module tb_{benchmark};
         int raw;
         begin
             raw = ((vec * 17) + (input_idx * 31) + 7) % {TEST_MAX - TEST_MIN + 1};
-            signed_value = 32'sd{TEST_MIN} + raw;
+            signed_value = {sv_const(TEST_MIN)} + raw;
         end
     endfunction
 

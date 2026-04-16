@@ -6,16 +6,25 @@
 // rtl intended multiplier/MAC DSPs: 8
 // expression: ((((((((1 * x0) + (2 * x1)) + (3 * x2)) + (4 * x3)) + (4 * x4)) + (3 * x5)) + (2 * x6)) + (1 * x7))
 module fir8_original(
-    input  logic signed [31:0] in_x0,
-    input  logic signed [31:0] in_x1,
-    input  logic signed [31:0] in_x2,
-    input  logic signed [31:0] in_x3,
-    input  logic signed [31:0] in_x4,
-    input  logic signed [31:0] in_x5,
-    input  logic signed [31:0] in_x6,
-    input  logic signed [31:0] in_x7,
-    output logic signed [31:0] out
+    in_x0,
+    in_x1,
+    in_x2,
+    in_x3,
+    in_x4,
+    in_x5,
+    in_x6,
+    in_x7,
+    out
 );
+    input  wire signed [31:0] in_x0;
+    input  wire signed [31:0] in_x1;
+    input  wire signed [31:0] in_x2;
+    input  wire signed [31:0] in_x3;
+    input  wire signed [31:0] in_x4;
+    input  wire signed [31:0] in_x5;
+    input  wire signed [31:0] in_x6;
+    input  wire signed [31:0] in_x7;
+    output wire signed [31:0] out;
     import rtl_validation_ops::*;
 
     // op=input analytical area=0 latency=0 power=0 dsp=0 lut=0

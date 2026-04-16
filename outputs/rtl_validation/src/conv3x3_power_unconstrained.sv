@@ -6,17 +6,27 @@
 // rtl intended multiplier/MAC DSPs: 1
 // expression: ((((((4 *dsp p11) +lut ((((p01 +lut p01) +lut p00) +lut p02) +lut (p10 +lut p10))) +lut (p12 +lut p12)) +lut p20) +lut (p21 +lut p21)) +lut p22)
 module conv3x3_power_unconstrained(
-    input  logic signed [31:0] in_p00,
-    input  logic signed [31:0] in_p01,
-    input  logic signed [31:0] in_p02,
-    input  logic signed [31:0] in_p10,
-    input  logic signed [31:0] in_p11,
-    input  logic signed [31:0] in_p12,
-    input  logic signed [31:0] in_p20,
-    input  logic signed [31:0] in_p21,
-    input  logic signed [31:0] in_p22,
-    output logic signed [31:0] out
+    in_p00,
+    in_p01,
+    in_p02,
+    in_p10,
+    in_p11,
+    in_p12,
+    in_p20,
+    in_p21,
+    in_p22,
+    out
 );
+    input  wire signed [31:0] in_p00;
+    input  wire signed [31:0] in_p01;
+    input  wire signed [31:0] in_p02;
+    input  wire signed [31:0] in_p10;
+    input  wire signed [31:0] in_p11;
+    input  wire signed [31:0] in_p12;
+    input  wire signed [31:0] in_p20;
+    input  wire signed [31:0] in_p21;
+    input  wire signed [31:0] in_p22;
+    output wire signed [31:0] out;
     import rtl_validation_ops::*;
 
     // op=const analytical area=0 latency=0 power=0 dsp=0 lut=0

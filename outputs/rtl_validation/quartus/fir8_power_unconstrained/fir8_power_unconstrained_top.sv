@@ -1,20 +1,33 @@
 `default_nettype none
 
 module fir8_power_unconstrained_top(
-    input  logic clk,
-    input  logic resetn,
-    input  logic valid_in,
-    input  logic signed [31:0] in_x0,
-    input  logic signed [31:0] in_x1,
-    input  logic signed [31:0] in_x2,
-    input  logic signed [31:0] in_x3,
-    input  logic signed [31:0] in_x4,
-    input  logic signed [31:0] in_x5,
-    input  logic signed [31:0] in_x6,
-    input  logic signed [31:0] in_x7,
-    output logic valid_out,
-    output logic signed [31:0] out
+    clk,
+    resetn,
+    valid_in,
+    in_x0,
+    in_x1,
+    in_x2,
+    in_x3,
+    in_x4,
+    in_x5,
+    in_x6,
+    in_x7,
+    valid_out,
+    out
 );
+    input  wire clk;
+    input  wire resetn;
+    input  wire valid_in;
+    input  wire signed [31:0] in_x0;
+    input  wire signed [31:0] in_x1;
+    input  wire signed [31:0] in_x2;
+    input  wire signed [31:0] in_x3;
+    input  wire signed [31:0] in_x4;
+    input  wire signed [31:0] in_x5;
+    input  wire signed [31:0] in_x6;
+    input  wire signed [31:0] in_x7;
+    output logic valid_out;
+    output logic signed [31:0] out;
     logic signed [31:0] in_x0_r;
     logic signed [31:0] in_x1_r;
     logic signed [31:0] in_x2_r;

@@ -1,17 +1,27 @@
 `default_nettype none
 
 module stencil5_power_unconstrained_top(
-    input  logic clk,
-    input  logic resetn,
-    input  logic valid_in,
-    input  logic signed [31:0] in_center,
-    input  logic signed [31:0] in_east,
-    input  logic signed [31:0] in_north,
-    input  logic signed [31:0] in_south,
-    input  logic signed [31:0] in_west,
-    output logic valid_out,
-    output logic signed [31:0] out
+    clk,
+    resetn,
+    valid_in,
+    in_center,
+    in_east,
+    in_north,
+    in_south,
+    in_west,
+    valid_out,
+    out
 );
+    input  wire clk;
+    input  wire resetn;
+    input  wire valid_in;
+    input  wire signed [31:0] in_center;
+    input  wire signed [31:0] in_east;
+    input  wire signed [31:0] in_north;
+    input  wire signed [31:0] in_south;
+    input  wire signed [31:0] in_west;
+    output logic valid_out;
+    output logic signed [31:0] out;
     logic signed [31:0] in_center_r;
     logic signed [31:0] in_east_r;
     logic signed [31:0] in_north_r;

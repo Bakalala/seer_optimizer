@@ -1,28 +1,49 @@
 `default_nettype none
 
 module gemm_k8_latency_under_lut_top(
-    input  logic clk,
-    input  logic resetn,
-    input  logic valid_in,
-    input  logic signed [31:0] in_A0,
-    input  logic signed [31:0] in_A1,
-    input  logic signed [31:0] in_A2,
-    input  logic signed [31:0] in_A3,
-    input  logic signed [31:0] in_A4,
-    input  logic signed [31:0] in_A5,
-    input  logic signed [31:0] in_A6,
-    input  logic signed [31:0] in_A7,
-    input  logic signed [31:0] in_B0,
-    input  logic signed [31:0] in_B1,
-    input  logic signed [31:0] in_B2,
-    input  logic signed [31:0] in_B3,
-    input  logic signed [31:0] in_B4,
-    input  logic signed [31:0] in_B5,
-    input  logic signed [31:0] in_B6,
-    input  logic signed [31:0] in_B7,
-    output logic valid_out,
-    output logic signed [31:0] out
+    clk,
+    resetn,
+    valid_in,
+    in_A0,
+    in_A1,
+    in_A2,
+    in_A3,
+    in_A4,
+    in_A5,
+    in_A6,
+    in_A7,
+    in_B0,
+    in_B1,
+    in_B2,
+    in_B3,
+    in_B4,
+    in_B5,
+    in_B6,
+    in_B7,
+    valid_out,
+    out
 );
+    input  wire clk;
+    input  wire resetn;
+    input  wire valid_in;
+    input  wire signed [31:0] in_A0;
+    input  wire signed [31:0] in_A1;
+    input  wire signed [31:0] in_A2;
+    input  wire signed [31:0] in_A3;
+    input  wire signed [31:0] in_A4;
+    input  wire signed [31:0] in_A5;
+    input  wire signed [31:0] in_A6;
+    input  wire signed [31:0] in_A7;
+    input  wire signed [31:0] in_B0;
+    input  wire signed [31:0] in_B1;
+    input  wire signed [31:0] in_B2;
+    input  wire signed [31:0] in_B3;
+    input  wire signed [31:0] in_B4;
+    input  wire signed [31:0] in_B5;
+    input  wire signed [31:0] in_B6;
+    input  wire signed [31:0] in_B7;
+    output logic valid_out;
+    output logic signed [31:0] out;
     logic signed [31:0] in_A0_r;
     logic signed [31:0] in_A1_r;
     logic signed [31:0] in_A2_r;

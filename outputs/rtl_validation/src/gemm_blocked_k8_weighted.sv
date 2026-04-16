@@ -6,24 +6,41 @@
 // rtl intended multiplier/MAC DSPs: 0
 // expression: (((BA3 *lut BB3) +lut ((BA2 *lut BB2) +lut ((BA0 *lut BB0) +lut (BA1 *lut BB1)))) +lut ((BA7 *lut BB7) +lut ((BA6 *lut BB6) +lut ((BA4 *lut BB4) +lut (BA5 *lut BB5)))))
 module gemm_blocked_k8_weighted(
-    input  logic signed [31:0] in_BA0,
-    input  logic signed [31:0] in_BA1,
-    input  logic signed [31:0] in_BA2,
-    input  logic signed [31:0] in_BA3,
-    input  logic signed [31:0] in_BA4,
-    input  logic signed [31:0] in_BA5,
-    input  logic signed [31:0] in_BA6,
-    input  logic signed [31:0] in_BA7,
-    input  logic signed [31:0] in_BB0,
-    input  logic signed [31:0] in_BB1,
-    input  logic signed [31:0] in_BB2,
-    input  logic signed [31:0] in_BB3,
-    input  logic signed [31:0] in_BB4,
-    input  logic signed [31:0] in_BB5,
-    input  logic signed [31:0] in_BB6,
-    input  logic signed [31:0] in_BB7,
-    output logic signed [31:0] out
+    in_BA0,
+    in_BA1,
+    in_BA2,
+    in_BA3,
+    in_BA4,
+    in_BA5,
+    in_BA6,
+    in_BA7,
+    in_BB0,
+    in_BB1,
+    in_BB2,
+    in_BB3,
+    in_BB4,
+    in_BB5,
+    in_BB6,
+    in_BB7,
+    out
 );
+    input  wire signed [31:0] in_BA0;
+    input  wire signed [31:0] in_BA1;
+    input  wire signed [31:0] in_BA2;
+    input  wire signed [31:0] in_BA3;
+    input  wire signed [31:0] in_BA4;
+    input  wire signed [31:0] in_BA5;
+    input  wire signed [31:0] in_BA6;
+    input  wire signed [31:0] in_BA7;
+    input  wire signed [31:0] in_BB0;
+    input  wire signed [31:0] in_BB1;
+    input  wire signed [31:0] in_BB2;
+    input  wire signed [31:0] in_BB3;
+    input  wire signed [31:0] in_BB4;
+    input  wire signed [31:0] in_BB5;
+    input  wire signed [31:0] in_BB6;
+    input  wire signed [31:0] in_BB7;
+    output wire signed [31:0] out;
     import rtl_validation_ops::*;
 
     // op=input analytical area=0 latency=0 power=0 dsp=0 lut=0
