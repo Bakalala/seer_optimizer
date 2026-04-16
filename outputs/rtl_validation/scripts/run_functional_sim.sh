@@ -24,7 +24,7 @@ fi
 
 summary="$REPORT_DIR/functional_summary.csv"
 echo "benchmark,status,optimized_variants,test_vectors,log_path" > "$summary"
-mapfile -t rtl_sources < <(find "$ROOT_DIR/src" -maxdepth 1 -name '*.sv' ! -name 'rtl_validation_ops.sv' | sort)
+mapfile -t rtl_sources < <(find "$ROOT_DIR/src" -maxdepth 1 \( -name '*.v' -o -name '*.sv' \) | sort)
 
 for tb in "$ROOT_DIR"/tests/tb_*.sv; do
   bench="$(basename "$tb" .sv)"
@@ -35,7 +35,7 @@ for tb in "$ROOT_DIR"/tests/tb_*.sv; do
     work="$REPORT_DIR/sim/work_${bench}"
     rm -rf "$work"
     vlib "$work" >/dev/null
-    vlog -quiet -sv -work "$work" "$ROOT_DIR/src/rtl_validation_ops.sv" "${rtl_sources[@]}" "$tb" > "$log" 2>&1
+    vlog -quiet -sv -work "$work" "${rtl_sources[@]}" "$tb" > "$log" 2>&1
     if vsim -c -quiet -lib "$work" "tb_${bench}" -do "run -all; quit -f" >> "$log" 2>&1; then
       pass_line="$(grep '^# PASS,' "$log" | tail -1 | sed 's/^# //')"
     else
@@ -43,7 +43,7 @@ for tb in "$ROOT_DIR"/tests/tb_*.sv; do
     fi
   else
     out="$REPORT_DIR/sim/${bench}.vvp"
-    if iverilog -g2012 -o "$out" "$ROOT_DIR/src/rtl_validation_ops.sv" "${rtl_sources[@]}" "$tb" > "$log" 2>&1 && vvp "$out" >> "$log" 2>&1; then
+    if iverilog -g2012 -o "$out" "${rtl_sources[@]}" "$tb" > "$log" 2>&1 && vvp "$out" >> "$log" 2>&1; then
       pass_line="$(grep '^PASS,' "$log" | tail -1)"
     else
       pass_line=""

@@ -1,9 +1,8 @@
 set_global_assignment -name FAMILY "Arria 10"
-set_global_assignment -name DEVICE 10AX115U1F45I1SG
+set_global_assignment -name DEVICE 10AX090H1F34E1SG
 set_global_assignment -name TOP_LEVEL_ENTITY fir8_latency_under_lut_top
-set_global_assignment -name SYSTEMVERILOG_FILE ../../src/rtl_validation_ops.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../src/fir8_latency_under_lut.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../quartus/fir8_latency_under_lut/fir8_latency_under_lut_top.sv
+set_global_assignment -name VERILOG_FILE ../../src/fir8_latency_under_lut.v
+set_global_assignment -name VERILOG_FILE ../../quartus/fir8_latency_under_lut/fir8_latency_under_lut_top.v
 set_global_assignment -name SDC_FILE fir8_latency_under_lut.sdc
 set_global_assignment -name FLOW_DISABLE_ASSEMBLER ON
 set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE PERFORMANCE"

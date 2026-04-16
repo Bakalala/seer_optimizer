@@ -1,9 +1,8 @@
 set_global_assignment -name FAMILY "Arria 10"
-set_global_assignment -name DEVICE 10AX115U1F45I1SG
+set_global_assignment -name DEVICE 10AX090H1F34E1SG
 set_global_assignment -name TOP_LEVEL_ENTITY conv3x3_weighted_top
-set_global_assignment -name SYSTEMVERILOG_FILE ../../src/rtl_validation_ops.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../src/conv3x3_weighted.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../quartus/conv3x3_weighted/conv3x3_weighted_top.sv
+set_global_assignment -name VERILOG_FILE ../../src/conv3x3_weighted.v
+set_global_assignment -name VERILOG_FILE ../../quartus/conv3x3_weighted/conv3x3_weighted_top.v
 set_global_assignment -name SDC_FILE conv3x3_weighted.sdc
 set_global_assignment -name FLOW_DISABLE_ASSEMBLER ON
 set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE PERFORMANCE"

@@ -27,7 +27,7 @@ DEFAULT_OUTPUT_DIR = ROOT / "outputs" / "rtl_validation"
 DEFAULT_BENCHMARKS = export_hls_cpp.DEFAULT_BENCHMARKS
 DEFAULT_VARIANTS = export_hls_cpp.DEFAULT_VARIANTS
 DEFAULT_FAMILY = "Arria 10"
-DEFAULT_DEVICE = "10AX115U1F45I1SG"
+DEFAULT_DEVICE = "10AX090H1F34E1SG"
 DEFAULT_CLOCK_NS = 2.0
 TEST_VECTOR_COUNT = 200
 TEST_MIN = -16
@@ -118,7 +118,6 @@ def render_datapath_module(
         ",\n".join(f"    {name}" for name in port_names),
         ");",
         *port_decls,
-        "    import rtl_validation_ops::*;",
         "",
     ]
 
@@ -135,28 +134,30 @@ def render_datapath_module(
             f"lut={metrics_for_op.get('lut_count', 0)}"
         )
         if op == "input":
-            lines.append(f"    logic signed [31:0] {var};")
+            lines.append(f"    wire signed [31:0] {var};")
             lines.append(f"    assign {var} = {sv_input_port(node['name'])};")
         elif op == "const":
-            lines.append(f"    logic signed [31:0] {var};")
+            lines.append(f"    wire signed [31:0] {var};")
             lines.append(f"    assign {var} = {sv_const(int(node['value']))};")
         elif op in {"add", "add_lut", "add_dsp"}:
-            lines.append(f"    logic signed [31:0] {var};")
+            lines.append(f"    wire signed [31:0] {var};")
             lines.append(f"    assign {var} = {inputs[0]} + {inputs[1]};")
         elif op in {"sub", "sub_lut", "sub_dsp"}:
-            lines.append(f"    logic signed [31:0] {var};")
+            lines.append(f"    wire signed [31:0] {var};")
             lines.append(f"    assign {var} = {inputs[0]} - {inputs[1]};")
         elif op in {"mul", "mul_dsp"}:
-            lines.append(f"    (* multstyle = \"dsp\" *) logic signed [63:0] {var}_full;")
-            lines.append(f"    logic signed [31:0] {var};")
+            lines.append(f"    (* multstyle = \"dsp\" *) wire signed [63:0] {var}_full;")
+            lines.append(f"    wire signed [31:0] {var};")
             lines.append(f"    assign {var}_full = {inputs[0]} * {inputs[1]};")
             lines.append(f"    assign {var} = {var}_full[31:0];")
         elif op == "mul_lut":
-            lines.append(f"    logic signed [31:0] {var};")
-            lines.append(f"    assign {var} = soft_mul32({inputs[0]}, {inputs[1]});")
+            lines.append(f"    (* multstyle = \"logic\" *) wire signed [63:0] {var}_full;")
+            lines.append(f"    wire signed [31:0] {var};")
+            lines.append(f"    assign {var}_full = {inputs[0]} * {inputs[1]};")
+            lines.append(f"    assign {var} = {var}_full[31:0];")
         elif op == "mac_dsp":
-            lines.append(f"    (* multstyle = \"dsp\" *) logic signed [63:0] {var}_prod_full;")
-            lines.append(f"    logic signed [31:0] {var};")
+            lines.append(f"    (* multstyle = \"dsp\" *) wire signed [63:0] {var}_prod_full;")
+            lines.append(f"    wire signed [31:0] {var};")
             lines.append(f"    assign {var}_prod_full = {inputs[1]} * {inputs[2]};")
             lines.append(f"    assign {var} = {inputs[0]} + {var}_prod_full[31:0];")
         else:
@@ -218,8 +219,8 @@ def render_wrapper(module_name: str, top_name: str, input_names: list[str]) -> s
     port_decls.extend(f"    input  wire signed [31:0] {sv_input_port(name)};" for name in input_names)
     port_decls.extend(
         [
-            "    output logic valid_out;",
-            "    output logic signed [31:0] out;",
+            "    output reg valid_out;",
+            "    output reg signed [31:0] out;",
         ]
     )
     reg_decls = []
@@ -227,7 +228,7 @@ def render_wrapper(module_name: str, top_name: str, input_names: list[str]) -> s
     for name in input_names:
         port = sv_input_port(name)
         reg = f"{port}_r"
-        reg_decls.append(f"    logic signed [31:0] {reg};")
+        reg_decls.append(f"    reg signed [31:0] {reg};")
         inst_ports.append(f"        .{port}({reg})")
     input_regs = "\n".join(reg_decls)
     sample_lines = "\n".join(f"            {sv_input_port(name)}_r <= {sv_input_port(name)};" for name in input_names)
@@ -239,13 +240,13 @@ module {top_name}(
 );
 {chr(10).join(port_decls)}
 {input_regs}
-    logic signed [31:0] datapath_out;
+    wire signed [31:0] datapath_out;
 
     {module_name} datapath_inst (
 {inst}
     );
 
-    always_ff @(posedge clk or negedge resetn) begin
+    always @(posedge clk or negedge resetn) begin
         if (!resetn) begin
             valid_out <= 1'b0;
             out <= 32'sd0;
@@ -332,9 +333,8 @@ def render_qsf(project_name: str, family: str, device: str) -> str:
     return f"""set_global_assignment -name FAMILY "{family}"
 set_global_assignment -name DEVICE {device}
 set_global_assignment -name TOP_LEVEL_ENTITY {project_name}_top
-set_global_assignment -name SYSTEMVERILOG_FILE ../../src/rtl_validation_ops.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../src/{project_name}.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../quartus/{project_name}/{project_name}_top.sv
+set_global_assignment -name VERILOG_FILE ../../src/{project_name}.v
+set_global_assignment -name VERILOG_FILE ../../quartus/{project_name}/{project_name}_top.v
 set_global_assignment -name SDC_FILE {project_name}.sdc
 set_global_assignment -name FLOW_DISABLE_ASSEMBLER ON
 set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE PERFORMANCE"
@@ -375,7 +375,7 @@ fi
 
 summary="$REPORT_DIR/functional_summary.csv"
 echo "benchmark,status,optimized_variants,test_vectors,log_path" > "$summary"
-mapfile -t rtl_sources < <(find "$ROOT_DIR/src" -maxdepth 1 -name '*.sv' ! -name 'rtl_validation_ops.sv' | sort)
+mapfile -t rtl_sources < <(find "$ROOT_DIR/src" -maxdepth 1 \( -name '*.v' -o -name '*.sv' \) | sort)
 
 for tb in "$ROOT_DIR"/tests/tb_*.sv; do
   bench="$(basename "$tb" .sv)"
@@ -386,7 +386,7 @@ for tb in "$ROOT_DIR"/tests/tb_*.sv; do
     work="$REPORT_DIR/sim/work_${bench}"
     rm -rf "$work"
     vlib "$work" >/dev/null
-    vlog -quiet -sv -work "$work" "$ROOT_DIR/src/rtl_validation_ops.sv" "${rtl_sources[@]}" "$tb" > "$log" 2>&1
+    vlog -quiet -sv -work "$work" "${rtl_sources[@]}" "$tb" > "$log" 2>&1
     if vsim -c -quiet -lib "$work" "tb_${bench}" -do "run -all; quit -f" >> "$log" 2>&1; then
       pass_line="$(grep '^# PASS,' "$log" | tail -1 | sed 's/^# //')"
     else
@@ -394,7 +394,7 @@ for tb in "$ROOT_DIR"/tests/tb_*.sv; do
     fi
   else
     out="$REPORT_DIR/sim/${bench}.vvp"
-    if iverilog -g2012 -o "$out" "$ROOT_DIR/src/rtl_validation_ops.sv" "${rtl_sources[@]}" "$tb" > "$log" 2>&1 && vvp "$out" >> "$log" 2>&1; then
+    if iverilog -g2012 -o "$out" "${rtl_sources[@]}" "$tb" > "$log" 2>&1 && vvp "$out" >> "$log" 2>&1; then
       pass_line="$(grep '^PASS,' "$log" | tail -1)"
     else
       pass_line=""
@@ -891,7 +891,6 @@ def export_rtl_validation(
     for directory in (src_dir, tests_dir, quartus_dir, scripts_dir, metadata_dir, reports_dir):
         directory.mkdir(parents=True, exist_ok=True)
 
-    (src_dir / "rtl_validation_ops.sv").write_text(render_common_ops())
     generated_by_benchmark: dict[str, list[dict]] = {}
     variant_metadata: list[dict] = []
 
@@ -918,7 +917,7 @@ def export_rtl_validation(
                     }
                 )
                 continue
-            source_path = src_dir / f"{module_name}.sv"
+            source_path = src_dir / f"{module_name}.v"
             project_dir = quartus_dir / module_name
             project_dir.mkdir(parents=True, exist_ok=True)
             top_name = f"{module_name}_top"
@@ -932,7 +931,7 @@ def export_rtl_validation(
                     input_names=input_names,
                 )
             )
-            (project_dir / f"{top_name}.sv").write_text(render_wrapper(module_name, top_name, input_names))
+            (project_dir / f"{top_name}.v").write_text(render_wrapper(module_name, top_name, input_names))
             (project_dir / f"{module_name}.qsf").write_text(render_qsf(module_name, family, device))
             (project_dir / f"{module_name}.qpf").write_text(f"PROJECT_REVISION = {module_name}\n")
             (project_dir / f"{module_name}.sdc").write_text(render_sdc(clock_ns))

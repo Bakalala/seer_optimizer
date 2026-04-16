@@ -973,11 +973,11 @@ class BenchmarkHarnessTest(unittest.TestCase):
                 clock_ns=2.0,
                 test_vectors=4,
             )
-            source = (out_dir / "src" / "toy_weighted.sv").read_text()
+            source = (out_dir / "src" / "toy_weighted.v").read_text()
             metadata = json.loads((out_dir / "metadata" / "generated_variants.json").read_text())
             weighted = next(item for item in metadata["variants"] if item["variant"] == "weighted")
             self.assertIn('(* multstyle = "dsp" *)', source)
-            self.assertIn("soft_mul32", source)
+            self.assertIn('(* multstyle = "logic" *)', source)
             self.assertEqual(weighted["rtl_intended_dsp_count"], 1)
             self.assertEqual(weighted["rtl_intended_logic_mul_count"], 1)
             self.assertTrue((out_dir / "tests" / "tb_toy.sv").exists())
