@@ -26,7 +26,7 @@ DEFAULT_RESULTS = ROOT / "outputs" / "benchmark_results.json"
 DEFAULT_OUTPUT_DIR = ROOT / "outputs" / "rtl_validation"
 DEFAULT_BENCHMARKS = export_hls_cpp.DEFAULT_BENCHMARKS
 DEFAULT_VARIANTS = export_hls_cpp.DEFAULT_VARIANTS
-DEFAULT_FAMILY = "Arria10"
+DEFAULT_FAMILY = "Arria 10"
 DEFAULT_DEVICE = "10AX115U1F45I1SG"
 DEFAULT_CLOCK_NS = 2.0
 TEST_VECTOR_COUNT = 200
@@ -421,6 +421,8 @@ PROJECT_ROOT="$(cd "$ROOT_DIR/../.." && pwd)"
 QUARTUS_SH="${QUARTUS_SH:-quartus_sh}"
 JOBS="${JOBS:-1}"
 ONLY="${RTL_ONLY:-}"
+RTL_FAMILY="${RTL_FAMILY:-}"
+RTL_DEVICE="${RTL_DEVICE:-}"
 
 if ! command -v "$QUARTUS_SH" >/dev/null 2>&1; then
   echo "quartus_sh not found. Load Quartus or set QUARTUS_SH=/path/to/quartus_sh." >&2
@@ -434,6 +436,19 @@ fi
 if [[ "${#projects[@]}" -eq 0 ]]; then
   echo "No Quartus projects matched." >&2
   exit 1
+fi
+
+if [[ -n "$RTL_FAMILY" || -n "$RTL_DEVICE" ]]; then
+  echo "Applying Quartus target override: family=${RTL_FAMILY:-<unchanged>} device=${RTL_DEVICE:-<unchanged>}"
+  for qsf in "$ROOT_DIR"/quartus/*/*.qsf; do
+    if [[ -n "$RTL_FAMILY" ]]; then
+      sed -i.bak -E "s/^set_global_assignment -name FAMILY .*/set_global_assignment -name FAMILY \"$RTL_FAMILY\"/" "$qsf"
+    fi
+    if [[ -n "$RTL_DEVICE" ]]; then
+      sed -i.bak -E "s/^set_global_assignment -name DEVICE .*/set_global_assignment -name DEVICE $RTL_DEVICE/" "$qsf"
+    fi
+    rm -f "$qsf.bak"
+  done
 fi
 
 run_one() {

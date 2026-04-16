@@ -1,7 +1,7 @@
 {
   "results_path": "outputs/benchmark_results.json",
   "output_dir": "outputs/rtl_validation",
-  "family": "Arria10",
+  "family": "Arria 10",
   "device": "10AX115U1F45I1SG",
   "clock_ns": 2.0,
   "benchmarks": [
