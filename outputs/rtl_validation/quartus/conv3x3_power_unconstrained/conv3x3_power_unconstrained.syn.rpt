@@ -1,0 +1,349 @@
+Synthesis report
+Fri Apr 17 11:14:56 2026
+Quartus Prime Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Synthesis Summary
+  2. Synthesis Settings
+  3. Parallel Compilation
+  4. Synthesis Source Files Read
+  5. Synthesis Partition Summary
+  6. Source Assignments for datapath_inst
+  7. Partition "root_partition" Resource Utilization by Entity
+  8. Registers Removed During Synthesis
+  9. General Register Statistics for Partition "root_partition"
+ 10. Post-Synthesis Netlist Statistics for Partition "root_partition"
+ 11. Synthesis Resource Usage Summary for Partition "root_partition"
+ 12. Synthesis Messages
+
+
+
++---------------------------------------------------------------+
+; Synthesis Summary                                             ;
++-----------------------+---------------------------------------+
+; Synthesis Status      ; Successful - Fri Apr 17 11:14:55 2026 ;
+; Revision Name         ; conv3x3_power_unconstrained           ;
+; Top-level Entity Name ; conv3x3_power_unconstrained_top       ;
+; Family                ; Arria 10                              ;
++-----------------------+---------------------------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------+
+; Synthesis Settings                                                                                                                              ;
++---------------------------------------------------------------------------------+---------------------------------+-----------------------------+
+; Option                                                                          ; Setting                         ; Default Value               ;
++---------------------------------------------------------------------------------+---------------------------------+-----------------------------+
+; Device                                                                          ; 10AX090H1F34E1SG                ;                             ;
+; Top-level entity name                                                           ; conv3x3_power_unconstrained_top ; conv3x3_power_unconstrained ;
+; Family name                                                                     ; Arria 10                        ; Cyclone 10 GX               ;
+; Optimization Mode                                                               ; Superior Performance            ; Balanced                    ;
+; Allow RAM Retiming                                                              ; On                              ; Off                         ;
+; Allow DSP Retiming                                                              ; On                              ; Off                         ;
+; Restructure Multiplexers                                                        ; Off                             ; Auto                        ;
+; Optimization Technique                                                          ; Speed                           ; Balanced                    ;
+; Enable parallel Assembler and Timing Analyzer during compilation                ; On                              ; On                          ;
+; Enable compact report table                                                     ; Off                             ; Off                         ;
+; Enable Design Assistant in the compilation flow                                 ; Off                             ; Off                         ;
+; Design Assistant include IP blocks                                              ; Off                             ; Off                         ;
+; Design Assistant limit on reported violations per rule                          ; 500                             ; 500                         ;
+; Allow Register Merging                                                          ; On                              ; On                          ;
+; Allow Register Duplication                                                      ; On                              ; On                          ;
+; Allow Register Retiming                                                         ; On                              ; On                          ;
+; MLAB Add Timing Constraints For Mixed-Port Feed-Through Mode Setting Don't Care ; Off                             ; Off                         ;
+; Preserve fewer node names                                                       ; On                              ; On                          ;
+; Intel FPGA IP Evaluation Mode                                                   ; Enable                          ; Enable                      ;
+; Verilog Version                                                                 ; Verilog_2001                    ; Verilog_2001                ;
+; VHDL Version                                                                    ; VHDL_1993                       ; VHDL_1993                   ;
+; State Machine Processing                                                        ; Auto                            ; Auto                        ;
+; Safe State Machine                                                              ; Auto                            ; Auto                        ;
+; Iteration limit for constant Verilog loops                                      ; 5000                            ; 5000                        ;
+; Iteration limit for non-constant Verilog loops                                  ; 250                             ; 250                         ;
+; Infer RAMs from Raw Logic                                                       ; On                              ; On                          ;
+; DSP Block Balancing                                                             ; Auto                            ; Auto                        ;
+; NOT Gate Push-Back                                                              ; On                              ; On                          ;
+; Power-Up Don't Care                                                             ; On                              ; On                          ;
+; Remove Redundant Logic Cells                                                    ; Off                             ; Off                         ;
+; Remove Duplicate Registers                                                      ; On                              ; On                          ;
+; Ignore GLOBAL Buffers                                                           ; Off                             ; Off                         ;
+; Ignore LCELL Buffers                                                            ; Off                             ; Off                         ;
+; Ignore SOFT Buffers                                                             ; On                              ; On                          ;
+; Auto Open-Drain Pins                                                            ; On                              ; On                          ;
+; Perform WYSIWYG Primitive Resynthesis                                           ; Off                             ; Off                         ;
+; Auto ROM Replacement                                                            ; On                              ; On                          ;
+; Auto RAM Replacement                                                            ; On                              ; On                          ;
+; Auto DSP Block Replacement                                                      ; On                              ; On                          ;
+; Auto Shift Register Replacement                                                 ; Auto                            ; Auto                        ;
+; Allow Shift Register Merging across Hierarchies                                 ; Auto                            ; Auto                        ;
+; Auto Clock Enable Replacement                                                   ; On                              ; On                          ;
+; Strict RAM Replacement                                                          ; Off                             ; Off                         ;
+; Allow Synchronous Control Signals                                               ; On                              ; On                          ;
+; Force Use of Synchronous Clear Signals                                          ; Off                             ; Off                         ;
+; Auto Resource Sharing                                                           ; Off                             ; Off                         ;
+; Allow Any RAM Size For Recognition                                              ; Off                             ; Off                         ;
+; Allow Any ROM Size For Recognition                                              ; Off                             ; Off                         ;
+; Allow Any Shift Register Size For Recognition                                   ; Off                             ; Off                         ;
+; Ignore translate_off and synthesis_off directives                               ; Off                             ; Off                         ;
+; Timing-Driven Synthesis                                                         ; On                              ; On                          ;
+; Ignore Maximum Fan-Out Assignments                                              ; Off                             ; Off                         ;
+; Synchronization Register Chain Length                                           ; 3                               ; 3                           ;
+; Power Optimization During Synthesis                                             ; Normal compilation              ; Normal compilation          ;
+; HDL message level                                                               ; Level2                          ; Level2                      ;
+; Number of Protected Registers Reported in Synthesis Report                      ; 100                             ; 100                         ;
+; Number of Removed Registers Reported in Synthesis Report                        ; 5000                            ; 5000                        ;
+; Number of Swept Nodes Reported in Synthesis Report                              ; 5000                            ; 5000                        ;
+; Number of Inverted Registers Reported in Synthesis Report                       ; 100                             ; 100                         ;
+; Clock MUX Protection                                                            ; On                              ; On                          ;
+; Auto Gated Clock Conversion                                                     ; Off                             ; Off                         ;
+; Block Design Naming                                                             ; Auto                            ; Auto                        ;
+; SDC constraint protection                                                       ; Off                             ; Off                         ;
+; Synthesis Effort                                                                ; Auto                            ; Auto                        ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal                    ; On                              ; On                          ;
+; Analysis & Synthesis Message Level                                              ; Medium                          ; Medium                      ;
+; Disable Register Merging Across Hierarchies                                     ; Auto                            ; Auto                        ;
+; Resource Aware Inference For Block RAM                                          ; On                              ; On                          ;
+; Automatic Parallel Synthesis                                                    ; On                              ; On                          ;
+; Partial Reconfiguration Bitstream ID                                            ; Off                             ; Off                         ;
+; Disable DSP Negate Inferencing                                                  ; Off                             ; Off                         ;
+; Report Parameter Settings                                                       ; On                              ; On                          ;
+; Report Source Assignments                                                       ; On                              ; On                          ;
+; Size of the Latch Report                                                        ; 100                             ; 100                         ;
+; Enable State Machines Inference                                                 ; On                              ; On                          ;
+; Enable formal verification support during compilation                           ; Off                             ; Off                         ;
+; Size of the PR Initial Conditions Report                                        ; 15                              ; 15                          ;
+; Report PR Initial Values as Errors                                              ; Off                             ; Off                         ;
+; Fractal Synthesis                                                               ; Off                             ; Off                         ;
++---------------------------------------------------------------------------------+---------------------------------+-----------------------------+
+
+
++-------------------------------------+
+; Parallel Compilation                ;
++----------------------------+--------+
+; Processors                 ; Number ;
++----------------------------+--------+
+; Number detected on machine ; 72     ;
+; Maximum allowed            ; 16     ;
+; Maximum used               ; 16     ;
++----------------------------+--------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Synthesis Source Files Read                                                                                                                                                                                                                               ;
++-----------------------------------------+----------------------------------------+---------------------------------------------------------------------------------------------------------------------------+---------+----------------------------------+
+; File Name with User-Entered Path        ; File Type                              ; File Name with Absolute Path                                                                                              ; Library ; MD5                              ;
++-----------------------------------------+----------------------------------------+---------------------------------------------------------------------------------------------------------------------------+---------+----------------------------------+
+; ../../src/conv3x3_power_unconstrained.v ; User Verilog HDL File                  ; /home/aseife2/seer_optimizer/outputs/rtl_validation/src/conv3x3_power_unconstrained.v                                     ;         ; 8fa0834981add2d6e3ae95205f23fd51 ;
+; conv3x3_power_unconstrained_top.v       ; User Verilog HDL File                  ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/conv3x3_power_unconstrained/conv3x3_power_unconstrained_top.v ;         ; 8e33046471b365398fa4021d0e0e08a5 ;
+; conv3x3_power_unconstrained.sdc         ; User Synopsys Design Constraints File  ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/conv3x3_power_unconstrained/conv3x3_power_unconstrained.sdc   ;         ; 127a22a8e31a5ca36a4ea3efae46cb43 ;
++-----------------------------------------+----------------------------------------+---------------------------------------------------------------------------------------------------------------------------+---------+----------------------------------+
+
+
++--------------------------------------------------------------------------------------------+
+; Synthesis Partition Summary                                                                ;
++----------------+----------------+---------+--------------+-------+-------------------------+
+; Partition Name ; Hierarchy Path ; Type    ; Preservation ; Empty ; Partition Database File ;
++----------------+----------------+---------+--------------+-------+-------------------------+
+; root_partition ; |              ; Default ;              ;       ;                         ;
++----------------+----------------+---------+--------------+-------+-------------------------+
+
+
++--------------------------------------------------+
+; Source Assignments for datapath_inst             ;
++---------------------+------------+------+--------+
+; Assignment          ; Value      ; From ; To     ;
++---------------------+------------+------+--------+
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; DSP blocks ; -    ; mult_0 ;
++---------------------+------------+------+--------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Partition "root_partition" Resource Utilization by Entity                                                                                                                                                           ;
++----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+--------+---------------------+---------------------------------+--------------+
+; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Virtual Pins ; IOPLLs ; Full Hierarchy Name ; Entity Name                     ; Library Name ;
++----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+--------+---------------------+---------------------------------+--------------+
+; |                          ; 250 (0)             ; 315 (315)                 ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; |                   ; conv3x3_power_unconstrained_top ; altera_work  ;
+;    |datapath_inst|         ; 250 (250)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst       ; conv3x3_power_unconstrained     ; altera_work  ;
++----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+--------+---------------------+---------------------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++------------------------------------------------------------+
+; Registers Removed During Synthesis                         ;
++---------------------------------------+--------------------+
+; Register name                         ; Reason for Removal ;
++---------------------------------------+--------------------+
+; in_p11_r[30,31]                       ; Lost fanout        ;
+; in_p01_r[31]                          ; Lost fanout        ;
+; in_p10_r[31]                          ; Lost fanout        ;
+; in_p12_r[31]                          ; Lost fanout        ;
+; in_p21_r[31]                          ; Lost fanout        ;
+; Total Number of Removed Registers = 6 ;                    ;
++---------------------------------------+--------------------+
+
+
++------------------------------------------------------------+
+; General Register Statistics for Partition "root_partition" ;
++----------------------------------------------+-------------+
+; Statistic                                    ; Value       ;
++----------------------------------------------+-------------+
+; Total registers                              ; 315         ;
+; Number of registers using Synchronous Clear  ; 0           ;
+; Number of registers using Synchronous Load   ; 0           ;
+; Number of registers using Asynchronous Clear ; 33          ;
+; Number of registers using Asynchronous Load  ; 0           ;
+; Number of registers using Clock Enable       ; 282         ;
+; Number of registers using Preset             ; 0           ;
++----------------------------------------------+-------------+
+
+
++------------------------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Partition "root_partition" ;
++------------------------+-----------------------------------------+
+; Type                   ; Count                                   ;
++------------------------+-----------------------------------------+
+; boundary_port          ; 324                                     ;
+; twentynm_ff            ; 315                                     ;
+;     CLR                ; 33                                      ;
+;     ENA                ; 282                                     ;
+; twentynm_lcell_comb    ; 250                                     ;
+;     arith              ; 250                                     ;
+;         2 data inputs  ; 250                                     ;
+;                        ;                                         ;
+; Number of carry chains ; 8                                       ;
+; Max carry chain length ; 32                                      ;
+;                        ;                                         ;
+; Max LUT depth          ; 11.00                                   ;
+; Average LUT depth      ; 6.53                                    ;
++------------------------+-----------------------------------------+
+
+
++-----------------------------------------------------------------+
+; Synthesis Resource Usage Summary for Partition "root_partition" ;
++---------------------------------------------+-------------------+
+; Resource                                    ; Usage             ;
++---------------------------------------------+-------------------+
+; Estimate of Logic utilization (ALMs needed) ; 194               ;
+;                                             ;                   ;
+; Combinational ALUT usage for logic          ; 250               ;
+;     -- 7 input functions                    ; 0                 ;
+;     -- 6 input functions                    ; 0                 ;
+;     -- 5 input functions                    ; 0                 ;
+;     -- 4 input functions                    ; 0                 ;
+;     -- <=3 input functions                  ; 250               ;
+;                                             ;                   ;
+; Dedicated logic registers                   ; 315               ;
+;                                             ;                   ;
+; I/O pins                                    ; 324               ;
+;                                             ;                   ;
+; Total DSP Blocks                            ; 0                 ;
+;     -- [A] Total Fixed Point DSP Blocks     ; 0                 ;
+;     -- [B] Total Floating Point DSP Blocks  ; 0                 ;
+;                                             ;                   ;
+; Maximum fan-out node                        ; clk               ;
+; Maximum fan-out                             ; 315               ;
+; Total fan-out                               ; 1720              ;
+; Average fan-out                             ; 1.93              ;
++---------------------------------------------+-------------------+
+
+
++--------------------+
+; Synthesis Messages ;
++--------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Synthesis
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Processing started: Fri Apr 17 11:14:53 2026
+Info: Command: quartus_syn --read_settings_files=on --write_settings_files=off conv3x3_power_unconstrained -c conv3x3_power_unconstrained
+Info: qis_default_flow_script.tcl version: #1
+Info: Initializing Synthesis...
+Info: Project = "conv3x3_power_unconstrained"
+Info: Revision = "conv3x3_power_unconstrained"
+Info: Analyzing source files
+Info (16303): Superior Performance optimization mode selected -- timing performance will be prioritized at the potential cost of increased logic area and compilation time
+Info: Elaborating from top-level entity "conv3x3_power_unconstrained_top"
+Info: Found 2 design entities
+Info: There are 2 partitions after elaboration.
+Info: Creating instance-specific data models and dissolving soft partitions
+Info (18299): Expanding entity and wildcard assignments.
+Info (18300): Expanded entity and wildcard assignments. Elapsed time: 00:00:00
+Info: found pre-synthesis snapshots for 1 partition(s)
+Info: Synthesizing partition "root_partition"
+Info (286030): Timing-Driven Synthesis is running
+Info (17049): 6 registers lost all their fanouts during netlist optimizations.
+Info (21057): Implemented 857 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 291 input pins
+    Info (21059): Implemented 33 output pins
+    Info (21061): Implemented 533 logic cells
+Info: Successfully synthesized partition
+Info: Saving post-synthesis snapshots for 1 partition(s)
+Info: Quartus Prime Synthesis was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 1734 megabytes
+    Info: Processing ended: Fri Apr 17 11:14:56 2026
+    Info: Elapsed time: 00:00:03
+
+

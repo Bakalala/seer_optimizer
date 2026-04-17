@@ -6,6 +6,7 @@ set_global_assignment -name VERILOG_FILE ../../quartus/fir8_original/fir8_origin
 set_global_assignment -name SDC_FILE fir8_original.sdc
 set_global_assignment -name FLOW_DISABLE_ASSEMBLER ON
 set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE PERFORMANCE"
-set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC ON
-set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_DUPLICATION ON
+# Obsolete assignment in <Version 19.2> "set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC ON"
+# Obsolete assignment in <Version 19.2> "set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_DUPLICATION ON"
 set_instance_assignment -name VIRTUAL_PIN ON -to *
+set_global_assignment -name LAST_QUARTUS_VERSION "19.2.0 SP0.01rc Pro Edition"

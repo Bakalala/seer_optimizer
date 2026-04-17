@@ -1,0 +1,1225 @@
+Synthesis report
+Fri Apr 17 11:46:43 2026
+Quartus Prime Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Synthesis Summary
+  2. Synthesis Settings
+  3. Parallel Compilation
+  4. Synthesis Source Files Read
+  5. Synthesis Partition Summary
+  6. Source Assignments for datapath_inst
+  7. Partition "root_partition" Resource Utilization by Entity
+  8. General Register Statistics for Partition "root_partition"
+  9. Ignored Source Level Assignments for datapath_inst|mult_7_rtl_0|auto_generated
+ 10. Ignored Source Level Assignments for datapath_inst|mult_6_rtl_0|auto_generated
+ 11. Ignored Source Level Assignments for datapath_inst|mult_5_rtl_0|auto_generated
+ 12. Ignored Source Level Assignments for datapath_inst|mult_4_rtl_0|auto_generated
+ 13. Ignored Source Level Assignments for datapath_inst|mult_3_rtl_0|auto_generated
+ 14. Ignored Source Level Assignments for datapath_inst|mult_2_rtl_0|auto_generated
+ 15. Ignored Source Level Assignments for datapath_inst|mult_1_rtl_0|auto_generated
+ 16. Ignored Source Level Assignments for datapath_inst|mult_0_rtl_0|auto_generated
+ 17. Parameter Settings for Inferred Entity Instance: datapath_inst|mult_7_rtl_0
+ 18. Parameter Settings for Inferred Entity Instance: datapath_inst|mult_6_rtl_0
+ 19. Parameter Settings for Inferred Entity Instance: datapath_inst|mult_5_rtl_0
+ 20. Parameter Settings for Inferred Entity Instance: datapath_inst|mult_4_rtl_0
+ 21. Parameter Settings for Inferred Entity Instance: datapath_inst|mult_3_rtl_0
+ 22. Parameter Settings for Inferred Entity Instance: datapath_inst|mult_2_rtl_0
+ 23. Parameter Settings for Inferred Entity Instance: datapath_inst|mult_1_rtl_0
+ 24. Parameter Settings for Inferred Entity Instance: datapath_inst|mult_0_rtl_0
+ 25. Post-Synthesis Netlist Statistics for Partition "root_partition"
+ 26. Synthesis Resource Usage Summary for Partition "root_partition"
+ 27. Synthesis Messages
+
+
+
++---------------------------------------------------------------+
+; Synthesis Summary                                             ;
++-----------------------+---------------------------------------+
+; Synthesis Status      ; Successful - Fri Apr 17 11:46:42 2026 ;
+; Revision Name         ; gemm_blocked_k8_weighted              ;
+; Top-level Entity Name ; gemm_blocked_k8_weighted_top          ;
+; Family                ; Arria 10                              ;
++-----------------------+---------------------------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------+
+; Synthesis Settings                                                                                                                        ;
++---------------------------------------------------------------------------------+------------------------------+--------------------------+
+; Option                                                                          ; Setting                      ; Default Value            ;
++---------------------------------------------------------------------------------+------------------------------+--------------------------+
+; Device                                                                          ; 10AX090H1F34E1SG             ;                          ;
+; Top-level entity name                                                           ; gemm_blocked_k8_weighted_top ; gemm_blocked_k8_weighted ;
+; Family name                                                                     ; Arria 10                     ; Cyclone 10 GX            ;
+; Optimization Mode                                                               ; Superior Performance         ; Balanced                 ;
+; Allow RAM Retiming                                                              ; On                           ; Off                      ;
+; Allow DSP Retiming                                                              ; On                           ; Off                      ;
+; Restructure Multiplexers                                                        ; Off                          ; Auto                     ;
+; Optimization Technique                                                          ; Speed                        ; Balanced                 ;
+; Enable parallel Assembler and Timing Analyzer during compilation                ; On                           ; On                       ;
+; Enable compact report table                                                     ; Off                          ; Off                      ;
+; Enable Design Assistant in the compilation flow                                 ; Off                          ; Off                      ;
+; Design Assistant include IP blocks                                              ; Off                          ; Off                      ;
+; Design Assistant limit on reported violations per rule                          ; 500                          ; 500                      ;
+; Allow Register Merging                                                          ; On                           ; On                       ;
+; Allow Register Duplication                                                      ; On                           ; On                       ;
+; Allow Register Retiming                                                         ; On                           ; On                       ;
+; MLAB Add Timing Constraints For Mixed-Port Feed-Through Mode Setting Don't Care ; Off                          ; Off                      ;
+; Preserve fewer node names                                                       ; On                           ; On                       ;
+; Intel FPGA IP Evaluation Mode                                                   ; Enable                       ; Enable                   ;
+; Verilog Version                                                                 ; Verilog_2001                 ; Verilog_2001             ;
+; VHDL Version                                                                    ; VHDL_1993                    ; VHDL_1993                ;
+; State Machine Processing                                                        ; Auto                         ; Auto                     ;
+; Safe State Machine                                                              ; Auto                         ; Auto                     ;
+; Iteration limit for constant Verilog loops                                      ; 5000                         ; 5000                     ;
+; Iteration limit for non-constant Verilog loops                                  ; 250                          ; 250                      ;
+; Infer RAMs from Raw Logic                                                       ; On                           ; On                       ;
+; DSP Block Balancing                                                             ; Auto                         ; Auto                     ;
+; NOT Gate Push-Back                                                              ; On                           ; On                       ;
+; Power-Up Don't Care                                                             ; On                           ; On                       ;
+; Remove Redundant Logic Cells                                                    ; Off                          ; Off                      ;
+; Remove Duplicate Registers                                                      ; On                           ; On                       ;
+; Ignore GLOBAL Buffers                                                           ; Off                          ; Off                      ;
+; Ignore LCELL Buffers                                                            ; Off                          ; Off                      ;
+; Ignore SOFT Buffers                                                             ; On                           ; On                       ;
+; Auto Open-Drain Pins                                                            ; On                           ; On                       ;
+; Perform WYSIWYG Primitive Resynthesis                                           ; Off                          ; Off                      ;
+; Auto ROM Replacement                                                            ; On                           ; On                       ;
+; Auto RAM Replacement                                                            ; On                           ; On                       ;
+; Auto DSP Block Replacement                                                      ; On                           ; On                       ;
+; Auto Shift Register Replacement                                                 ; Auto                         ; Auto                     ;
+; Allow Shift Register Merging across Hierarchies                                 ; Auto                         ; Auto                     ;
+; Auto Clock Enable Replacement                                                   ; On                           ; On                       ;
+; Strict RAM Replacement                                                          ; Off                          ; Off                      ;
+; Allow Synchronous Control Signals                                               ; On                           ; On                       ;
+; Force Use of Synchronous Clear Signals                                          ; Off                          ; Off                      ;
+; Auto Resource Sharing                                                           ; Off                          ; Off                      ;
+; Allow Any RAM Size For Recognition                                              ; Off                          ; Off                      ;
+; Allow Any ROM Size For Recognition                                              ; Off                          ; Off                      ;
+; Allow Any Shift Register Size For Recognition                                   ; Off                          ; Off                      ;
+; Ignore translate_off and synthesis_off directives                               ; Off                          ; Off                      ;
+; Timing-Driven Synthesis                                                         ; On                           ; On                       ;
+; Ignore Maximum Fan-Out Assignments                                              ; Off                          ; Off                      ;
+; Synchronization Register Chain Length                                           ; 3                            ; 3                        ;
+; Power Optimization During Synthesis                                             ; Normal compilation           ; Normal compilation       ;
+; HDL message level                                                               ; Level2                       ; Level2                   ;
+; Number of Protected Registers Reported in Synthesis Report                      ; 100                          ; 100                      ;
+; Number of Removed Registers Reported in Synthesis Report                        ; 5000                         ; 5000                     ;
+; Number of Swept Nodes Reported in Synthesis Report                              ; 5000                         ; 5000                     ;
+; Number of Inverted Registers Reported in Synthesis Report                       ; 100                          ; 100                      ;
+; Clock MUX Protection                                                            ; On                           ; On                       ;
+; Auto Gated Clock Conversion                                                     ; Off                          ; Off                      ;
+; Block Design Naming                                                             ; Auto                         ; Auto                     ;
+; SDC constraint protection                                                       ; Off                          ; Off                      ;
+; Synthesis Effort                                                                ; Auto                         ; Auto                     ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal                    ; On                           ; On                       ;
+; Analysis & Synthesis Message Level                                              ; Medium                       ; Medium                   ;
+; Disable Register Merging Across Hierarchies                                     ; Auto                         ; Auto                     ;
+; Resource Aware Inference For Block RAM                                          ; On                           ; On                       ;
+; Automatic Parallel Synthesis                                                    ; On                           ; On                       ;
+; Partial Reconfiguration Bitstream ID                                            ; Off                          ; Off                      ;
+; Disable DSP Negate Inferencing                                                  ; Off                          ; Off                      ;
+; Report Parameter Settings                                                       ; On                           ; On                       ;
+; Report Source Assignments                                                       ; On                           ; On                       ;
+; Size of the Latch Report                                                        ; 100                          ; 100                      ;
+; Enable State Machines Inference                                                 ; On                           ; On                       ;
+; Enable formal verification support during compilation                           ; Off                          ; Off                      ;
+; Size of the PR Initial Conditions Report                                        ; 15                           ; 15                       ;
+; Report PR Initial Values as Errors                                              ; Off                          ; Off                      ;
+; Fractal Synthesis                                                               ; Off                          ; Off                      ;
++---------------------------------------------------------------------------------+------------------------------+--------------------------+
+
+
++-------------------------------------+
+; Parallel Compilation                ;
++----------------------------+--------+
+; Processors                 ; Number ;
++----------------------------+--------+
+; Number detected on machine ; 72     ;
+; Maximum allowed            ; 16     ;
+; Maximum used               ; 16     ;
++----------------------------+--------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Synthesis Source Files Read                                                                                                                                                                                                                                                                                                                                                             ;
++-------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------+---------+----------------------------------+
+; File Name with User-Entered Path                                                                                                                ; File Type                              ; File Name with Absolute Path                                                                                                                    ; Library ; MD5                              ;
++-------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------+---------+----------------------------------+
+; ../../src/gemm_blocked_k8_weighted.v                                                                                                            ; User Verilog HDL File                  ; /home/aseife2/seer_optimizer/outputs/rtl_validation/src/gemm_blocked_k8_weighted.v                                                              ;         ; 77d0cce3bafa7add547f2efda7014f4b ;
+; gemm_blocked_k8_weighted_top.v                                                                                                                  ; User Verilog HDL File                  ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/gemm_blocked_k8_weighted_top.v                             ;         ; 2f9f18b390c8b224b39de6c1609d44d1 ;
+; gemm_blocked_k8_weighted.sdc                                                                                                                    ; User Synopsys Design Constraints File  ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/gemm_blocked_k8_weighted.sdc                               ;         ; 127a22a8e31a5ca36a4ea3efae46cb43 ;
+; /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/libraries/megafunctions/lpm_mult.tdf                                                               ; Megafunction                           ; /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/libraries/megafunctions/lpm_mult.tdf                                                               ; work    ;                                  ;
+; aglobal192.inc                                                                                                                                  ; Auto-Found AHDL File                   ; /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/libraries/megafunctions/aglobal192.inc                                                             ;         ;                                  ;
+; lpm_add_sub.inc                                                                                                                                 ; Auto-Found AHDL File                   ; /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/libraries/megafunctions/lpm_add_sub.inc                                                            ;         ;                                  ;
+; multcore.inc                                                                                                                                    ; Auto-Found AHDL File                   ; /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/libraries/megafunctions/multcore.inc                                                               ;         ;                                  ;
+; bypassff.inc                                                                                                                                    ; Auto-Found AHDL File                   ; /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/libraries/megafunctions/bypassff.inc                                                               ;         ;                                  ;
+; altshift.inc                                                                                                                                    ; Auto-Found AHDL File                   ; /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/libraries/megafunctions/altshift.inc                                                               ;         ;                                  ;
+; cbx.lst                                                                                                                                         ; Auto-Found Unspecified File            ; /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/libraries/megafunctions/cbx.lst                                                                    ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v    ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v    ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_g0c.v     ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_g0c.v     ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_80c.v     ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_80c.v     ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_d0c.v     ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_d0c.v     ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_90c.v     ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_90c.v     ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_a0c.v     ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_a0c.v     ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_b0c.v     ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_b0c.v     ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_50c.v     ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_50c.v     ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_f0c.v     ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_f0c.v     ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_73h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_73h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_83h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_83h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_93h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_93h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_a3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_a3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_b3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_b3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_c3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_c3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_d3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_d3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_e3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_e3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_f3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_f3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_g3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_g3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_h3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_h3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_i3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_i3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_j3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_j3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_k3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_k3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_l3h.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_l3h.v ;         ;                                  ;
+; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_1eh.v ; Auto-Generated Megafunction            ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/add_sub_1eh.v ;         ;                                  ;
++-------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------+---------+----------------------------------+
+
+
++--------------------------------------------------------------------------------------------+
+; Synthesis Partition Summary                                                                ;
++----------------+----------------+---------+--------------+-------+-------------------------+
+; Partition Name ; Hierarchy Path ; Type    ; Preservation ; Empty ; Partition Database File ;
++----------------+----------------+---------+--------------+-------+-------------------------+
+; root_partition ; |              ; Default ;              ;       ;                         ;
++----------------+----------------+---------+--------------+-------+-------------------------+
+
+
++------------------------------------------------------+
+; Source Assignments for datapath_inst                 ;
++---------------------+----------------+------+--------+
+; Assignment          ; Value          ; From ; To     ;
++---------------------+----------------+------+--------+
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_0 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_1 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_2 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_3 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_4 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_5 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_6 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
+; DSP_BLOCK_BALANCING ; Logic Elements ; -    ; mult_7 ;
++---------------------+----------------+------+--------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Partition "root_partition" Resource Utilization by Entity                                                                                                                                                                              ;
++----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+--------+-------------------------------------------+------------------------------+--------------+
+; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Virtual Pins ; IOPLLs ; Full Hierarchy Name                       ; Entity Name                  ; Library Name ;
++----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+--------+-------------------------------------------+------------------------------+--------------+
+; |                          ; 3328 (0)            ; 545 (545)                 ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; |                                         ; gemm_blocked_k8_weighted_top ; altera_work  ;
+;    |datapath_inst|         ; 3328 (128)          ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst                             ; gemm_blocked_k8_weighted     ; altera_work  ;
+;       |mult_0_rtl_0|       ; 400 (0)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_0_rtl_0                ; lpm_mult                     ; work         ;
+;          |auto_generated|  ; 400 (400)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_0_rtl_0|auto_generated ; mult_edu                     ; work         ;
+;       |mult_1_rtl_0|       ; 400 (0)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_1_rtl_0                ; lpm_mult                     ; work         ;
+;          |auto_generated|  ; 400 (400)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_1_rtl_0|auto_generated ; mult_edu                     ; work         ;
+;       |mult_2_rtl_0|       ; 400 (0)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_2_rtl_0                ; lpm_mult                     ; work         ;
+;          |auto_generated|  ; 400 (400)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_2_rtl_0|auto_generated ; mult_edu                     ; work         ;
+;       |mult_3_rtl_0|       ; 400 (0)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_3_rtl_0                ; lpm_mult                     ; work         ;
+;          |auto_generated|  ; 400 (400)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_3_rtl_0|auto_generated ; mult_edu                     ; work         ;
+;       |mult_4_rtl_0|       ; 400 (0)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_4_rtl_0                ; lpm_mult                     ; work         ;
+;          |auto_generated|  ; 400 (400)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_4_rtl_0|auto_generated ; mult_edu                     ; work         ;
+;       |mult_5_rtl_0|       ; 400 (0)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_5_rtl_0                ; lpm_mult                     ; work         ;
+;          |auto_generated|  ; 400 (400)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_5_rtl_0|auto_generated ; mult_edu                     ; work         ;
+;       |mult_6_rtl_0|       ; 400 (0)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_6_rtl_0                ; lpm_mult                     ; work         ;
+;          |auto_generated|  ; 400 (400)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_6_rtl_0|auto_generated ; mult_edu                     ; work         ;
+;       |mult_7_rtl_0|       ; 400 (0)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_7_rtl_0                ; lpm_mult                     ; work         ;
+;          |auto_generated|  ; 400 (400)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; 0 (0)  ; datapath_inst|mult_7_rtl_0|auto_generated ; mult_edu                     ; work         ;
++----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+--------+-------------------------------------------+------------------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++------------------------------------------------------------+
+; General Register Statistics for Partition "root_partition" ;
++----------------------------------------------+-------------+
+; Statistic                                    ; Value       ;
++----------------------------------------------+-------------+
+; Total registers                              ; 545         ;
+; Number of registers using Synchronous Clear  ; 0           ;
+; Number of registers using Synchronous Load   ; 0           ;
+; Number of registers using Asynchronous Clear ; 33          ;
+; Number of registers using Asynchronous Load  ; 0           ;
+; Number of registers using Clock Enable       ; 512         ;
+; Number of registers using Preset             ; 0           ;
++----------------------------------------------+-------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Ignored Source Level Assignments for datapath_inst|mult_7_rtl_0|auto_generated                                                                                                                                  ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assignment            ; Value ; To ; Reason                  ; Location                                                                                                                                         ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; VERILOG_INPUT_VERSION ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; VERILOG_2001          ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; synthesis_clearbox    ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Ignored Source Level Assignments for datapath_inst|mult_6_rtl_0|auto_generated                                                                                                                                  ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assignment            ; Value ; To ; Reason                  ; Location                                                                                                                                         ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; VERILOG_INPUT_VERSION ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; VERILOG_2001          ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; synthesis_clearbox    ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Ignored Source Level Assignments for datapath_inst|mult_5_rtl_0|auto_generated                                                                                                                                  ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assignment            ; Value ; To ; Reason                  ; Location                                                                                                                                         ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; VERILOG_INPUT_VERSION ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; VERILOG_2001          ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; synthesis_clearbox    ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Ignored Source Level Assignments for datapath_inst|mult_4_rtl_0|auto_generated                                                                                                                                  ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assignment            ; Value ; To ; Reason                  ; Location                                                                                                                                         ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; VERILOG_INPUT_VERSION ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; VERILOG_2001          ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; synthesis_clearbox    ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Ignored Source Level Assignments for datapath_inst|mult_3_rtl_0|auto_generated                                                                                                                                  ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assignment            ; Value ; To ; Reason                  ; Location                                                                                                                                         ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; VERILOG_INPUT_VERSION ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; VERILOG_2001          ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; synthesis_clearbox    ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Ignored Source Level Assignments for datapath_inst|mult_2_rtl_0|auto_generated                                                                                                                                  ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assignment            ; Value ; To ; Reason                  ; Location                                                                                                                                         ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; VERILOG_INPUT_VERSION ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; VERILOG_2001          ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; synthesis_clearbox    ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Ignored Source Level Assignments for datapath_inst|mult_1_rtl_0|auto_generated                                                                                                                                  ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assignment            ; Value ; To ; Reason                  ; Location                                                                                                                                         ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; VERILOG_INPUT_VERSION ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; VERILOG_2001          ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; synthesis_clearbox    ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Ignored Source Level Assignments for datapath_inst|mult_0_rtl_0|auto_generated                                                                                                                                  ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assignment            ; Value ; To ; Reason                  ; Location                                                                                                                                         ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+; VERILOG_INPUT_VERSION ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; VERILOG_2001          ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
+; synthesis_clearbox    ; 1     ; -  ; Invalid assignment name ; /home/aseife2/seer_optimizer/outputs/rtl_validation/quartus/gemm_blocked_k8_weighted/tmp-clearbox/gemm_blocked_k8_weighted/162988/mult_edu.v(29) ;
++-----------------------+-------+----+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: datapath_inst|mult_7_rtl_0     ;
++------------------------------------------------+----------+---------------------+
+; Parameter Name                                 ; Value    ; Type                ;
++------------------------------------------------+----------+---------------------+
+; AUTO_CARRY_CHAINS                              ; ON       ; Untyped             ;
+; IGNORE_CARRY_BUFFERS                           ; OFF      ; Untyped             ;
+; AUTO_CASCADE_CHAINS                            ; ON       ; AUTO_CASCADE        ;
+; IGNORE_CASCADE_BUFFERS                         ; OFF      ; Untyped             ;
+; LPM_WIDTHA                                     ; 32       ; Untyped             ;
+; LPM_WIDTHB                                     ; 32       ; Untyped             ;
+; LPM_WIDTHP                                     ; 64       ; Untyped             ;
+; LPM_WIDTHR                                     ; 64       ; Untyped             ;
+; LPM_WIDTHS                                     ; 1        ; Untyped             ;
+; LPM_REPRESENTATION                             ; SIGNED   ; Untyped             ;
+; LPM_PIPELINE                                   ; 0        ; Untyped             ;
+; LATENCY                                        ; 0        ; Untyped             ;
+; INPUT_A_IS_CONSTANT                            ; NO       ; Untyped             ;
+; INPUT_B_IS_CONSTANT                            ; NO       ; Untyped             ;
+; USE_EAB                                        ; OFF      ; Untyped             ;
+; MAXIMIZE_SPEED                                 ; 5        ; Untyped             ;
+; DEVICE_FAMILY                                  ; Arria 10 ; Untyped             ;
+; CARRY_CHAIN                                    ; MANUAL   ; Untyped             ;
+; APEX20K_TECHNOLOGY_MAPPER                      ; LUT      ; TECH_MAPPER_APEX20K ;
+; DEDICATED_MULTIPLIER_CIRCUITRY                 ; NO       ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0        ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0        ; Untyped             ;
+; CBXI_PARAMETER                                 ; mult_edu ; Untyped             ;
+; INPUT_A_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; INPUT_B_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; USE_AHDL_IMPLEMENTATION                        ; OFF      ; Untyped             ;
++------------------------------------------------+----------+---------------------+
+
+
++---------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: datapath_inst|mult_6_rtl_0     ;
++------------------------------------------------+----------+---------------------+
+; Parameter Name                                 ; Value    ; Type                ;
++------------------------------------------------+----------+---------------------+
+; AUTO_CARRY_CHAINS                              ; ON       ; Untyped             ;
+; IGNORE_CARRY_BUFFERS                           ; OFF      ; Untyped             ;
+; AUTO_CASCADE_CHAINS                            ; ON       ; AUTO_CASCADE        ;
+; IGNORE_CASCADE_BUFFERS                         ; OFF      ; Untyped             ;
+; LPM_WIDTHA                                     ; 32       ; Untyped             ;
+; LPM_WIDTHB                                     ; 32       ; Untyped             ;
+; LPM_WIDTHP                                     ; 64       ; Untyped             ;
+; LPM_WIDTHR                                     ; 64       ; Untyped             ;
+; LPM_WIDTHS                                     ; 1        ; Untyped             ;
+; LPM_REPRESENTATION                             ; SIGNED   ; Untyped             ;
+; LPM_PIPELINE                                   ; 0        ; Untyped             ;
+; LATENCY                                        ; 0        ; Untyped             ;
+; INPUT_A_IS_CONSTANT                            ; NO       ; Untyped             ;
+; INPUT_B_IS_CONSTANT                            ; NO       ; Untyped             ;
+; USE_EAB                                        ; OFF      ; Untyped             ;
+; MAXIMIZE_SPEED                                 ; 5        ; Untyped             ;
+; DEVICE_FAMILY                                  ; Arria 10 ; Untyped             ;
+; CARRY_CHAIN                                    ; MANUAL   ; Untyped             ;
+; APEX20K_TECHNOLOGY_MAPPER                      ; LUT      ; TECH_MAPPER_APEX20K ;
+; DEDICATED_MULTIPLIER_CIRCUITRY                 ; NO       ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0        ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0        ; Untyped             ;
+; CBXI_PARAMETER                                 ; mult_edu ; Untyped             ;
+; INPUT_A_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; INPUT_B_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; USE_AHDL_IMPLEMENTATION                        ; OFF      ; Untyped             ;
++------------------------------------------------+----------+---------------------+
+
+
++---------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: datapath_inst|mult_5_rtl_0     ;
++------------------------------------------------+----------+---------------------+
+; Parameter Name                                 ; Value    ; Type                ;
++------------------------------------------------+----------+---------------------+
+; AUTO_CARRY_CHAINS                              ; ON       ; Untyped             ;
+; IGNORE_CARRY_BUFFERS                           ; OFF      ; Untyped             ;
+; AUTO_CASCADE_CHAINS                            ; ON       ; AUTO_CASCADE        ;
+; IGNORE_CASCADE_BUFFERS                         ; OFF      ; Untyped             ;
+; LPM_WIDTHA                                     ; 32       ; Untyped             ;
+; LPM_WIDTHB                                     ; 32       ; Untyped             ;
+; LPM_WIDTHP                                     ; 64       ; Untyped             ;
+; LPM_WIDTHR                                     ; 64       ; Untyped             ;
+; LPM_WIDTHS                                     ; 1        ; Untyped             ;
+; LPM_REPRESENTATION                             ; SIGNED   ; Untyped             ;
+; LPM_PIPELINE                                   ; 0        ; Untyped             ;
+; LATENCY                                        ; 0        ; Untyped             ;
+; INPUT_A_IS_CONSTANT                            ; NO       ; Untyped             ;
+; INPUT_B_IS_CONSTANT                            ; NO       ; Untyped             ;
+; USE_EAB                                        ; OFF      ; Untyped             ;
+; MAXIMIZE_SPEED                                 ; 5        ; Untyped             ;
+; DEVICE_FAMILY                                  ; Arria 10 ; Untyped             ;
+; CARRY_CHAIN                                    ; MANUAL   ; Untyped             ;
+; APEX20K_TECHNOLOGY_MAPPER                      ; LUT      ; TECH_MAPPER_APEX20K ;
+; DEDICATED_MULTIPLIER_CIRCUITRY                 ; NO       ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0        ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0        ; Untyped             ;
+; CBXI_PARAMETER                                 ; mult_edu ; Untyped             ;
+; INPUT_A_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; INPUT_B_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; USE_AHDL_IMPLEMENTATION                        ; OFF      ; Untyped             ;
++------------------------------------------------+----------+---------------------+
+
+
++---------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: datapath_inst|mult_4_rtl_0     ;
++------------------------------------------------+----------+---------------------+
+; Parameter Name                                 ; Value    ; Type                ;
++------------------------------------------------+----------+---------------------+
+; AUTO_CARRY_CHAINS                              ; ON       ; Untyped             ;
+; IGNORE_CARRY_BUFFERS                           ; OFF      ; Untyped             ;
+; AUTO_CASCADE_CHAINS                            ; ON       ; AUTO_CASCADE        ;
+; IGNORE_CASCADE_BUFFERS                         ; OFF      ; Untyped             ;
+; LPM_WIDTHA                                     ; 32       ; Untyped             ;
+; LPM_WIDTHB                                     ; 32       ; Untyped             ;
+; LPM_WIDTHP                                     ; 64       ; Untyped             ;
+; LPM_WIDTHR                                     ; 64       ; Untyped             ;
+; LPM_WIDTHS                                     ; 1        ; Untyped             ;
+; LPM_REPRESENTATION                             ; SIGNED   ; Untyped             ;
+; LPM_PIPELINE                                   ; 0        ; Untyped             ;
+; LATENCY                                        ; 0        ; Untyped             ;
+; INPUT_A_IS_CONSTANT                            ; NO       ; Untyped             ;
+; INPUT_B_IS_CONSTANT                            ; NO       ; Untyped             ;
+; USE_EAB                                        ; OFF      ; Untyped             ;
+; MAXIMIZE_SPEED                                 ; 5        ; Untyped             ;
+; DEVICE_FAMILY                                  ; Arria 10 ; Untyped             ;
+; CARRY_CHAIN                                    ; MANUAL   ; Untyped             ;
+; APEX20K_TECHNOLOGY_MAPPER                      ; LUT      ; TECH_MAPPER_APEX20K ;
+; DEDICATED_MULTIPLIER_CIRCUITRY                 ; NO       ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0        ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0        ; Untyped             ;
+; CBXI_PARAMETER                                 ; mult_edu ; Untyped             ;
+; INPUT_A_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; INPUT_B_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; USE_AHDL_IMPLEMENTATION                        ; OFF      ; Untyped             ;
++------------------------------------------------+----------+---------------------+
+
+
++---------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: datapath_inst|mult_3_rtl_0     ;
++------------------------------------------------+----------+---------------------+
+; Parameter Name                                 ; Value    ; Type                ;
++------------------------------------------------+----------+---------------------+
+; AUTO_CARRY_CHAINS                              ; ON       ; Untyped             ;
+; IGNORE_CARRY_BUFFERS                           ; OFF      ; Untyped             ;
+; AUTO_CASCADE_CHAINS                            ; ON       ; AUTO_CASCADE        ;
+; IGNORE_CASCADE_BUFFERS                         ; OFF      ; Untyped             ;
+; LPM_WIDTHA                                     ; 32       ; Untyped             ;
+; LPM_WIDTHB                                     ; 32       ; Untyped             ;
+; LPM_WIDTHP                                     ; 64       ; Untyped             ;
+; LPM_WIDTHR                                     ; 64       ; Untyped             ;
+; LPM_WIDTHS                                     ; 1        ; Untyped             ;
+; LPM_REPRESENTATION                             ; SIGNED   ; Untyped             ;
+; LPM_PIPELINE                                   ; 0        ; Untyped             ;
+; LATENCY                                        ; 0        ; Untyped             ;
+; INPUT_A_IS_CONSTANT                            ; NO       ; Untyped             ;
+; INPUT_B_IS_CONSTANT                            ; NO       ; Untyped             ;
+; USE_EAB                                        ; OFF      ; Untyped             ;
+; MAXIMIZE_SPEED                                 ; 5        ; Untyped             ;
+; DEVICE_FAMILY                                  ; Arria 10 ; Untyped             ;
+; CARRY_CHAIN                                    ; MANUAL   ; Untyped             ;
+; APEX20K_TECHNOLOGY_MAPPER                      ; LUT      ; TECH_MAPPER_APEX20K ;
+; DEDICATED_MULTIPLIER_CIRCUITRY                 ; NO       ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0        ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0        ; Untyped             ;
+; CBXI_PARAMETER                                 ; mult_edu ; Untyped             ;
+; INPUT_A_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; INPUT_B_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; USE_AHDL_IMPLEMENTATION                        ; OFF      ; Untyped             ;
++------------------------------------------------+----------+---------------------+
+
+
++---------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: datapath_inst|mult_2_rtl_0     ;
++------------------------------------------------+----------+---------------------+
+; Parameter Name                                 ; Value    ; Type                ;
++------------------------------------------------+----------+---------------------+
+; AUTO_CARRY_CHAINS                              ; ON       ; Untyped             ;
+; IGNORE_CARRY_BUFFERS                           ; OFF      ; Untyped             ;
+; AUTO_CASCADE_CHAINS                            ; ON       ; AUTO_CASCADE        ;
+; IGNORE_CASCADE_BUFFERS                         ; OFF      ; Untyped             ;
+; LPM_WIDTHA                                     ; 32       ; Untyped             ;
+; LPM_WIDTHB                                     ; 32       ; Untyped             ;
+; LPM_WIDTHP                                     ; 64       ; Untyped             ;
+; LPM_WIDTHR                                     ; 64       ; Untyped             ;
+; LPM_WIDTHS                                     ; 1        ; Untyped             ;
+; LPM_REPRESENTATION                             ; SIGNED   ; Untyped             ;
+; LPM_PIPELINE                                   ; 0        ; Untyped             ;
+; LATENCY                                        ; 0        ; Untyped             ;
+; INPUT_A_IS_CONSTANT                            ; NO       ; Untyped             ;
+; INPUT_B_IS_CONSTANT                            ; NO       ; Untyped             ;
+; USE_EAB                                        ; OFF      ; Untyped             ;
+; MAXIMIZE_SPEED                                 ; 5        ; Untyped             ;
+; DEVICE_FAMILY                                  ; Arria 10 ; Untyped             ;
+; CARRY_CHAIN                                    ; MANUAL   ; Untyped             ;
+; APEX20K_TECHNOLOGY_MAPPER                      ; LUT      ; TECH_MAPPER_APEX20K ;
+; DEDICATED_MULTIPLIER_CIRCUITRY                 ; NO       ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0        ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0        ; Untyped             ;
+; CBXI_PARAMETER                                 ; mult_edu ; Untyped             ;
+; INPUT_A_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; INPUT_B_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; USE_AHDL_IMPLEMENTATION                        ; OFF      ; Untyped             ;
++------------------------------------------------+----------+---------------------+
+
+
++---------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: datapath_inst|mult_1_rtl_0     ;
++------------------------------------------------+----------+---------------------+
+; Parameter Name                                 ; Value    ; Type                ;
++------------------------------------------------+----------+---------------------+
+; AUTO_CARRY_CHAINS                              ; ON       ; Untyped             ;
+; IGNORE_CARRY_BUFFERS                           ; OFF      ; Untyped             ;
+; AUTO_CASCADE_CHAINS                            ; ON       ; AUTO_CASCADE        ;
+; IGNORE_CASCADE_BUFFERS                         ; OFF      ; Untyped             ;
+; LPM_WIDTHA                                     ; 32       ; Untyped             ;
+; LPM_WIDTHB                                     ; 32       ; Untyped             ;
+; LPM_WIDTHP                                     ; 64       ; Untyped             ;
+; LPM_WIDTHR                                     ; 64       ; Untyped             ;
+; LPM_WIDTHS                                     ; 1        ; Untyped             ;
+; LPM_REPRESENTATION                             ; SIGNED   ; Untyped             ;
+; LPM_PIPELINE                                   ; 0        ; Untyped             ;
+; LATENCY                                        ; 0        ; Untyped             ;
+; INPUT_A_IS_CONSTANT                            ; NO       ; Untyped             ;
+; INPUT_B_IS_CONSTANT                            ; NO       ; Untyped             ;
+; USE_EAB                                        ; OFF      ; Untyped             ;
+; MAXIMIZE_SPEED                                 ; 5        ; Untyped             ;
+; DEVICE_FAMILY                                  ; Arria 10 ; Untyped             ;
+; CARRY_CHAIN                                    ; MANUAL   ; Untyped             ;
+; APEX20K_TECHNOLOGY_MAPPER                      ; LUT      ; TECH_MAPPER_APEX20K ;
+; DEDICATED_MULTIPLIER_CIRCUITRY                 ; NO       ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0        ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0        ; Untyped             ;
+; CBXI_PARAMETER                                 ; mult_edu ; Untyped             ;
+; INPUT_A_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; INPUT_B_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; USE_AHDL_IMPLEMENTATION                        ; OFF      ; Untyped             ;
++------------------------------------------------+----------+---------------------+
+
+
++---------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: datapath_inst|mult_0_rtl_0     ;
++------------------------------------------------+----------+---------------------+
+; Parameter Name                                 ; Value    ; Type                ;
++------------------------------------------------+----------+---------------------+
+; AUTO_CARRY_CHAINS                              ; ON       ; Untyped             ;
+; IGNORE_CARRY_BUFFERS                           ; OFF      ; Untyped             ;
+; AUTO_CASCADE_CHAINS                            ; ON       ; AUTO_CASCADE        ;
+; IGNORE_CASCADE_BUFFERS                         ; OFF      ; Untyped             ;
+; LPM_WIDTHA                                     ; 32       ; Untyped             ;
+; LPM_WIDTHB                                     ; 32       ; Untyped             ;
+; LPM_WIDTHP                                     ; 64       ; Untyped             ;
+; LPM_WIDTHR                                     ; 64       ; Untyped             ;
+; LPM_WIDTHS                                     ; 1        ; Untyped             ;
+; LPM_REPRESENTATION                             ; SIGNED   ; Untyped             ;
+; LPM_PIPELINE                                   ; 0        ; Untyped             ;
+; LATENCY                                        ; 0        ; Untyped             ;
+; INPUT_A_IS_CONSTANT                            ; NO       ; Untyped             ;
+; INPUT_B_IS_CONSTANT                            ; NO       ; Untyped             ;
+; USE_EAB                                        ; OFF      ; Untyped             ;
+; MAXIMIZE_SPEED                                 ; 5        ; Untyped             ;
+; DEVICE_FAMILY                                  ; Arria 10 ; Untyped             ;
+; CARRY_CHAIN                                    ; MANUAL   ; Untyped             ;
+; APEX20K_TECHNOLOGY_MAPPER                      ; LUT      ; TECH_MAPPER_APEX20K ;
+; DEDICATED_MULTIPLIER_CIRCUITRY                 ; NO       ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0        ; Untyped             ;
+; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0        ; Untyped             ;
+; CBXI_PARAMETER                                 ; mult_edu ; Untyped             ;
+; INPUT_A_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; INPUT_B_FIXED_VALUE                            ; Bx       ; Untyped             ;
+; USE_AHDL_IMPLEMENTATION                        ; OFF      ; Untyped             ;
++------------------------------------------------+----------+---------------------+
+
+
++------------------------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Partition "root_partition" ;
++------------------------+-----------------------------------------+
+; Type                   ; Count                                   ;
++------------------------+-----------------------------------------+
+; boundary_port          ; 548                                     ;
+; twentynm_ff            ; 545                                     ;
+;     CLR                ; 33                                      ;
+;     ENA                ; 512                                     ;
+; twentynm_lcell_comb    ; 3328                                    ;
+;     arith              ; 2048                                    ;
+;         2 data inputs  ; 32                                      ;
+;         4 data inputs  ; 2016                                    ;
+;     normal             ; 160                                     ;
+;         2 data inputs  ; 128                                     ;
+;         4 data inputs  ; 16                                      ;
+;         5 data inputs  ; 8                                       ;
+;         6 data inputs  ; 8                                       ;
+;     shared             ; 1120                                    ;
+;         2 data inputs  ; 128                                     ;
+;         3 data inputs  ; 992                                     ;
+;                        ;                                         ;
+; Number of carry chains ; 180                                     ;
+; Max carry chain length ; 32                                      ;
+;                        ;                                         ;
+; Max LUT depth          ; 9.60                                    ;
+; Average LUT depth      ; 7.46                                    ;
++------------------------+-----------------------------------------+
+
+
++-----------------------------------------------------------------+
+; Synthesis Resource Usage Summary for Partition "root_partition" ;
++---------------------------------------------+-------------------+
+; Resource                                    ; Usage             ;
++---------------------------------------------+-------------------+
+; Estimate of Logic utilization (ALMs needed) ; 1753              ;
+;                                             ;                   ;
+; Combinational ALUT usage for logic          ; 3328              ;
+;     -- 7 input functions                    ; 0                 ;
+;     -- 6 input functions                    ; 8                 ;
+;     -- 5 input functions                    ; 8                 ;
+;     -- 4 input functions                    ; 2032              ;
+;     -- <=3 input functions                  ; 1280              ;
+;                                             ;                   ;
+; Dedicated logic registers                   ; 545               ;
+;                                             ;                   ;
+; I/O pins                                    ; 548               ;
+;                                             ;                   ;
+; Total DSP Blocks                            ; 0                 ;
+;     -- [A] Total Fixed Point DSP Blocks     ; 0                 ;
+;     -- [B] Total Floating Point DSP Blocks  ; 0                 ;
+;                                             ;                   ;
+; Maximum fan-out node                        ; clk               ;
+; Maximum fan-out                             ; 545               ;
+; Total fan-out                               ; 16424             ;
+; Average fan-out                             ; 3.71              ;
++---------------------------------------------+-------------------+
+
+
++--------------------+
+; Synthesis Messages ;
++--------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Synthesis
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Processing started: Fri Apr 17 11:46:33 2026
+Info: Command: quartus_syn --read_settings_files=on --write_settings_files=off gemm_blocked_k8_weighted -c gemm_blocked_k8_weighted
+Info: qis_default_flow_script.tcl version: #1
+Info: Initializing Synthesis...
+Info: Project = "gemm_blocked_k8_weighted"
+Info: Revision = "gemm_blocked_k8_weighted"
+Info: Analyzing source files
+Info (16303): Superior Performance optimization mode selected -- timing performance will be prioritized at the potential cost of increased logic area and compilation time
+Info: Elaborating from top-level entity "gemm_blocked_k8_weighted_top"
+Info: Found 2 design entities
+Info: There are 2 partitions after elaboration.
+Info: Creating instance-specific data models and dissolving soft partitions
+Info (18299): Expanding entity and wildcard assignments.
+Info (18300): Expanded entity and wildcard assignments. Elapsed time: 00:00:00
+Info: found pre-synthesis snapshots for 1 partition(s)
+Info: Synthesizing partition "root_partition"
+Info (286030): Timing-Driven Synthesis is running
+Info (278001): Inferred 8 megafunctions from design logic
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "datapath_inst|mult_7_rtl_0"
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "datapath_inst|mult_6_rtl_0"
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "datapath_inst|mult_5_rtl_0"
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "datapath_inst|mult_4_rtl_0"
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "datapath_inst|mult_3_rtl_0"
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "datapath_inst|mult_2_rtl_0"
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "datapath_inst|mult_1_rtl_0"
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "datapath_inst|mult_0_rtl_0"
+Info (13014): Ignored 3968 buffer(s)
+    Info (13019): Ignored 3968 SOFT buffer(s)
+Info (21057): Implemented 4389 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 515 input pins
+    Info (21059): Implemented 33 output pins
+    Info (21061): Implemented 3841 logic cells
+Info: Successfully synthesized partition
+Info: Saving post-synthesis snapshots for 1 partition(s)
+Info: Quartus Prime Synthesis was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 1721 megabytes
+    Info: Processing ended: Fri Apr 17 11:46:43 2026
+    Info: Elapsed time: 00:00:10
+
+

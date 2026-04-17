@@ -1,0 +1,68 @@
+Fitter Finalize Stage Report for dot16_latency_under_dsp
+Fri Apr 17 11:21:59 2026
+Quartus Prime Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Fitter HSLP Summary
+  3. Finalize Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2019  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++----------------------------------------------------------------------------------+
+; Fitter HSLP Summary                                                              ;
++--------------------------------------------------------+-----------------+-------+
+; Resource                                               ; Usage           ; %     ;
++--------------------------------------------------------+-----------------+-------+
+;                                                        ;                 ;       ;
+; Programmable power technology high-speed tiles         ; 122 / 18,244    ; < 1 % ;
+; Programmable power technology low-power tiles          ; 18,122 / 18,244 ; 99 %  ;
+;     -- low-power tiles that are used by the design     ; 142 / 18,122    ; < 1 % ;
+;     -- unused tiles (low-power)                        ; 17,980 / 18,122 ; 99 %  ;
+;                                                        ;                 ;       ;
+; Programmable power technology high-speed LAB tiles     ; 122 / 13,898    ; < 1 % ;
+; Programmable power technology low-power LAB tiles      ; 13,776 / 13,898 ; 99 %  ;
+;     -- low-power LAB tiles that are used by the design ; 142 / 13,776    ; 1 %   ;
+;     -- unused LAB tiles (low-power)                    ; 13,634 / 13,776 ; 99 %  ;
+;                                                        ;                 ;       ;
++--------------------------------------------------------+-----------------+-------+
+
+
++-------------------+
+; Finalize Messages ;
++-------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Fitter
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Processing started: Fri Apr 17 11:15:19 2026
+Info: Command: quartus_fit --read_settings_files=on --write_settings_files=off dot16_latency_under_dsp -c dot16_latency_under_dsp
+Info: qfit2_default_script.tcl version: #1
+Info: Project  = dot16_latency_under_dsp
+Info: Revision = dot16_latency_under_dsp
+Info (11888): Total time spent on timing analysis during Post-Routing is 0.01 seconds.
+Info (16557): Fitter post-fit operations ending: elapsed time is 00:00:21
+
+

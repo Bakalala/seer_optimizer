@@ -1,0 +1,37 @@
+| benchmark | variant | rtl_intended_dsp_count | quartus_dsp_blocks | quartus_alm_or_alut | quartus_fmax_mhz | quartus_worst_slack_ns | timing_passed | status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| dot16 | original | 16 |  | 732 |  | -4.196 | false | compiled |
+| dot16 | weighted | 0 |  | 4328 |  | -3.354 | false | compiled |
+| dot16 | latency_unconstrained | 0 |  | 4328 |  | -3.354 | false | compiled |
+| dot16 | power_unconstrained | 7 |  | 2665 |  | -4.957 | false | compiled |
+| dot16 | latency_under_dsp | 0 |  | 4328 |  | -3.354 | false | compiled |
+| gemm_blocked_k8 | original | 8 |  | 366 |  | -3.421 | false | compiled |
+| gemm_blocked_k8 | weighted | 0 |  | 2154 |  | -2.079 | false | compiled |
+| gemm_blocked_k8 | latency_unconstrained | 8 |  | 366 |  | -3.421 | false | compiled |
+| gemm_blocked_k8 | power_unconstrained | 8 |  | 366 |  | -3.421 | false | compiled |
+| gemm_blocked_k8 | latency_under_dsp | 0 |  | 2154 |  | -2.079 | false | compiled |
+| gemm_blocked_k8 | latency_under_lut | 8 |  | 366 |  | -3.421 | false | compiled |
+| stencil5 | original | 5 |  | 240 |  | 1.350 | true | compiled |
+| stencil5 | weighted | 0 |  | 240 |  | 1.350 | true | compiled |
+| stencil5 | latency_unconstrained | 4 |  | 240 |  | 1.350 | true | compiled |
+| stencil5 | power_unconstrained | 5 |  | 240 |  | 1.350 | true | compiled |
+| stencil5 | latency_under_dsp | 0 |  | 240 |  | 1.350 | true | compiled |
+| stencil5 | latency_under_lut | 5 |  | 240 |  | 1.350 | true | compiled |
+| fir8 | original | 8 |  | 288 |  | 1.227 | true | compiled |
+| fir8 | weighted | 0 |  | 288 |  | 1.227 | true | compiled |
+| fir8 | latency_unconstrained | 3 |  | 288 |  | 1.227 | true | compiled |
+| fir8 | power_unconstrained | 4 |  | 288 |  | 1.227 | true | compiled |
+| fir8 | latency_under_dsp | 0 |  | 288 |  | 1.227 | true | compiled |
+| fir8 | latency_under_lut | 4 |  | 288 |  | 1.227 | true | compiled |
+| conv3x3 | original | 9 |  | 289 |  | 1.309 | true | compiled |
+| conv3x3 | weighted | 0 |  | 289 |  | 1.309 | true | compiled |
+| conv3x3 | latency_unconstrained | 1 |  | 289 |  | 1.309 | true | compiled |
+| conv3x3 | power_unconstrained | 1 |  | 289 |  | 1.309 | true | compiled |
+| conv3x3 | latency_under_dsp | 0 |  | 289 |  | 1.309 | true | compiled |
+| conv3x3 | latency_under_lut | 1 |  | 289 |  | 1.309 | true | compiled |
+| gemm_k8 | original | 8 |  | 366 |  | -3.421 | false | compiled |
+| gemm_k8 | weighted | 0 |  | 2154 |  | -2.079 | false | compiled |
+| gemm_k8 | latency_unconstrained | 4 |  | 1272 |  | -3.511 | false | compiled |
+| gemm_k8 | power_unconstrained | 8 |  | 366 |  | -3.421 | false | compiled |
+| gemm_k8 | latency_under_dsp | 0 |  | 2154 |  | -2.079 | false | compiled |
+| gemm_k8 | latency_under_lut | 8 |  | 366 |  | -3.421 | false | compiled |

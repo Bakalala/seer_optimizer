@@ -1,0 +1,135 @@
+Flow report for fir8_weighted
+Fri Apr 17 11:42:09 2026
+Quartus Prime Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Parallel Compilation
+  2. Legal Notice
+  3. Flow Summary
+  4. Flow Settings
+  5. Flow Non-Default Global Settings
+  6. Flow Elapsed Time
+  7. Flow OS Summary
+  8. Flow Log
+
+
+
++-------------------------------------+
+; Parallel Compilation                ;
++----------------------------+--------+
+; Processors                 ; Number ;
++----------------------------+--------+
+; Number detected on machine ; 72     ;
+; Maximum allowed            ; 16     ;
+; Maximum used               ; 16     ;
++----------------------------+--------+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2019  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++----------------------------------------------------------------------------------------+
+; Flow Summary                                                                           ;
++-----------------------------+----------------------------------------------------------+
+; Flow Status                 ; Successful - Fri Apr 17 11:41:53 2026                    ;
+; Quartus Prime Version       ; 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition ;
+; Revision Name               ; fir8_weighted                                            ;
+; Top-level Entity Name       ; fir8_weighted_top                                        ;
+; Family                      ; Arria 10                                                 ;
+; Device                      ; 10AX090H1F34E1SG                                         ;
+; Timing Models               ; Final                                                    ;
+; Logic utilization (in ALMs) ; 288 / 339,620 ( < 1 % )                                  ;
+; Total registers             ; 65                                                       ;
+; Total pins                  ; 0 / 618 ( 0 % )                                          ;
+; Total virtual pins          ; 292                                                      ;
+; Total block memory bits     ; 0 / 49,623,040 ( 0 % )                                   ;
+; Total DSP Blocks            ; 0 / 1,518 ( 0 % )                                        ;
+; Total HSSI RX channels      ; 0 / 24 ( 0 % )                                           ;
+; Total HSSI TX channels      ; 0 / 24 ( 0 % )                                           ;
+; Total PLLs                  ; 0 / 80 ( 0 % )                                           ;
++-----------------------------+----------------------------------------------------------+
+
+
++-----------------------------------------+
+; Flow Settings                           ;
++-------------------+---------------------+
+; Option            ; Setting             ;
++-------------------+---------------------+
+; Start date & time ; 04/17/2026 11:34:28 ;
+; Main task         ; Compilation         ;
+; Revision Name     ; fir8_weighted       ;
++-------------------+---------------------+
+
+
++--------------------------------------------------------------------------------------------------------------+
+; Flow Non-Default Global Settings                                                                             ;
++----------------------------------+--------------------------------+---------------+-------------+------------+
+; Assignment Name                  ; Value                          ; Default Value ; Entity Name ; Section Id ;
++----------------------------------+--------------------------------+---------------+-------------+------------+
+; ALLOW_DSP_RETIMING               ; On                             ; Off           ; --          ; --         ;
+; ALLOW_RAM_RETIMING               ; On                             ; Off           ; --          ; --         ;
+; COMPILER_SIGNATURE_ID            ; 57670046491892.177644006826249 ; --            ; --          ; --         ;
+; FITTER_EFFORT                    ; Standard Fit                   ; Auto Fit      ; --          ; --         ;
+; FLOW_DISABLE_ASSEMBLER           ; On                             ; Off           ; --          ; --         ;
+; MUX_RESTRUCTURE                  ; Off                            ; Auto          ; --          ; --         ;
+; OPTIMIZATION_MODE                ; Superior Performance           ; Balanced      ; --          ; --         ;
+; OPTIMIZATION_TECHNIQUE           ; Speed                          ; Balanced      ; --          ; --         ;
+; PHYSICAL_SYNTHESIS               ; On                             ; Off           ; --          ; --         ;
+; PLACEMENT_EFFORT_MULTIPLIER      ; 4.0                            ; 1.0           ; --          ; --         ;
+; ROUTER_TIMING_OPTIMIZATION_LEVEL ; MAXIMUM                        ; Normal        ; --          ; --         ;
+; TOP_LEVEL_ENTITY                 ; fir8_weighted_top              ; fir8_weighted ; --          ; --         ;
++----------------------------------+--------------------------------+---------------+-------------+------------+
+
+
++--------------------------------------------------------------------------------+
+; Flow Elapsed Time                                                              ;
++-----------------+--------------+-------------------------+---------------------+
+; Module Name     ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ;
++-----------------+--------------+-------------------------+---------------------+
+; Synthesis       ; 00:00:03     ; 1.8                     ; 1734 MB             ;
+; Fitter          ; 00:07:20     ; 1.0                     ; 8682 MB             ;
+; Timing Analyzer ; 00:00:10     ; 1.4                     ; 4401 MB             ;
+; Total           ; 00:07:33     ; --                      ; --                  ;
++-----------------+--------------+-------------------------+---------------------+
+
+
++--------------------------------------------------------------------------------+
+; Flow OS Summary                                                                ;
++-----------------+----------------------+---------+------------+----------------+
+; Module Name     ; Machine Hostname     ; OS Name ; OS Version ; Processor type ;
++-----------------+----------------------+---------+------------+----------------+
+; Synthesis       ; solaire.cs.mcgill.ca ; Red Hat ; 7          ; x86_64         ;
+; Fitter          ; solaire.cs.mcgill.ca ; Red Hat ; 7          ; x86_64         ;
+; Timing Analyzer ; solaire.cs.mcgill.ca ; Red Hat ; 7          ; x86_64         ;
++-----------------+----------------------+---------+------------+----------------+
+
+
+------------
+; Flow Log ;
+------------
+quartus_syn --read_settings_files=on --write_settings_files=off fir8_weighted -c fir8_weighted
+quartus_fit --read_settings_files=on --write_settings_files=off fir8_weighted -c fir8_weighted
+quartus_sta fir8_weighted -c fir8_weighted --mode=finalize
+
+
+

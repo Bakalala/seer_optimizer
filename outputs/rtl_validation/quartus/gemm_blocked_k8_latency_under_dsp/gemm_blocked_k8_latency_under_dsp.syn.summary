@@ -1,0 +1,4 @@
+Synthesis Status : Successful - Fri Apr 17 11:35:29 2026
+Revision Name : gemm_blocked_k8_latency_under_dsp
+Top-level Entity Name : gemm_blocked_k8_latency_under_dsp_top
+Family : Arria 10
