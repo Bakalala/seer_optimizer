@@ -113,22 +113,19 @@ Datapath-oriented work by Coward et al.\ is the closest extraction-focused compa
 \label{fig:workflow}
 \end{figure*}
 
-\subsubsection{IR and Rewrite Space}
+\subsection{IR and Rewrite Space}
 The IR contains \texttt{input}, \texttt{const}, \texttt{add}, \texttt{sub}, and \texttt{mul} nodes plus architecture-aware variants such as \texttt{add\_lut}, \texttt{add\_dsp}, \texttt{mul\_lut}, \texttt{mul\_dsp}, and \texttt{mac\_dsp}. Rewrites cover constant folding, neutral-element elimination, algebraic reassociation, and datapath mapping alternatives. Additions and subtractions may bind to LUT or DSP implementations; multiplications may bind to LUT or DSP variants; and multiply-accumulate structure can be recognized and replaced with a fused DSP MAC.
 
-\subsubsection{Equality Saturation and Frontier Construction}
-Each benchmark is serialized as a JSON arithmetic DAG, then saturated once in the Rust core using \texttt{egg}. The system does not keep one extracted term per e-class, nor does it sample 128 random implementations. Instead, it computes a bounded deterministic frontier. Child frontiers are combined bottom-up, candidates with identical metric vectors are deduplicated, dominated points are removed, and the surviving candidates are retained in a lexicographic order with a 128-candidate cap per e-class and a 16-pass convergence limit. The important design choice is that equality saturation creates the design space once, while extraction reuses that retained frontier to answer multiple model-level design questions afterward.
+\subsection{Equality Saturation and Frontier Construction}
+Each benchmark is serialized as a JSON arithmetic DAG, then saturated once in the Rust core using \texttt{egg}. The system computes a bounded deterministic frontier rather than retaining one extracted term per e-class. Child frontiers are combined bottom-up, candidates with identical metric vectors are deduplicated, dominated points are removed in five dimensions, and survivors are kept in lexicographic order with a 128-candidate cap per e-class and a 16-pass convergence limit. Equality saturation creates the design space once; later extraction queries reuse the retained frontier to answer multiple model-level design questions.
 
-\subsubsection{Constraint-Aware Extraction}
+\subsection{Constraint-Aware Extraction}
 Each candidate carries a metric vector $(A,L,P,D,U)$ for area, latency, power, DSP count, and LUT count. Weighted extraction provides a default scalar baseline via $\mathrm{score}(x)=w_aA(x)+w_lL(x)+w_pP(x)$, but the main interface is constrained extraction. The system can minimize latency under an area cap, minimize area under a latency cap, minimize latency under DSP or LUT budgets, and minimize power under a latency constraint. These modes correspond directly to the design questions that motivated the project: minimum modeled latency under an area budget, minimum modeled area under a latency budget, minimum modeled power under a latency target, or feasibility under explicit resource ceilings.
 
-\subsubsection{Pareto and Tradeoff Exploration}
+\subsection{Pareto and Tradeoff Exploration}
 The project also exposes the design space instead of only returning a single answer. Exact Pareto extraction projects the retained candidate set onto area versus latency to produce a compact nondominated frontier, and the reporting pipeline uses those points to show where weighted, latency-optimal, and power-aware choices sit relative to one another. This is the main delta from a pure SEER-style ``generate equivalences'' story: the user can inspect tradeoffs rather than accept one opaque extracted point.
 
-\subsubsection{Frontier Algorithm}
-Candidates are pruned using five-dimensional dominance over area, latency, power, DSP count, and LUT count. This is what allows the extractor to preserve non-area information during pruning and still answer different objective queries from the same retained frontier. In other words, the e-graph generates alternatives, while the frontier algorithm preserves enough of them for constrained selection to be meaningful.
-
-\subsubsection{Analytical Cost Model}
+\subsection{Analytical Cost Model}
 Metrics are analytical rather than synthesis-derived. Area, power, DSP count, and LUT count are additive over children plus the local operator cost; latency follows the longest dependency path plus local operator latency. Formally, for operation $o$ with children $c_i$, $A=\sum_i A(c_i)+A(o)$, $P=\sum_i P(c_i)+P(o)$, $D=\sum_i D(c_i)+D(o)$, $U=\sum_i U(c_i)+U(o)$, and $L=\max_i L(c_i)+L(o)$. Power is included to strengthen the constrained-extraction interface, but it is treated as a secondary objective rather than as a claim of device-accurate energy modeling. Table~\ref{tab:cost-model} gives the complete operation table used by both the Rust extractor and Python benchmark harness.
 
 \begin{table}[t]
