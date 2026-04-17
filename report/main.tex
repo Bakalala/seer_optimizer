@@ -39,10 +39,10 @@ This project studies that missing step. The goal is not to reproduce the full SE
 
 The system therefore makes four contributions:
 \begin{itemize}
-\item a datapath-only SEER-style optimizer with constraint-aware extraction;
+\item a datapath-only SEER-style optimizer that saturates each benchmark once and reuses a bounded retained frontier for later queries;
 \item a shared analytical cost model over area, latency, DSP/LUT usage, and power;
-\item extraction modes for constrained optimization and tradeoff exploration;
-\item an evaluation showing that constraints materially change the extracted implementation.
+\item extraction modes for weighted selection, constrained optimization, infeasibility reporting, and Pareto tradeoff exploration;
+\item validation that combines analytical benchmark results, generated RTL simulation, and narrow Quartus resource-steering evidence.
 \end{itemize}
 
 The core claim of the report is straightforward: for SEER-style equality saturation in HLS, generating equivalent implementations is not enough. A useful system also needs extraction interfaces that can express budgets, expose tradeoffs, and report infeasibility when constraints cannot be satisfied.
@@ -162,7 +162,7 @@ The optimizer core is implemented in Rust 2024 using \texttt{egg} 0.10 and \text
 
 In execution terms, the Rust path has three phases. First, equality saturation builds the shared equivalence space. Second, frontier extraction compresses that space into a bounded retained candidate set at the root e-class. Third, query-time selection filters that retained set by budgets and chooses the best feasible candidate for the requested objective. This decomposition matters because the first two phases are shared across all queries for one benchmark, while only the last phase changes when the user asks a different hardware question.
 
-The Python harness builds benchmark graphs, computes baseline metrics from the shared cost model, invokes the Rust binary once per benchmark, and flattens results into CSV, HTML, and paper-ready figures. Batch mode keeps saturation and frontier construction shared across all queries for one benchmark; only the final selector differs between weighted, constrained, and Pareto extraction. Figure~\ref{fig:workflow} separates the information artifacts from the actions that produce or validate them.
+The Python harness builds benchmark graphs, computes baseline metrics from the shared cost model, invokes the Rust binary once per benchmark, and flattens results into CSV, HTML, and paper-ready figures. Batch mode keeps saturation and frontier construction shared across all queries for one benchmark; only the final selector differs between weighted, constrained, and Pareto extraction. Figure~\ref{fig:workflow} separates the information artifacts from the actions that produce or validate them. The C++/\texttt{i++} branch is retained as an exploratory HLS path, but the main quantitative validation uses generated Verilog because Intel HLS can legally remap equivalent C++ arithmetic to similar hardware.
 
 \section{Experimental Setup}
 The analytical evaluation runs on a MacBook Pro with an Apple M4 CPU and 16\,GB memory, using \texttt{rustc} 1.94.0, \texttt{cargo} 1.94.0, and Python 3.13.9. A follow-up validation pass uses generated RTL, ModelSim, and Quartus Prime Pro 19.2 on an Arria 10 target. Quartus results validate fitted DSP/ALM/Fmax tradeoffs for generated RTL variants; analytical area, latency, and power remain the optimizer's primary objective metrics.
@@ -248,7 +248,7 @@ Taken together, the three evaluation questions support a single interpretation o
 The analytical results also correspond to generated datapaths, not only different scores attached to an abstract expression. The RTL exporter generates Verilog variants for each feasible extraction result. ModelSim checks each benchmark on 200 deterministic signed 32-bit vectors; every testbench computes an independent golden result, checks the original RTL, and then checks every feasible optimized variant against the same result. All 29 optimized variants pass.
 
 \begin{table}[t]
-\caption{Representative Quartus RTL validation on multiplier-heavy kernels. DSP and ALM are post-fit Quartus resources; Fmax is the reported STA Fmax. These rows show resource steering, not global optimality or measured power.}
+\caption{Representative RTL/Quartus resource-steering evidence on multiplier-heavy kernels. DSP and ALM are post-fit Quartus resources; Fmax is the reported STA Fmax. These rows show that LUT-multiplier variants trade DSP blocks for ALMs; they do not establish global optimality or measured power.}
 \label{tab:quartus-validation}
 \centering
 \scriptsize
@@ -275,9 +275,12 @@ Quartus compiles all 35 generated variants. Table~\ref{tab:quartus-validation} g
 \begin{sloppypar}
 Relative to SEER, the project demonstrates one concrete point: equality saturation is a good way to generate HLS datapath alternatives, but constrained extraction is what makes those alternatives usable. The results are strongest where the weighted point is clearly not the right answer and where explicit budgets either recover a better implementation or expose infeasibility. That is why the negative \texttt{dot16} cases strengthen the paper rather than weaken it.
 
-At the same time, the scope prevents broader claims. The IR is datapath-only: there is no frontend, MLIR or CIRCT integration, control flow, or memory/BRAM model. The cost model is analytical, so the reported numbers are controlled relative comparisons rather than device-accurate performance or energy predictions. Quartus is also an optimizing synthesis tool, not a literal Verilog interpreter. Even with resource-style attributes, it can simplify small datapaths and map distinct source expressions to the same fitted circuit. Fully preventing that behavior would require lower-level primitive instantiation, which is outside this prototype.
-
 The systems implication is that constrained extraction changes how an e-graph is used. In SEER, equality saturation is primarily an optimization substrate. Here, the same saturated graph is also a queryable design-space representation: one run can answer latency, area, power, and feasibility questions under different budgets. That is the main reason the constrained interface is worth treating as its own contribution rather than as a minor variation on cost-based extraction.
+\end{sloppypar}
+
+\section{Limitations}
+\begin{sloppypar}
+The scope prevents broader claims. The IR is datapath-only: there is no frontend, MLIR or CIRCT integration, control flow, or memory/BRAM model. The cost model is analytical, so the reported numbers are controlled relative comparisons rather than device-accurate performance or energy predictions. Quartus is also an optimizing synthesis tool, not a literal Verilog interpreter. Even with resource-style attributes, it can simplify small datapaths and map distinct source expressions to the same fitted circuit. Fully preventing that behavior would require lower-level primitive instantiation, which is outside this prototype.
 
 Three threats to validity are worth stating explicitly. First, the bounded frontier may discard useful candidates, so the results characterize the retained design space rather than the full theoretical equivalence space. Second, budgets are analytical, not fitted FPGA limits; feasibility means ``under this model,'' not ``for every device.'' Third, the power objective distinguishes operator classes and resource bindings, but it does not model switching activity, placement, routing, or clocking effects. Fourth, RTL validation is simulation-based rather than formal, and the Quartus evidence comes from one Arria 10 flow. These limitations matter for external fidelity, but not for the internal comparison because every extraction mode uses the same model.
 \end{sloppypar}
