@@ -187,40 +187,7 @@ The resource-oriented queries also clarify what kind of alternatives the retaine
 Taken together, the three evaluation questions support a single interpretation of the project. Equality saturation is valuable because it keeps multiple arithmetic implementations alive simultaneously, but the course-level novelty here is that the same saturated graph can then be interrogated with several model-level design questions. The evidence would be weaker if every constrained query simply reproduced the weighted answer, or if every profile always returned some feasible variant. Instead, the results show a richer behavior: some queries recover meaningfully better analytical operating points, some return the baseline as the best constrained point, and some become infeasible. That is exactly the kind of extraction-level evidence needed to argue that the extension is about constrained selection rather than about generating equivalences for their own sake.
 
 \paragraph{Structural and RTL validation.}
-The analytical results also correspond to different generated datapaths, not only different scores attached to the same expression. The RTL exporter emitted Verilog variants for each feasible extraction result, using DSP-oriented multiplier attributes for \texttt{mul}/\texttt{mul\_dsp}/\texttt{mac\_dsp} and logic-oriented attributes for \texttt{mul\_lut}. Generated RTL variants were tested with ModelSim on 200 deterministic signed 32-bit vectors per benchmark. Each testbench computes an independent golden result from the benchmark definition, checks the original RTL against that result, and then checks every feasible optimized variant against the same result. All 29 optimized variants passed, so the generated variants preserve functional equivalence on the validation suite. This is simulation-based functional validation, not exhaustive formal equivalence.
-
-\begin{table}[t]
-\caption{Representative structural validation. Each row is one generated RTL variant. $A/L/P$ is the analytical objective tuple; $D/U$ is total DSP/LUT intent; $M_D/M_U$ is DSP-intended versus LUT-intended multiplier/MAC count.}
-\label{tab:structural-validation}
-\centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{l l r r r}
-\toprule
-Benchmark & Variant & A/L/P & D/U & $M_D/M_U$ \\
-\midrule
-\texttt{fir8} & weighted & 25/18/33 & 0/41 & 0/4 \\
-\texttt{fir8} & lat-opt & 38/9/31 & 10/10 & 3/1 \\
-\texttt{fir8} & pwr-opt & 33/16/21 & 4/9 & 4/0 \\
-\texttt{dot16} & weighted & 79/36/111 & 0/143 & 0/16 \\
-\texttt{dot16} & lat-opt & 94/21/126 & 15/128 & 0/16 \\
-\texttt{dot16} & pwr-opt & 93/33/90 & 7/87 & 7/9 \\
-\texttt{conv3x3} & weighted & 16/18/18 & 0/20 & 0/1 \\
-\texttt{conv3x3} & lat-opt & 27/9/24 & 10/3 & 1/0 \\
-\texttt{stencil5} & weighted & 24/14/34 & 0/44 & 0/5 \\
-\texttt{stencil5} & LUT cap & 38/7/23 & 9/0 & 5/0 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/structural_dsp_lut_heatmap.png}
-\caption{Structural DSP/LUT intent in generated variants. Cell text is total DSP/LUT intent and color is the DSP share. Weighted selections are LUT-heavy, while latency- and LUT-capped selections often move toward DSP-intended datapaths.}
-\label{fig:structural-intent}
-\end{figure}
-
-Table~\ref{tab:structural-validation} and Figure~\ref{fig:structural-intent} show the structural evidence used in this report. The area-oriented weighted point is structurally different from latency-oriented and LUT-capped points: for example, \texttt{fir8} moves from 0 DSP / 41 LUT intent in the weighted variant to 10 DSP / 10 LUT intent in the latency-optimal variant, and \texttt{stencil5} moves from 0 DSP / 44 LUT intent to 9 DSP / 0 LUT intent under the LUT cap. This supports the claim that constraints select different datapath structures. The report does not claim measured FPGA speed, fitted area, or device power improvements; the analytical extractor, structural RTL differences, and functional RTL simulation provide the evidence.
+The analytical results also correspond to generated datapaths, not only different scores attached to an abstract expression. The RTL exporter emitted Verilog variants for each feasible extraction result. Generated RTL variants were tested with ModelSim on 200 deterministic signed 32-bit vectors per benchmark. Each testbench computes an independent golden result from the benchmark definition, checks the original RTL against that result, and then checks every feasible optimized variant against the same result. All 29 optimized variants passed, so the generated variants preserve functional equivalence on the validation suite. This is simulation-based functional validation, not exhaustive formal equivalence, and it does not claim measured FPGA speed, fitted area, or device power improvements.
 
 \section{Discussion}
 Relative to SEER, the project demonstrates one concrete point: equality saturation is a good way to generate HLS datapath alternatives, but constrained extraction is what makes those alternatives usable. The results are strongest where the weighted point is clearly not the right answer and where explicit budgets either recover a better implementation or expose infeasibility. That is why the negative \texttt{dot16} cases strengthen the paper rather than weaken it.
