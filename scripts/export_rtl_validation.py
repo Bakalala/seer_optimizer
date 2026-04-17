@@ -518,11 +518,12 @@ SDC
 
 echo "Running Quartus preflight: family=$RTL_FAMILY device=$RTL_DEVICE"
 if (cd "$PREFLIGHT_DIR" && "$QUARTUS_SH" --flow compile preflight_adder) > "$LOG" 2>&1; then
-  if [[ -f "$PREFLIGHT_DIR/preflight_adder.map.rpt" && -f "$PREFLIGHT_DIR/preflight_adder.fit.rpt" ]] &&
+  if { [[ -f "$PREFLIGHT_DIR/preflight_adder.map.rpt" ]] || [[ -f "$PREFLIGHT_DIR/preflight_adder.syn.rpt" ]]; } &&
+     [[ -f "$PREFLIGHT_DIR/preflight_adder.fit.rpt" ]] &&
      { [[ -f "$PREFLIGHT_DIR/preflight_adder.sta.rpt" ]] || [[ -f "$PREFLIGHT_DIR/preflight_adder.tan.rpt" ]]; }; then
     echo "Quartus preflight passed. Log: $LOG"
   else
-    echo "Quartus preflight failed: compile returned success but did not produce map, fit, and timing reports." >&2
+    echo "Quartus preflight failed: compile returned success but did not produce synthesis, fit, and timing reports." >&2
     echo "See log: $LOG" >&2
     exit 1
   fi
@@ -598,8 +599,8 @@ run_one() {
   rm -f "$dir"/*.done "$dir"/*.rpt "$dir"/*.summary "$dir"/*.pin "$dir"/*.sof "$dir"/*.pof
   echo "Compiling $name"
   (cd "$dir" && "$QUARTUS_SH" --flow compile "$name") > "$log" 2>&1
-  if [[ ! -f "$dir/${name}.map.rpt" || ! -f "$dir/${name}.fit.rpt" ]]; then
-    echo "Quartus compile for $name did not produce map and fit reports. See $log" >&2
+  if { [[ ! -f "$dir/${name}.map.rpt" ]] && [[ ! -f "$dir/${name}.syn.rpt" ]]; } || [[ ! -f "$dir/${name}.fit.rpt" ]]; then
+    echo "Quartus compile for $name did not produce synthesis and fit reports. See $log" >&2
     return 1
   fi
 }
@@ -653,11 +654,11 @@ def parse_variant(root: Path, item: dict) -> dict[str, str]:
     name = item["module_name"]
     qdir = root / "quartus" / name
     fit = read_text(qdir / f"{name}.fit.rpt")
-    mapr = read_text(qdir / f"{name}.map.rpt")
+    synthesis = read_text(qdir / f"{name}.map.rpt") or read_text(qdir / f"{name}.syn.rpt")
     sta = read_text(qdir / f"{name}.sta.rpt")
     tan = read_text(qdir / f"{name}.tan.rpt")
     timing = sta or tan
-    text = "\n".join([fit, mapr, timing])
+    text = "\n".join([fit, synthesis, timing])
     alm = first_match(text, [
         r"Total\s+ALMs\s*[:;]\s*([\d,]+)",
         r"Logic utilization \(in ALMs\)\s*[:;]\s*([\d,]+)",
@@ -686,9 +687,9 @@ def parse_variant(root: Path, item: dict) -> dict[str, str]:
         r"Slack\s*[:;]\s*([+-]?[\d.]+)",
         r"Worst-case setup slack\s*[:;]\s*([+-]?[\d.]+)",
     ])
-    if fit and mapr:
+    if fit and synthesis:
         status = "compiled"
-    elif fit or mapr or timing:
+    elif fit or synthesis or timing:
         status = "partial_reports"
     else:
         status = "missing_reports"

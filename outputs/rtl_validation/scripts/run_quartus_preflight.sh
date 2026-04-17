@@ -48,11 +48,12 @@ SDC
 
 echo "Running Quartus preflight: family=$RTL_FAMILY device=$RTL_DEVICE"
 if (cd "$PREFLIGHT_DIR" && "$QUARTUS_SH" --flow compile preflight_adder) > "$LOG" 2>&1; then
-  if [[ -f "$PREFLIGHT_DIR/preflight_adder.map.rpt" && -f "$PREFLIGHT_DIR/preflight_adder.fit.rpt" ]] &&
+  if { [[ -f "$PREFLIGHT_DIR/preflight_adder.map.rpt" ]] || [[ -f "$PREFLIGHT_DIR/preflight_adder.syn.rpt" ]]; } &&
+     [[ -f "$PREFLIGHT_DIR/preflight_adder.fit.rpt" ]] &&
      { [[ -f "$PREFLIGHT_DIR/preflight_adder.sta.rpt" ]] || [[ -f "$PREFLIGHT_DIR/preflight_adder.tan.rpt" ]]; }; then
     echo "Quartus preflight passed. Log: $LOG"
   else
-    echo "Quartus preflight failed: compile returned success but did not produce map, fit, and timing reports." >&2
+    echo "Quartus preflight failed: compile returned success but did not produce synthesis, fit, and timing reports." >&2
     echo "See log: $LOG" >&2
     exit 1
   fi

@@ -74,8 +74,9 @@ classify_failure() {
 }
 
 has_required_preflight_reports() {
-  [[ -f "$PREFLIGHT_DIR/preflight_adder.map.rpt" &&
-     -f "$PREFLIGHT_DIR/preflight_adder.fit.rpt" ]] &&
+  { [[ -f "$PREFLIGHT_DIR/preflight_adder.map.rpt" ]] ||
+    [[ -f "$PREFLIGHT_DIR/preflight_adder.syn.rpt" ]]; } &&
+  [[ -f "$PREFLIGHT_DIR/preflight_adder.fit.rpt" ]] &&
   { [[ -f "$PREFLIGHT_DIR/preflight_adder.sta.rpt" ]] ||
     [[ -f "$PREFLIGHT_DIR/preflight_adder.tan.rpt" ]]; }
 }
@@ -174,7 +175,7 @@ write_summary() {
   {
     echo "# Quartus Environment Probe Summary"
     echo
-    echo "Required pass condition: trivial preflight produces \`.map.rpt\`, \`.fit.rpt\`, and \`.sta.rpt\` or \`.tan.rpt\`."
+    echo "Required pass condition: trivial preflight produces a synthesis report (\`.map.rpt\` or \`.syn.rpt\`), \`.fit.rpt\`, and \`.sta.rpt\` or \`.tan.rpt\`."
     echo
     echo "| Configuration | Version | Device query | Selected device | Preflight exit | Required reports | Likely failure | Log |"
     echo "| --- | --- | --- | --- | --- | --- | --- | --- |"

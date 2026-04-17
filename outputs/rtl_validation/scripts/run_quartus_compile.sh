@@ -61,8 +61,8 @@ run_one() {
   rm -f "$dir"/*.done "$dir"/*.rpt "$dir"/*.summary "$dir"/*.pin "$dir"/*.sof "$dir"/*.pof
   echo "Compiling $name"
   (cd "$dir" && "$QUARTUS_SH" --flow compile "$name") > "$log" 2>&1
-  if [[ ! -f "$dir/${name}.map.rpt" || ! -f "$dir/${name}.fit.rpt" ]]; then
-    echo "Quartus compile for $name did not produce map and fit reports. See $log" >&2
+  if { [[ ! -f "$dir/${name}.map.rpt" ]] && [[ ! -f "$dir/${name}.syn.rpt" ]]; } || [[ ! -f "$dir/${name}.fit.rpt" ]]; then
+    echo "Quartus compile for $name did not produce synthesis and fit reports. See $log" >&2
     return 1
   fi
 }

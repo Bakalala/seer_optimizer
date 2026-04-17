@@ -24,11 +24,11 @@ def parse_variant(root: Path, item: dict) -> dict[str, str]:
     name = item["module_name"]
     qdir = root / "quartus" / name
     fit = read_text(qdir / f"{name}.fit.rpt")
-    mapr = read_text(qdir / f"{name}.map.rpt")
+    synthesis = read_text(qdir / f"{name}.map.rpt") or read_text(qdir / f"{name}.syn.rpt")
     sta = read_text(qdir / f"{name}.sta.rpt")
     tan = read_text(qdir / f"{name}.tan.rpt")
     timing = sta or tan
-    text = "\n".join([fit, mapr, timing])
+    text = "\n".join([fit, synthesis, timing])
     alm = first_match(text, [
         r"Total\s+ALMs\s*[:;]\s*([\d,]+)",
         r"Logic utilization \(in ALMs\)\s*[:;]\s*([\d,]+)",
@@ -57,9 +57,9 @@ def parse_variant(root: Path, item: dict) -> dict[str, str]:
         r"Slack\s*[:;]\s*([+-]?[\d.]+)",
         r"Worst-case setup slack\s*[:;]\s*([+-]?[\d.]+)",
     ])
-    if fit and mapr:
+    if fit and synthesis:
         status = "compiled"
-    elif fit or mapr or timing:
+    elif fit or synthesis or timing:
         status = "partial_reports"
     else:
         status = "missing_reports"
