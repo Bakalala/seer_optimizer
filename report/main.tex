@@ -9,6 +9,8 @@
 
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
 
 \begin{document}
 
@@ -57,45 +59,57 @@ Datapath-oriented work by Coward et al.\ is the closest extraction-focused compa
 \section{Approach and System Design}
 \begin{figure*}[t!]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{@{}p{0.19\textwidth}p{0.18\textwidth}p{0.19\textwidth}p{0.18\textwidth}p{0.18\textwidth}@{}}
-\toprule
-\textbf{Artifact} & \textbf{Action/tool} & \textbf{Artifact} & \textbf{Action/tool} & \textbf{Artifact} \\
-\midrule
-Benchmark IR + cost model &
-Rust/\texttt{egg} saturation &
-Saturated e-graph + retained frontier &
-Constrained extraction &
-Variant metrics + expressions \\
-\addlinespace[2pt]
-Variant metrics + expressions &
-Analysis scripts &
-CSV summaries &
-Report generation &
-Tables and figures \\
-\addlinespace[2pt]
-Variant expressions &
-C++ export; Intel \texttt{i++} &
-HLS reports &
-Parser scripts &
-Supporting HLS evidence \\
-\addlinespace[2pt]
-Variant expressions &
-Verilog RTL export; ModelSim &
-Functional logs &
-Parser scripts &
-Functional pass/fail table \\
-\addlinespace[2pt]
-Generated Verilog RTL &
-Quartus fit/STA &
-Fitted DSP, ALM, Fmax reports &
-Parser scripts &
-Quartus validation table \\
-\bottomrule
-\end{tabular}
-\caption{End-to-end project flow. The artifact columns are information states; the action/tool columns are the transformations between them. The C++/\texttt{i++} branch is supporting HLS evidence, while the Verilog branch provides the ModelSim functional checks and Quartus fitted resource data used in the final tables.}
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  x=1in,
+  y=1in,
+  artifact/.style={
+    draw,
+    rounded corners,
+    align=center,
+    inner sep=3pt,
+    minimum height=0.36in,
+    text width=1.23in,
+    font=\scriptsize
+  },
+  action/.style={font=\tiny\itshape, align=center, inner sep=1pt},
+  arrow/.style={-{Latex[length=2mm]}, line width=0.35pt}
+]
+\node[artifact] (ir) at (0,0) {Benchmark IR\\+ cost model};
+\node[artifact] (eg) at (1.9,0) {Saturated e-graph\\+ retained frontier};
+\node[artifact] (variants) at (3.8,0) {Variant metrics\\+ expressions};
+\node[artifact] (csv) at (5.7,0) {CSV summaries};
+\node[artifact] (paper) at (7.6,0) {Tables\\+ figures};
+
+\node[artifact] (cpp) at (0.9,-1.15) {Generated C++\\components};
+\node[artifact] (hls) at (2.7,-1.15) {Intel HLS\\reports};
+\node[artifact] (hlsout) at (4.5,-1.15) {Supporting\\HLS evidence};
+
+\node[artifact] (rtl) at (4.5,-2.25) {Generated\\Verilog RTL};
+\node[artifact] (sim) at (6.3,-2.25) {ModelSim\\functional logs};
+\node[artifact] (funout) at (8.1,-2.25) {Functional\\pass/fail table};
+
+\node[artifact] (fit) at (4.5,-3.35) {Quartus\\fit/STA reports};
+\node[artifact] (qout) at (6.3,-3.35) {Quartus\\validation table};
+
+\draw[arrow] (ir) -- node[action, above] {Rust/\texttt{egg}\\saturation} (eg);
+\draw[arrow] (eg) -- node[action, above] {constrained\\extraction} (variants);
+\draw[arrow] (variants) -- node[action, above] {analysis\\scripts} (csv);
+\draw[arrow] (csv) -- node[action, above] {report\\generation} (paper);
+
+\draw[arrow] (variants) -- node[action, above, sloped] {C++ export} (cpp);
+\draw[arrow] (cpp) -- node[action, above] {Intel \texttt{i++}} (hls);
+\draw[arrow] (hls) -- node[action, above] {parser\\scripts} (hlsout);
+
+\draw[arrow] (variants) -- node[action, right, pos=0.80] {RTL\\export} (rtl);
+\draw[arrow] (rtl) -- node[action, above] {ModelSim} (sim);
+\draw[arrow] (sim) -- node[action, above] {parser\\scripts} (funout);
+
+\draw[arrow] (rtl) -- node[action, left] {Quartus\\fit/STA} (fit);
+\draw[arrow] (fit) -- node[action, above] {parser\\scripts} (qout);
+\end{tikzpicture}
+}
+\caption{End-to-end project flow. Boxes are artifacts or information states; arrows are the actions/tools that transform or validate them. The C++/\texttt{i++} branch is supporting HLS evidence, while the Verilog branch provides the ModelSim functional checks and Quartus fitted resource data used in the final tables.}
 \label{fig:workflow}
 \end{figure*}
 
