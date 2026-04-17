@@ -983,6 +983,7 @@ class BenchmarkHarnessTest(unittest.TestCase):
             self.assertTrue((out_dir / "tests" / "tb_toy.sv").exists())
             self.assertTrue((out_dir / "quartus" / "toy_weighted" / "toy_weighted.qsf").exists())
             self.assertTrue((out_dir / "scripts" / "run_functional_sim.sh").exists())
+            self.assertTrue((out_dir / "scripts" / "run_quartus_preflight.sh").exists())
             self.assertTrue((out_dir / "scripts" / "run_quartus_compile.sh").exists())
             self.assertTrue((out_dir / "scripts" / "parse_quartus_reports.py").exists())
 

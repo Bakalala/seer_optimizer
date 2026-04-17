@@ -353,7 +353,9 @@ def write_interpretation(path: Path, rows: List[Dict[str, str]]) -> None:
     lines = [
         "# Structural Validation Interpretation",
         "",
-        "Quartus fit/STA was unavailable in this environment; therefore hardware timing/power validation is left as future work. The generated RTL and functional simulation still validate equivalence and resource intent.",
+        "The optimizer generates functionally equivalent RTL variants with different analytical and structural DSP/LUT intent. A real FPGA fitted-metric validation flow is implemented, but the available Quartus installation cannot produce fit/STA reports on this server, so no fitted FPGA improvement is claimed yet.",
+        "",
+        "This server is valid for Rust optimizer tests, Python benchmark tests, RTL generation, ModelSim functional equivalence, structural analytical validation, and Quartus preflight failure diagnosis. It is not valid for fitted ALM/DSP claims, Fmax claims, Quartus power claims, or any real-FPGA improvement statement.",
         "",
         "The tables and figures compare feasible optimizer-selected datapaths under the analytical cost model. They do not claim a globally best implementation; they show that constrained extraction selects different feasible implementations for different objectives and budgets.",
         "",

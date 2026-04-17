@@ -48,6 +48,89 @@ def write_md(path: Path, rows: list[dict[str, str]], fields: list[str]) -> None:
             handle.write("| " + " | ".join(str(row.get(field, "")) for field in fields) + " |\n")
 
 
+def read_optional_rows(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    return read_rows(path)
+
+
+def numeric_delta(before: str, after: str) -> float | None:
+    lhs = to_float(before)
+    rhs = to_float(after)
+    if lhs is None or rhs is None:
+        return None
+    return rhs - lhs
+
+
+def format_delta(value: float | None) -> str:
+    if value is None:
+        return ""
+    if value.is_integer():
+        return str(int(value))
+    return f"{value:.3f}".rstrip("0").rstrip(".")
+
+
+def build_real_fpga_evidence(rows: list[dict[str, str]], functional_rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    by_key = {(row["benchmark"], row["variant"]): row for row in rows}
+    functional_status = {row.get("benchmark", ""): row.get("status", "") for row in functional_rows}
+    evidence = []
+    for benchmark in sorted({row["benchmark"] for row in rows}):
+        original = by_key.get((benchmark, "original"))
+        if not original:
+            continue
+        optimized_variants = [
+            row for row in rows
+            if row["benchmark"] == benchmark and row["variant"] != "original"
+        ]
+        optimized_variants.sort(key=lambda row: VARIANT_ORDER.index(row["variant"]) if row["variant"] in VARIANT_ORDER else 99)
+        for opt in optimized_variants:
+            dsp_delta = numeric_delta(original.get("quartus_dsp_blocks", ""), opt.get("quartus_dsp_blocks", ""))
+            alm_delta = numeric_delta(original.get("quartus_alm_or_alut", ""), opt.get("quartus_alm_or_alut", ""))
+            fmax_delta = numeric_delta(original.get("quartus_fmax_mhz", ""), opt.get("quartus_fmax_mhz", ""))
+            improvements = []
+            if dsp_delta is not None and dsp_delta < 0:
+                improvements.append(f"DSP blocks {format_delta(dsp_delta)}")
+            if alm_delta is not None and alm_delta < 0:
+                improvements.append(f"ALM/ALUT {format_delta(alm_delta)}")
+            if fmax_delta is not None and fmax_delta > 0:
+                improvements.append(f"Fmax +{format_delta(fmax_delta)} MHz")
+            original_compiled = original.get("status") == "compiled"
+            opt_compiled = opt.get("status") == "compiled"
+            functional_pass = functional_status.get(benchmark) == "pass"
+            if improvements and original_compiled and opt_compiled and functional_pass:
+                claim_status = "pass"
+            elif not original_compiled or not opt_compiled:
+                claim_status = "missing_quartus"
+            elif not functional_pass:
+                claim_status = "missing_functional_pass"
+            else:
+                claim_status = "no_fitted_improvement"
+            evidence.append({
+                "benchmark": benchmark,
+                "original_variant": "original",
+                "optimized_variant": opt["variant"],
+                "functional_status": functional_status.get(benchmark, ""),
+                "original_status": original.get("status", ""),
+                "optimized_status": opt.get("status", ""),
+                "original_rtl_intended_dsp": original.get("rtl_intended_dsp_count", ""),
+                "optimized_rtl_intended_dsp": opt.get("rtl_intended_dsp_count", ""),
+                "original_rtl_intended_logic_mul": original.get("rtl_intended_logic_mul_count", ""),
+                "optimized_rtl_intended_logic_mul": opt.get("rtl_intended_logic_mul_count", ""),
+                "original_quartus_dsp": original.get("quartus_dsp_blocks", ""),
+                "optimized_quartus_dsp": opt.get("quartus_dsp_blocks", ""),
+                "dsp_delta": format_delta(dsp_delta),
+                "original_quartus_alm_or_alut": original.get("quartus_alm_or_alut", ""),
+                "optimized_quartus_alm_or_alut": opt.get("quartus_alm_or_alut", ""),
+                "alm_or_alut_delta": format_delta(alm_delta),
+                "original_quartus_fmax_mhz": original.get("quartus_fmax_mhz", ""),
+                "optimized_quartus_fmax_mhz": opt.get("quartus_fmax_mhz", ""),
+                "fmax_delta_mhz": format_delta(fmax_delta),
+                "improved_metric": "; ".join(improvements),
+                "claim_status": claim_status,
+            })
+    return evidence
+
+
 def svg_text(x: float, y: float, text: str, size: int = 12, anchor: str = "middle") -> str:
     return f'<text x="{x:.1f}" y="{y:.1f}" font-size="{size}" text-anchor="{anchor}" fill="#102a43">{text}</text>'
 
@@ -156,6 +239,7 @@ def main() -> None:
     parser.add_argument("--summary", type=Path, required=True)
     args = parser.parse_args()
     rows = read_rows(args.summary)
+    functional_rows = read_optional_rows(args.root / "reports" / "functional_summary.csv")
     analysis = args.root / "analysis"
     analysis.mkdir(parents=True, exist_ok=True)
     table_fields = [
@@ -166,6 +250,19 @@ def main() -> None:
     table_rows = [{field: row.get(field, "") for field in table_fields} for row in rows]
     write_csv(analysis / "rtl_validation_table.csv", table_rows, table_fields)
     write_md(analysis / "rtl_validation_table.md", table_rows, table_fields)
+    evidence_rows = build_real_fpga_evidence(rows, functional_rows)
+    evidence_fields = [
+        "benchmark", "original_variant", "optimized_variant", "functional_status",
+        "original_status", "optimized_status", "original_rtl_intended_dsp",
+        "optimized_rtl_intended_dsp", "original_rtl_intended_logic_mul",
+        "optimized_rtl_intended_logic_mul", "original_quartus_dsp",
+        "optimized_quartus_dsp", "dsp_delta", "original_quartus_alm_or_alut",
+        "optimized_quartus_alm_or_alut", "alm_or_alut_delta",
+        "original_quartus_fmax_mhz", "optimized_quartus_fmax_mhz",
+        "fmax_delta_mhz", "improved_metric", "claim_status",
+    ]
+    write_csv(analysis / "real_fpga_evidence_table.csv", evidence_rows, evidence_fields)
+    write_md(analysis / "real_fpga_evidence_table.md", evidence_rows, evidence_fields)
     save_svg_png(analysis / "rtl_expected_vs_actual_dsp.svg", build_expected_vs_actual(rows))
     save_svg_png(analysis / "rtl_resource_tradeoff.svg", build_resource_tradeoff(rows))
     save_svg_png(analysis / "rtl_fmax_by_variant.svg", build_fmax(rows))

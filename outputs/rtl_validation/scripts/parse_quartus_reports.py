@@ -57,7 +57,12 @@ def parse_variant(root: Path, item: dict) -> dict[str, str]:
         r"Slack\s*[:;]\s*([+-]?[\d.]+)",
         r"Worst-case setup slack\s*[:;]\s*([+-]?[\d.]+)",
     ])
-    status = "compiled" if fit or mapr or timing else "missing_reports"
+    if fit and mapr:
+        status = "compiled"
+    elif fit or mapr or timing:
+        status = "partial_reports"
+    else:
+        status = "missing_reports"
     return {
         "benchmark": item["benchmark"],
         "variant": item["variant"],

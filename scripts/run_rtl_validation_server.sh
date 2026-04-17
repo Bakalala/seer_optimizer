@@ -4,7 +4,11 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RTL_DIR="$REPO_ROOT/outputs/rtl_validation"
 
-export PATH="${QUARTUS_ROOT:-/opt/intelFPGA_pro/quartus_19.2.0b57/quartus}/bin:${PATH}"
+if [[ -n "${QUARTUS_BIN_DIR:-}" ]]; then
+  export PATH="$QUARTUS_BIN_DIR:${PATH}"
+elif [[ -z "${QUARTUS_SH:-}" ]]; then
+  export PATH="${QUARTUS_ROOT:-/opt/intelFPGA_pro/quartus_19.2.0b57/quartus}/bin:${PATH}"
+fi
 for modelsim_dir in /opt/intelFPGA_pro/*/modelsim_ase/bin /opt/intelFPGA/*/modelsim_ase/bin; do
   if [[ -d "$modelsim_dir" ]]; then
     export PATH="$modelsim_dir:$PATH"
@@ -41,6 +45,11 @@ echo "== Quartus fit and timing =="
 if [[ "${SKIP_QUARTUS:-0}" == "1" || "${SKIP_RTL_QUARTUS:-0}" == "1" ]]; then
   echo "Skipping Quartus because SKIP_QUARTUS=1 or SKIP_RTL_QUARTUS=1"
 else
+  if [[ "${SKIP_QUARTUS_PREFLIGHT:-0}" != "1" ]]; then
+    (cd "$RTL_DIR" && ./scripts/run_quartus_preflight.sh)
+  else
+    echo "Skipping Quartus preflight because SKIP_QUARTUS_PREFLIGHT=1"
+  fi
   (cd "$RTL_DIR" && ./scripts/run_quartus_compile.sh)
 fi
 
@@ -49,3 +58,4 @@ echo "Outputs:"
 echo "$RTL_DIR/reports/functional_summary.csv"
 echo "$RTL_DIR/reports/rtl_quartus_summary.csv"
 echo "$RTL_DIR/analysis/rtl_validation_table.md"
+echo "$RTL_DIR/analysis/real_fpga_evidence_table.md"

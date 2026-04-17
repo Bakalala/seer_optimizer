@@ -233,12 +233,14 @@ def render_wrapper(module_name: str, top_name: str, input_names: list[str]) -> s
     input_regs = "\n".join(reg_decls)
     sample_lines = "\n".join(f"            {sv_input_port(name)}_r <= {sv_input_port(name)};" for name in input_names)
     inst = ",\n".join(inst_ports + ["        .out(datapath_out)"])
+    port_list = ",\n".join(f"    {name}" for name in port_names)
+    port_decl_text = "\n".join(port_decls)
     return f"""`default_nettype none
 
 module {top_name}(
-{',\n'.join(f'    {name}' for name in port_names)}
+{port_list}
 );
-{chr(10).join(port_decls)}
+{port_decl_text}
 {input_regs}
     wire signed [31:0] datapath_out;
 
@@ -412,6 +414,73 @@ echo "Wrote $summary"
 """
 
 
+def render_run_quartus_preflight() -> str:
+    return r"""#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+QUARTUS_SH="${QUARTUS_SH:-quartus_sh}"
+RTL_FAMILY="${RTL_FAMILY:-Arria 10}"
+RTL_DEVICE="${RTL_DEVICE:-10AX090H1F34E1SG}"
+PREFLIGHT_DIR="$ROOT_DIR/reports/quartus_preflight"
+LOG="$PREFLIGHT_DIR/quartus_preflight.log"
+
+if ! command -v "$QUARTUS_SH" >/dev/null 2>&1; then
+  echo "quartus_sh not found. Load Quartus or set QUARTUS_SH=/path/to/quartus_sh." >&2
+  exit 1
+fi
+
+rm -rf "$PREFLIGHT_DIR"
+mkdir -p "$PREFLIGHT_DIR"
+
+cat > "$PREFLIGHT_DIR/preflight_adder.v" <<'VERILOG'
+module preflight_adder (
+    input  wire        clk,
+    input  wire [7:0]  a,
+    input  wire [7:0]  b,
+    output reg  [8:0]  y
+);
+    always @(posedge clk) begin
+        y <= a + b;
+    end
+endmodule
+VERILOG
+
+cat > "$PREFLIGHT_DIR/preflight_adder.qpf" <<'QPF'
+PROJECT_REVISION = preflight_adder
+QPF
+
+cat > "$PREFLIGHT_DIR/preflight_adder.qsf" <<QSF
+set_global_assignment -name FAMILY "$RTL_FAMILY"
+set_global_assignment -name DEVICE $RTL_DEVICE
+set_global_assignment -name TOP_LEVEL_ENTITY preflight_adder
+set_global_assignment -name VERILOG_FILE preflight_adder.v
+set_global_assignment -name SDC_FILE preflight_adder.sdc
+set_instance_assignment -name VIRTUAL_PIN ON -to *
+QSF
+
+cat > "$PREFLIGHT_DIR/preflight_adder.sdc" <<'SDC'
+create_clock -period 10.000 [get_ports clk]
+SDC
+
+echo "Running Quartus preflight: family=$RTL_FAMILY device=$RTL_DEVICE"
+if (cd "$PREFLIGHT_DIR" && "$QUARTUS_SH" --flow compile preflight_adder) > "$LOG" 2>&1; then
+  if [[ -f "$PREFLIGHT_DIR/preflight_adder.map.rpt" && -f "$PREFLIGHT_DIR/preflight_adder.fit.rpt" ]] &&
+     { [[ -f "$PREFLIGHT_DIR/preflight_adder.sta.rpt" ]] || [[ -f "$PREFLIGHT_DIR/preflight_adder.tan.rpt" ]]; }; then
+    echo "Quartus preflight passed. Log: $LOG"
+  else
+    echo "Quartus preflight failed: compile returned success but did not produce map, fit, and timing reports." >&2
+    echo "See log: $LOG" >&2
+    exit 1
+  fi
+else
+  echo "Quartus preflight failed. The selected machine/license/device is not usable for validation." >&2
+  echo "See log: $LOG" >&2
+  exit 1
+fi
+"""
+
+
 def render_run_quartus_compile() -> str:
     return r"""#!/usr/bin/env bash
 set -euo pipefail
@@ -423,9 +492,23 @@ JOBS="${JOBS:-1}"
 ONLY="${RTL_ONLY:-}"
 RTL_FAMILY="${RTL_FAMILY:-}"
 RTL_DEVICE="${RTL_DEVICE:-}"
+PYTHON_BIN="${PYTHON_BIN:-}"
 
 if ! command -v "$QUARTUS_SH" >/dev/null 2>&1; then
   echo "quartus_sh not found. Load Quartus or set QUARTUS_SH=/path/to/quartus_sh." >&2
+  exit 1
+fi
+
+if [[ -z "$PYTHON_BIN" ]]; then
+  for candidate in python3.12 python3.11 python3.10 /opt/anaconda3/bin/python3.10 python3; do
+    if command -v "$candidate" >/dev/null 2>&1; then
+      PYTHON_BIN="$candidate"
+      break
+    fi
+  done
+fi
+if [[ -z "$PYTHON_BIN" ]]; then
+  echo "No Python interpreter found. Set PYTHON_BIN=/path/to/python3.10 or newer." >&2
   exit 1
 fi
 
@@ -458,8 +541,14 @@ run_one() {
   name="$(basename "$qpf" .qpf)"
   log="$ROOT_DIR/reports/quartus/${name}.log"
   mkdir -p "$(dirname "$log")"
+  rm -rf "$dir/db" "$dir/incremental_db" "$dir/output_files" "$dir/qdb"
+  rm -f "$dir"/*.done "$dir"/*.rpt "$dir"/*.summary "$dir"/*.pin "$dir"/*.sof "$dir"/*.pof
   echo "Compiling $name"
   (cd "$dir" && "$QUARTUS_SH" --flow compile "$name") > "$log" 2>&1
+  if [[ ! -f "$dir/${name}.map.rpt" || ! -f "$dir/${name}.fit.rpt" ]]; then
+    echo "Quartus compile for $name did not produce map and fit reports. See $log" >&2
+    return 1
+  fi
 }
 
 export -f run_one
@@ -473,12 +562,12 @@ else
   printf '%s\n' "${projects[@]}" | xargs -n1 -P "$JOBS" bash -c 'run_one "$0"'
 fi
 
-python3 "$ROOT_DIR/scripts/parse_quartus_reports.py" \
+"$PYTHON_BIN" "$ROOT_DIR/scripts/parse_quartus_reports.py" \
   --root "$ROOT_DIR" \
   --metadata "$ROOT_DIR/metadata/generated_variants.json" \
   --out "$ROOT_DIR/reports/rtl_quartus_summary.csv"
 
-python3 "$ROOT_DIR/scripts/analyze_rtl_reports.py" \
+"$PYTHON_BIN" "$ROOT_DIR/scripts/analyze_rtl_reports.py" \
   --root "$ROOT_DIR" \
   --summary "$ROOT_DIR/reports/rtl_quartus_summary.csv"
 """
@@ -544,7 +633,12 @@ def parse_variant(root: Path, item: dict) -> dict[str, str]:
         r"Slack\s*[:;]\s*([+-]?[\d.]+)",
         r"Worst-case setup slack\s*[:;]\s*([+-]?[\d.]+)",
     ])
-    status = "compiled" if fit or mapr or timing else "missing_reports"
+    if fit and mapr:
+        status = "compiled"
+    elif fit or mapr or timing:
+        status = "partial_reports"
+    else:
+        status = "missing_reports"
     return {
         "benchmark": item["benchmark"],
         "variant": item["variant"],
@@ -644,6 +738,89 @@ def write_md(path: Path, rows: list[dict[str, str]], fields: list[str]) -> None:
         handle.write("| " + " | ".join("---" for _ in fields) + " |\n")
         for row in rows:
             handle.write("| " + " | ".join(str(row.get(field, "")) for field in fields) + " |\n")
+
+
+def read_optional_rows(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    return read_rows(path)
+
+
+def numeric_delta(before: str, after: str) -> float | None:
+    lhs = to_float(before)
+    rhs = to_float(after)
+    if lhs is None or rhs is None:
+        return None
+    return rhs - lhs
+
+
+def format_delta(value: float | None) -> str:
+    if value is None:
+        return ""
+    if value.is_integer():
+        return str(int(value))
+    return f"{value:.3f}".rstrip("0").rstrip(".")
+
+
+def build_real_fpga_evidence(rows: list[dict[str, str]], functional_rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    by_key = {(row["benchmark"], row["variant"]): row for row in rows}
+    functional_status = {row.get("benchmark", ""): row.get("status", "") for row in functional_rows}
+    evidence = []
+    for benchmark in sorted({row["benchmark"] for row in rows}):
+        original = by_key.get((benchmark, "original"))
+        if not original:
+            continue
+        optimized_variants = [
+            row for row in rows
+            if row["benchmark"] == benchmark and row["variant"] != "original"
+        ]
+        optimized_variants.sort(key=lambda row: VARIANT_ORDER.index(row["variant"]) if row["variant"] in VARIANT_ORDER else 99)
+        for opt in optimized_variants:
+            dsp_delta = numeric_delta(original.get("quartus_dsp_blocks", ""), opt.get("quartus_dsp_blocks", ""))
+            alm_delta = numeric_delta(original.get("quartus_alm_or_alut", ""), opt.get("quartus_alm_or_alut", ""))
+            fmax_delta = numeric_delta(original.get("quartus_fmax_mhz", ""), opt.get("quartus_fmax_mhz", ""))
+            improvements = []
+            if dsp_delta is not None and dsp_delta < 0:
+                improvements.append(f"DSP blocks {format_delta(dsp_delta)}")
+            if alm_delta is not None and alm_delta < 0:
+                improvements.append(f"ALM/ALUT {format_delta(alm_delta)}")
+            if fmax_delta is not None and fmax_delta > 0:
+                improvements.append(f"Fmax +{format_delta(fmax_delta)} MHz")
+            original_compiled = original.get("status") == "compiled"
+            opt_compiled = opt.get("status") == "compiled"
+            functional_pass = functional_status.get(benchmark) == "pass"
+            if improvements and original_compiled and opt_compiled and functional_pass:
+                claim_status = "pass"
+            elif not original_compiled or not opt_compiled:
+                claim_status = "missing_quartus"
+            elif not functional_pass:
+                claim_status = "missing_functional_pass"
+            else:
+                claim_status = "no_fitted_improvement"
+            evidence.append({
+                "benchmark": benchmark,
+                "original_variant": "original",
+                "optimized_variant": opt["variant"],
+                "functional_status": functional_status.get(benchmark, ""),
+                "original_status": original.get("status", ""),
+                "optimized_status": opt.get("status", ""),
+                "original_rtl_intended_dsp": original.get("rtl_intended_dsp_count", ""),
+                "optimized_rtl_intended_dsp": opt.get("rtl_intended_dsp_count", ""),
+                "original_rtl_intended_logic_mul": original.get("rtl_intended_logic_mul_count", ""),
+                "optimized_rtl_intended_logic_mul": opt.get("rtl_intended_logic_mul_count", ""),
+                "original_quartus_dsp": original.get("quartus_dsp_blocks", ""),
+                "optimized_quartus_dsp": opt.get("quartus_dsp_blocks", ""),
+                "dsp_delta": format_delta(dsp_delta),
+                "original_quartus_alm_or_alut": original.get("quartus_alm_or_alut", ""),
+                "optimized_quartus_alm_or_alut": opt.get("quartus_alm_or_alut", ""),
+                "alm_or_alut_delta": format_delta(alm_delta),
+                "original_quartus_fmax_mhz": original.get("quartus_fmax_mhz", ""),
+                "optimized_quartus_fmax_mhz": opt.get("quartus_fmax_mhz", ""),
+                "fmax_delta_mhz": format_delta(fmax_delta),
+                "improved_metric": "; ".join(improvements),
+                "claim_status": claim_status,
+            })
+    return evidence
 
 
 def svg_text(x: float, y: float, text: str, size: int = 12, anchor: str = "middle") -> str:
@@ -754,6 +931,7 @@ def main() -> None:
     parser.add_argument("--summary", type=Path, required=True)
     args = parser.parse_args()
     rows = read_rows(args.summary)
+    functional_rows = read_optional_rows(args.root / "reports" / "functional_summary.csv")
     analysis = args.root / "analysis"
     analysis.mkdir(parents=True, exist_ok=True)
     table_fields = [
@@ -764,6 +942,19 @@ def main() -> None:
     table_rows = [{field: row.get(field, "") for field in table_fields} for row in rows]
     write_csv(analysis / "rtl_validation_table.csv", table_rows, table_fields)
     write_md(analysis / "rtl_validation_table.md", table_rows, table_fields)
+    evidence_rows = build_real_fpga_evidence(rows, functional_rows)
+    evidence_fields = [
+        "benchmark", "original_variant", "optimized_variant", "functional_status",
+        "original_status", "optimized_status", "original_rtl_intended_dsp",
+        "optimized_rtl_intended_dsp", "original_rtl_intended_logic_mul",
+        "optimized_rtl_intended_logic_mul", "original_quartus_dsp",
+        "optimized_quartus_dsp", "dsp_delta", "original_quartus_alm_or_alut",
+        "optimized_quartus_alm_or_alut", "alm_or_alut_delta",
+        "original_quartus_fmax_mhz", "optimized_quartus_fmax_mhz",
+        "fmax_delta_mhz", "improved_metric", "claim_status",
+    ]
+    write_csv(analysis / "real_fpga_evidence_table.csv", evidence_rows, evidence_fields)
+    write_md(analysis / "real_fpga_evidence_table.md", evidence_rows, evidence_fields)
     save_svg_png(analysis / "rtl_expected_vs_actual_dsp.svg", build_expected_vs_actual(rows))
     save_svg_png(analysis / "rtl_resource_tradeoff.svg", build_resource_tradeoff(rows))
     save_svg_png(analysis / "rtl_fmax_by_variant.svg", build_fmax(rows))
@@ -829,6 +1020,18 @@ This directory contains direct SystemVerilog variants generated from the optimiz
 It is intended to validate DSP-vs-logic multiplier mapping with Quartus fit/STA, not
 through Intel HLS inference.
 
+## Current validation status
+
+The optimizer generates functionally equivalent RTL variants with different analytical
+and structural DSP/LUT intent. A real FPGA fitted-metric validation flow is implemented,
+but the available Quartus installation cannot produce fit/STA reports on this server,
+so no fitted FPGA improvement is claimed yet.
+
+This server is valid for Rust optimizer tests, Python benchmark tests, RTL generation,
+ModelSim functional equivalence, structural analytical validation, and Quartus preflight
+failure diagnosis. It is not valid for fitted ALM/DSP claims, Fmax claims, Quartus power
+claims, or any real-FPGA improvement statement.
+
 ## Functional simulation
 
 ```bash
@@ -841,15 +1044,59 @@ tries Icarus Verilog.
 
 ## Quartus fit and timing
 
+Run this package on a different Quartus machine. First verify the selected Quartus
+install, license, family, and device with a trivial registered adder:
+
 ```bash
-cd outputs/rtl_validation
-JOBS=1 ./scripts/run_quartus_compile.sh
+cd ~/seer_optimizer
+git pull --rebase origin main
+
+QUARTUS_SH=/path/to/quartus_sh \
+RTL_FAMILY='<installed licensed family>' \
+RTL_DEVICE='<valid device>' \
+outputs/rtl_validation/scripts/run_quartus_preflight.sh
 ```
 
-To run a subset first:
+Then compile the high-value subset first:
 
 ```bash
-RTL_ONLY='(dot16|fir8|stencil5)' JOBS=1 ./scripts/run_quartus_compile.sh
+SKIP_RTL_SIM=1 \
+QUARTUS_SH=/path/to/quartus_sh \
+RTL_FAMILY='<installed licensed family>' \
+RTL_DEVICE='<valid device>' \
+RTL_ONLY='(conv3x3_original|conv3x3_weighted|dot16_original|dot16_weighted|stencil5_original|stencil5_weighted|stencil5_latency_under_lut|fir8_original|fir8_power_unconstrained)' \
+JOBS=1 \
+./scripts/run_rtl_validation_server.sh
+```
+
+If `outputs/rtl_validation/reports/rtl_quartus_summary.csv` is produced with nonempty
+fitted resource fields, run the full matrix:
+
+```bash
+SKIP_RTL_SIM=1 \
+QUARTUS_SH=/path/to/quartus_sh \
+RTL_FAMILY='<installed licensed family>' \
+RTL_DEVICE='<valid device>' \
+JOBS=1 \
+./scripts/run_rtl_validation_server.sh
+```
+
+The easiest fitted metrics to use are:
+
+- Primary: fitted DSP blocks.
+- Secondary: fitted ALM/ALUT usage.
+- Optional: Fmax if STA reports it.
+- Excluded: power, unless Power Analyzer output is generated and parsed.
+
+Successful real-FPGA evidence requires at least the original and one optimized variant
+to compile on the same family/device, with functional equivalence passing and at least
+one optimized variant improving a real fitted metric over `original`.
+
+For direct script use from this directory:
+
+```bash
+cd outputs/rtl_validation
+RTL_ONLY='(conv3x3_original|conv3x3_weighted|dot16_original|dot16_weighted|stencil5_original|stencil5_weighted|stencil5_latency_under_lut|fir8_original|fir8_power_unconstrained)' JOBS=1 ./scripts/run_quartus_compile.sh
 ```
 
 Outputs:
@@ -857,6 +1104,7 @@ Outputs:
 - `reports/functional_summary.csv`
 - `reports/rtl_quartus_summary.csv`
 - `analysis/rtl_validation_table.md`
+- `analysis/real_fpga_evidence_table.md`
 - `analysis/rtl_expected_vs_actual_dsp.{svg,png}`
 - `analysis/rtl_resource_tradeoff.{svg,png}`
 - `analysis/rtl_fmax_by_variant.{svg,png}`
@@ -959,6 +1207,7 @@ def export_rtl_validation(
         (tests_dir / f"tb_{benchmark}.sv").write_text(render_testbench(benchmark, items, test_vectors))
 
     write_executable(scripts_dir / "run_functional_sim.sh", render_run_functional_sim())
+    write_executable(scripts_dir / "run_quartus_preflight.sh", render_run_quartus_preflight())
     write_executable(scripts_dir / "run_quartus_compile.sh", render_run_quartus_compile())
     write_executable(scripts_dir / "parse_quartus_reports.py", render_parse_quartus_reports())
     write_executable(scripts_dir / "analyze_rtl_reports.py", render_analyze_rtl_reports())

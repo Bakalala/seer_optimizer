@@ -13,6 +13,7 @@ import csv
 import html
 import json
 import platform
+import shutil
 import subprocess
 from statistics import mean
 from pathlib import Path
@@ -3313,6 +3314,29 @@ def write_html_report(results: dict, summary: dict, output_path: Path) -> None:
 
 
 def rasterize_svg(svg_path: Path, png_path: Path) -> None:
+    rsvg_convert = shutil.which("rsvg-convert")
+    if rsvg_convert:
+        completed = subprocess.run(
+            [
+                rsvg_convert,
+                "--background-color=white",
+                "--dpi-x=192",
+                "--dpi-y=192",
+                "--format=png",
+                "--output",
+                str(png_path),
+                str(svg_path),
+            ],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+        )
+        if completed.returncode == 0:
+            return
+        raise RuntimeError(
+            f"failed to rasterize {svg_path.name}: {completed.stderr.strip() or completed.stdout.strip()}"
+        )
+
     completed = subprocess.run(
         [
             "convert",

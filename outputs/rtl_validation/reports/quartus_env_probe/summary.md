@@ -1,0 +1,347 @@
+# Quartus Environment Probe Summary
+
+Required pass condition: trivial preflight produces `.map.rpt`, `.fit.rpt`, and `.sta.rpt` or `.tan.rpt`.
+
+| Configuration | Version | Device query | Selected device | Preflight exit | Required reports | Likely failure | Log |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `A_bin_wrapper` | pass | pass | `10AX115H1F34E1SG` | fail | no | quartus_internal_crash | `/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_env_probe/A_bin_wrapper.log` |
+| `B_linux64_direct` | pass | pass | `10AX115H1F34E1SG` | fail | no | environment_setup | `/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_env_probe/B_linux64_direct.log` |
+| `C_linux64_root_paths` | pass | pass | `10AX115H1F34E1SG` | fail | no | quartus_internal_crash | `/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_env_probe/C_linux64_root_paths.log` |
+| `D1_init_opencl_sh_` | pass | pass | `10AX115H1F34E1SG` | fail | no | quartus_internal_crash | `/home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_env_probe/D1_init_opencl_sh_.log` |
+
+No tested configuration produced all required preflight reports. Optimizer RTL was not compiled.
+
+## A_bin_wrapper
+
+- QUARTUS_SH: `/opt/intelFPGA_pro/quartus_19.2.0b57/quartus/bin/quartus_sh`
+- Setup: `<none>`
+- Version query: pass
+- Device query: pass
+- Selected device: `10AX115H1F34E1SG`
+- Preflight exit: fail
+- Required reports produced: no
+- Likely failure: quartus_internal_crash
+
+Last 80 lines of failing/preflight log:
+
+```text
+    Info: Your use of Intel Corporation's design tools, logic functions 
+    Info: and other software and tools, and any partner logic 
+    Info: functions, and any output files from any of the foregoing 
+    Info: (including device programming or simulation files), and any 
+    Info: associated documentation or information are expressly subject 
+    Info: to the terms and conditions of the Intel Program License 
+    Info: Subscription Agreement, the Intel Quartus Prime License Agreement,
+    Info: the Intel FPGA IP License Agreement, or other applicable license
+    Info: agreement, including, without limitation, that your use is for
+    Info: the sole purpose of programming logic devices manufactured by
+    Info: Intel and sold by Intel or its authorized distributors.  Please
+    Info: refer to the applicable agreement for further details, at
+    Info: https://fpgasoftware.intel.com/eula.
+    Info: Processing started: Thu Apr 16 21:44:33 2026
+Info: Command: quartus_sh --flow compile preflight_adder
+Info: Quartus(args): compile preflight_adder
+Info: Project Name = /home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_preflight/preflight_adder
+Info: Revision Name = preflight_adder
+Info: *******************************************************************
+Info: Running Quartus Prime IP Generation Tool
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Processing started: Thu Apr 16 21:44:35 2026
+Info: Command: quartus_ipgenerate preflight_adder -c preflight_adder --run_default_mode_op
+Info: Quartus Prime IP Generation Tool was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 1134 megabytes
+    Info: Processing ended: Thu Apr 16 21:44:36 2026
+    Info: Elapsed time: 00:00:01
+Info: *******************************************************************
+Info: Running Quartus Prime Synthesis
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Processing started: Thu Apr 16 21:44:38 2026
+Info: Command: quartus_syn --read_settings_files=on --write_settings_files=off preflight_adder -c preflight_adder
+Info: qis_default_flow_script.tcl version: #1
+Info: Initializing Synthesis...
+Info: Project = "preflight_adder"
+Info: Revision = "preflight_adder"
+Info: Analyzing source files
+Info: Elaborating from top-level entity "preflight_adder"
+Internal Error: Sub-system: SUTIL, File: /quartus/synth/sutil/sutil_device.cpp, Line: 1072
+is_legal_device()
+Stack Trace:
+    0xc4b88: SUTIL_DEVICE_IMPL::initialize_full_info() [clone .cold.57] (synth_sutil)
+   0x4bba70: new_verific::vrfx2_set_verilog_elab_flags(BASEX_ELABORATE_INFO*) + 0x301 (synth_vrfx2)
+   0x4bd78f: new_verific::VRFX2_EXTRACTOR::extract_hierarchy(char const*, BASEX_ELABORATE_INFO*, bool, bool, bool) + 0x3f5 (synth_vrfx2)
+    0x84b4c: QIS_RTL_STAGE::IMPL::elaborate_verific(QHD_PARTITION&, HDB_ENTITY*, BASEX_ELAB_INFO_CORE&) + 0x134 (synth_qis)
+    0x8d03f: QIS_RTL_STAGE::IMPL::elaborate(QHD_PARTITION&) + 0x11e1 (synth_qis)
+    0x8e6e6: QIS_RTL_STAGE::elaborate(QHD_PARTITION&) + 0xc (synth_qis)
+    0x5d16a: qis_elaborate + 0x205 (synth_qis)
+    0x4c942: TclNRRunCallbacks + 0x42 (tcl8.6)
+    0x4de7b: TclEvalEx + 0x68b (tcl8.6)
+    0xf3f0e: Tcl_FSEvalFileEx + 0x25e (tcl8.6)
+    0xf3ffe: Tcl_EvalFile + 0x2e (tcl8.6)
+    0x14167: qexe_evaluate_tcl_script(std::string const&) + 0x36c (comp_qexe)
+    0x1928c: qexe_do_tcl(QEXE_FRAMEWORK*, std::string const&, std::string const&, std::list<std::string, std::allocator<std::string> > const&, bool, bool) + 0x417 (comp_qexe)
+    0x1a213: qexe_run_tcl_option(QEXE_FRAMEWORK*, char const*, std::list<std::string, std::allocator<std::string> >*, bool) + 0x558 (comp_qexe)
+    0x395e7: QCU::DETAIL::intialise_qhd_and_run_qexe(QCU_FRAMEWORK&, FIO_PATH const&, std::string const&, std::string const&, char const*, std::list<std::string, std::allocator<std::string> >*, bool) + 0xe1 (comp_qcu)
+    0x41eea: qcu_run_tcl_option(QCU_FRAMEWORK*, char const*, std::list<std::string, std::allocator<std::string> >*, bool) + 0x259 (comp_qcu)
+   0x405c27: qsyn2_tcl_process_default_flow_option(ACF_VARIABLE_TYPE_ENUM, char const*) + 0x9d (quartus_syn)
+    0x1cdfd: qexe_standard_main(QEXE_FRAMEWORK*, QEXE_OPTION_DEFINITION const**, int, char const**) + 0x5c5 (comp_qexe)
+   0x40578b: qsyn2_main(int, char const**) + 0x14b (quartus_syn)
+    0x3ebd0: msg_main_thread(void*) + 0x10 (ccl_msg)
+    0x40de4: msg_thread_wrapper(void* (*)(void*), void*) + 0x6e (ccl_msg)
+    0x11bec: mem_thread_wrapper(void* (*)(void*), void*) + 0x5c (ccl_mem)
+     0xc2ee: err_thread_wrapper(void* (*)(void*), void*) + 0x27 (ccl_err)
+     0x6c25: thr_thread_wrapper + 0x15 (ccl_thr)
+    0x41930: msg_exe_main(int, char const**, int (*)(int, char const**)) + 0x148 (ccl_msg)
+   0x405e10: main + 0x26 (quartus_syn)
+    0x22495: __libc_start_main + 0xf5 (c)
+
+
+End-trace
+
+Error: Flow compile (for project /home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_preflight/preflight_adder) was not successful
+Error: ERROR: Error(s) found while running an executable. See report file(s) for error message(s). Message log indicates which executable was run last.
+
+Error (23031): Evaluation of Tcl script /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/common/tcl/internal/qsh_flow.tcl unsuccessful
+Error: Quartus Prime Shell was unsuccessful. 3 errors, 0 warnings
+    Error: Peak virtual memory: 1126 megabytes
+    Error: Processing ended: Thu Apr 16 21:44:42 2026
+    Error: Elapsed time: 00:00:09
+```
+
+## B_linux64_direct
+
+- QUARTUS_SH: `/opt/intelFPGA_pro/quartus_19.2.0b57/quartus/linux64/quartus_sh`
+- Setup: `export LD_LIBRARY_PATH=/opt/intelFPGA_pro/quartus_19.2.0b57/quartus/linux64`
+- Version query: pass
+- Device query: pass
+- Selected device: `10AX115H1F34E1SG`
+- Preflight exit: fail
+- Required reports produced: no
+- Likely failure: environment_setup
+
+Last 80 lines of failing/preflight log:
+
+```text
+Info: *******************************************************************
+Info: Running Quartus Prime Shell
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Copyright (C) 2019  Intel Corporation. All rights reserved.
+    Info: Your use of Intel Corporation's design tools, logic functions 
+    Info: and other software and tools, and any partner logic 
+    Info: functions, and any output files from any of the foregoing 
+    Info: (including device programming or simulation files), and any 
+    Info: associated documentation or information are expressly subject 
+    Info: to the terms and conditions of the Intel Program License 
+    Info: Subscription Agreement, the Intel Quartus Prime License Agreement,
+    Info: the Intel FPGA IP License Agreement, or other applicable license
+    Info: agreement, including, without limitation, that your use is for
+    Info: the sole purpose of programming logic devices manufactured by
+    Info: Intel and sold by Intel or its authorized distributors.  Please
+    Info: refer to the applicable agreement for further details, at
+    Info: https://fpgasoftware.intel.com/eula.
+    Info: Processing started: Thu Apr 16 21:44:47 2026
+Info: Command: quartus_sh --flow compile preflight_adder
+Info: Quartus(args): compile preflight_adder
+Info: Project Name = /home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_preflight/preflight_adder
+Info: Revision Name = preflight_adder
+Info (293026): Skipped module Fast Forward due to the assignment FLOW_ENABLE_HYPER_RETIMER_FAST_FORWARD
+Info (293026): Skipped module Power Analyzer due to the assignment FLOW_ENABLE_POWER_ANALYZER
+Info (293000): Quartus Prime Full Compilation was successful. 0 errors, 0 warnings
+Info (23030): Evaluation of Tcl script /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/common/tcl/internal/qsh_flow.tcl was successful
+Info: Quartus Prime Shell was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 1228 megabytes
+    Info: Processing ended: Thu Apr 16 21:44:50 2026
+    Info: Elapsed time: 00:00:03
+```
+
+## C_linux64_root_paths
+
+- QUARTUS_SH: `/opt/intelFPGA_pro/quartus_19.2.0b57/quartus/linux64/quartus_sh`
+- Setup: `export QUARTUS_ROOTDIR=/opt/intelFPGA_pro/quartus_19.2.0b57/quartus; export QUARTUS_ROOTDIR_OVERRIDE=/opt/intelFPGA_pro/quartus_19.2.0b57/quartus; export PATH=/opt/intelFPGA_pro/quartus_19.2.0b57/quartus/linux64:/opt/intelFPGA_pro/quartus_19.2.0b57/quartus/bin:$PATH; export LD_LIBRARY_PATH=/opt/intelFPGA_pro/quartus_19.2.0b57/quartus/linux64:/opt/intelFPGA_pro/quartus_19.2.0b57/quartus/linux64/perl/lib/5.28.1/x86_64-linux-thread-multi/CORE:${LD_LIBRARY_PATH:-}`
+- Version query: pass
+- Device query: pass
+- Selected device: `10AX115H1F34E1SG`
+- Preflight exit: fail
+- Required reports produced: no
+- Likely failure: quartus_internal_crash
+
+Last 80 lines of failing/preflight log:
+
+```text
+    Info: Your use of Intel Corporation's design tools, logic functions 
+    Info: and other software and tools, and any partner logic 
+    Info: functions, and any output files from any of the foregoing 
+    Info: (including device programming or simulation files), and any 
+    Info: associated documentation or information are expressly subject 
+    Info: to the terms and conditions of the Intel Program License 
+    Info: Subscription Agreement, the Intel Quartus Prime License Agreement,
+    Info: the Intel FPGA IP License Agreement, or other applicable license
+    Info: agreement, including, without limitation, that your use is for
+    Info: the sole purpose of programming logic devices manufactured by
+    Info: Intel and sold by Intel or its authorized distributors.  Please
+    Info: refer to the applicable agreement for further details, at
+    Info: https://fpgasoftware.intel.com/eula.
+    Info: Processing started: Thu Apr 16 21:44:55 2026
+Info: Command: quartus_sh --flow compile preflight_adder
+Info: Quartus(args): compile preflight_adder
+Info: Project Name = /home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_preflight/preflight_adder
+Info: Revision Name = preflight_adder
+Info: *******************************************************************
+Info: Running Quartus Prime IP Generation Tool
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Processing started: Thu Apr 16 21:44:57 2026
+Info: Command: quartus_ipgenerate preflight_adder -c preflight_adder --run_default_mode_op
+Info: Quartus Prime IP Generation Tool was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 1235 megabytes
+    Info: Processing ended: Thu Apr 16 21:44:57 2026
+    Info: Elapsed time: 00:00:00
+Info: *******************************************************************
+Info: Running Quartus Prime Synthesis
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Processing started: Thu Apr 16 21:45:00 2026
+Info: Command: quartus_syn --read_settings_files=on --write_settings_files=off preflight_adder -c preflight_adder
+Info: qis_default_flow_script.tcl version: #1
+Info: Initializing Synthesis...
+Info: Project = "preflight_adder"
+Info: Revision = "preflight_adder"
+Info: Analyzing source files
+Info: Elaborating from top-level entity "preflight_adder"
+Internal Error: Sub-system: SUTIL, File: /quartus/synth/sutil/sutil_device.cpp, Line: 1072
+is_legal_device()
+Stack Trace:
+    0xc4b88: SUTIL_DEVICE_IMPL::initialize_full_info() [clone .cold.57] (synth_sutil)
+   0x4bba70: new_verific::vrfx2_set_verilog_elab_flags(BASEX_ELABORATE_INFO*) + 0x301 (synth_vrfx2)
+   0x4bd78f: new_verific::VRFX2_EXTRACTOR::extract_hierarchy(char const*, BASEX_ELABORATE_INFO*, bool, bool, bool) + 0x3f5 (synth_vrfx2)
+    0x84b4c: QIS_RTL_STAGE::IMPL::elaborate_verific(QHD_PARTITION&, HDB_ENTITY*, BASEX_ELAB_INFO_CORE&) + 0x134 (synth_qis)
+    0x8d03f: QIS_RTL_STAGE::IMPL::elaborate(QHD_PARTITION&) + 0x11e1 (synth_qis)
+    0x8e6e6: QIS_RTL_STAGE::elaborate(QHD_PARTITION&) + 0xc (synth_qis)
+    0x5d16a: qis_elaborate + 0x205 (synth_qis)
+    0x4c942: TclNRRunCallbacks + 0x42 (tcl8.6)
+    0x4de7b: TclEvalEx + 0x68b (tcl8.6)
+    0xf3f0e: Tcl_FSEvalFileEx + 0x25e (tcl8.6)
+    0xf3ffe: Tcl_EvalFile + 0x2e (tcl8.6)
+    0x14167: qexe_evaluate_tcl_script(std::string const&) + 0x36c (comp_qexe)
+    0x1928c: qexe_do_tcl(QEXE_FRAMEWORK*, std::string const&, std::string const&, std::list<std::string, std::allocator<std::string> > const&, bool, bool) + 0x417 (comp_qexe)
+    0x1a213: qexe_run_tcl_option(QEXE_FRAMEWORK*, char const*, std::list<std::string, std::allocator<std::string> >*, bool) + 0x558 (comp_qexe)
+    0x395e7: QCU::DETAIL::intialise_qhd_and_run_qexe(QCU_FRAMEWORK&, FIO_PATH const&, std::string const&, std::string const&, char const*, std::list<std::string, std::allocator<std::string> >*, bool) + 0xe1 (comp_qcu)
+    0x41eea: qcu_run_tcl_option(QCU_FRAMEWORK*, char const*, std::list<std::string, std::allocator<std::string> >*, bool) + 0x259 (comp_qcu)
+   0x405c27: qsyn2_tcl_process_default_flow_option(ACF_VARIABLE_TYPE_ENUM, char const*) + 0x9d (quartus_syn)
+    0x1cdfd: qexe_standard_main(QEXE_FRAMEWORK*, QEXE_OPTION_DEFINITION const**, int, char const**) + 0x5c5 (comp_qexe)
+   0x40578b: qsyn2_main(int, char const**) + 0x14b (quartus_syn)
+    0x3ebd0: msg_main_thread(void*) + 0x10 (ccl_msg)
+    0x40de4: msg_thread_wrapper(void* (*)(void*), void*) + 0x6e (ccl_msg)
+    0x11bec: mem_thread_wrapper(void* (*)(void*), void*) + 0x5c (ccl_mem)
+     0xc2ee: err_thread_wrapper(void* (*)(void*), void*) + 0x27 (ccl_err)
+     0x6c25: thr_thread_wrapper + 0x15 (ccl_thr)
+    0x41930: msg_exe_main(int, char const**, int (*)(int, char const**)) + 0x148 (ccl_msg)
+   0x405e10: main + 0x26 (quartus_syn)
+    0x22495: __libc_start_main + 0xf5 (c)
+
+
+End-trace
+
+Error: Flow compile (for project /home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_preflight/preflight_adder) was not successful
+Error: ERROR: Error(s) found while running an executable. See report file(s) for error message(s). Message log indicates which executable was run last.
+
+Error (23031): Evaluation of Tcl script /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/common/tcl/internal/qsh_flow.tcl unsuccessful
+Error: Quartus Prime Shell was unsuccessful. 3 errors, 0 warnings
+    Error: Peak virtual memory: 1228 megabytes
+    Error: Processing ended: Thu Apr 16 21:45:04 2026
+    Error: Elapsed time: 00:00:09
+```
+
+## D1_init_opencl_sh_
+
+- QUARTUS_SH: `/opt/intelFPGA_pro/quartus_19.2.0b57/quartus/bin/quartus_sh`
+- Setup: `export QUARTUS_ROOTDIR=/opt/intelFPGA_pro/quartus_19.2.0b57/quartus; export QUARTUS_ROOTDIR_OVERRIDE=/opt/intelFPGA_pro/quartus_19.2.0b57/quartus; source /opt/intelFPGA_pro/quartus_19.2.0b57/hld/init_opencl.sh`
+- Version query: pass
+- Device query: pass
+- Selected device: `10AX115H1F34E1SG`
+- Preflight exit: fail
+- Required reports produced: no
+- Likely failure: quartus_internal_crash
+
+Last 80 lines of failing/preflight log:
+
+```text
+    Info: Your use of Intel Corporation's design tools, logic functions 
+    Info: and other software and tools, and any partner logic 
+    Info: functions, and any output files from any of the foregoing 
+    Info: (including device programming or simulation files), and any 
+    Info: associated documentation or information are expressly subject 
+    Info: to the terms and conditions of the Intel Program License 
+    Info: Subscription Agreement, the Intel Quartus Prime License Agreement,
+    Info: the Intel FPGA IP License Agreement, or other applicable license
+    Info: agreement, including, without limitation, that your use is for
+    Info: the sole purpose of programming logic devices manufactured by
+    Info: Intel and sold by Intel or its authorized distributors.  Please
+    Info: refer to the applicable agreement for further details, at
+    Info: https://fpgasoftware.intel.com/eula.
+    Info: Processing started: Thu Apr 16 21:45:09 2026
+Info: Command: quartus_sh --flow compile preflight_adder
+Info: Quartus(args): compile preflight_adder
+Info: Project Name = /home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_preflight/preflight_adder
+Info: Revision Name = preflight_adder
+Info: *******************************************************************
+Info: Running Quartus Prime IP Generation Tool
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Processing started: Thu Apr 16 21:45:11 2026
+Info: Command: quartus_ipgenerate preflight_adder -c preflight_adder --run_default_mode_op
+Info: Quartus Prime IP Generation Tool was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 1134 megabytes
+    Info: Processing ended: Thu Apr 16 21:45:11 2026
+    Info: Elapsed time: 00:00:00
+Info: *******************************************************************
+Info: Running Quartus Prime Synthesis
+    Info: Version 19.2.0 Build 57 06/24/2019 Patches 0.01rc SJ Pro Edition
+    Info: Processing started: Thu Apr 16 21:45:14 2026
+Info: Command: quartus_syn --read_settings_files=on --write_settings_files=off preflight_adder -c preflight_adder
+Info: qis_default_flow_script.tcl version: #1
+Info: Initializing Synthesis...
+Info: Project = "preflight_adder"
+Info: Revision = "preflight_adder"
+Info: Analyzing source files
+Info: Elaborating from top-level entity "preflight_adder"
+Internal Error: Sub-system: SUTIL, File: /quartus/synth/sutil/sutil_device.cpp, Line: 1072
+is_legal_device()
+Stack Trace:
+    0xc4b88: SUTIL_DEVICE_IMPL::initialize_full_info() [clone .cold.57] (synth_sutil)
+   0x4bba70: new_verific::vrfx2_set_verilog_elab_flags(BASEX_ELABORATE_INFO*) + 0x301 (synth_vrfx2)
+   0x4bd78f: new_verific::VRFX2_EXTRACTOR::extract_hierarchy(char const*, BASEX_ELABORATE_INFO*, bool, bool, bool) + 0x3f5 (synth_vrfx2)
+    0x84b4c: QIS_RTL_STAGE::IMPL::elaborate_verific(QHD_PARTITION&, HDB_ENTITY*, BASEX_ELAB_INFO_CORE&) + 0x134 (synth_qis)
+    0x8d03f: QIS_RTL_STAGE::IMPL::elaborate(QHD_PARTITION&) + 0x11e1 (synth_qis)
+    0x8e6e6: QIS_RTL_STAGE::elaborate(QHD_PARTITION&) + 0xc (synth_qis)
+    0x5d16a: qis_elaborate + 0x205 (synth_qis)
+    0x4c942: TclNRRunCallbacks + 0x42 (tcl8.6)
+    0x4de7b: TclEvalEx + 0x68b (tcl8.6)
+    0xf3f0e: Tcl_FSEvalFileEx + 0x25e (tcl8.6)
+    0xf3ffe: Tcl_EvalFile + 0x2e (tcl8.6)
+    0x14167: qexe_evaluate_tcl_script(std::string const&) + 0x36c (comp_qexe)
+    0x1928c: qexe_do_tcl(QEXE_FRAMEWORK*, std::string const&, std::string const&, std::list<std::string, std::allocator<std::string> > const&, bool, bool) + 0x417 (comp_qexe)
+    0x1a213: qexe_run_tcl_option(QEXE_FRAMEWORK*, char const*, std::list<std::string, std::allocator<std::string> >*, bool) + 0x558 (comp_qexe)
+    0x395e7: QCU::DETAIL::intialise_qhd_and_run_qexe(QCU_FRAMEWORK&, FIO_PATH const&, std::string const&, std::string const&, char const*, std::list<std::string, std::allocator<std::string> >*, bool) + 0xe1 (comp_qcu)
+    0x41eea: qcu_run_tcl_option(QCU_FRAMEWORK*, char const*, std::list<std::string, std::allocator<std::string> >*, bool) + 0x259 (comp_qcu)
+   0x405c27: qsyn2_tcl_process_default_flow_option(ACF_VARIABLE_TYPE_ENUM, char const*) + 0x9d (quartus_syn)
+    0x1cdfd: qexe_standard_main(QEXE_FRAMEWORK*, QEXE_OPTION_DEFINITION const**, int, char const**) + 0x5c5 (comp_qexe)
+   0x40578b: qsyn2_main(int, char const**) + 0x14b (quartus_syn)
+    0x3ebd0: msg_main_thread(void*) + 0x10 (ccl_msg)
+    0x40de4: msg_thread_wrapper(void* (*)(void*), void*) + 0x6e (ccl_msg)
+    0x11bec: mem_thread_wrapper(void* (*)(void*), void*) + 0x5c (ccl_mem)
+     0xc2ee: err_thread_wrapper(void* (*)(void*), void*) + 0x27 (ccl_err)
+     0x6c25: thr_thread_wrapper + 0x15 (ccl_thr)
+    0x41930: msg_exe_main(int, char const**, int (*)(int, char const**)) + 0x148 (ccl_msg)
+   0x405e10: main + 0x26 (quartus_syn)
+    0x22495: __libc_start_main + 0xf5 (c)
+
+
+End-trace
+
+Error: Flow compile (for project /home/aseife2/seer_optimizer/outputs/rtl_validation/reports/quartus_preflight/preflight_adder) was not successful
+Error: ERROR: Error(s) found while running an executable. See report file(s) for error message(s). Message log indicates which executable was run last.
+
+Error (23031): Evaluation of Tcl script /opt/intelFPGA_pro/quartus_19.2.0b57/quartus/common/tcl/internal/qsh_flow.tcl unsuccessful
+Error: Quartus Prime Shell was unsuccessful. 3 errors, 0 warnings
+    Error: Peak virtual memory: 1126 megabytes
+    Error: Processing ended: Thu Apr 16 21:45:18 2026
+    Error: Elapsed time: 00:00:09
+```
+
