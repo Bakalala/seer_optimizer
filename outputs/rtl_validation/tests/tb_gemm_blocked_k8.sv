@@ -24,6 +24,7 @@ module tb_gemm_blocked_k8;
     logic signed [31:0] out_power_unconstrained;
     logic signed [31:0] out_latency_under_dsp;
     logic signed [31:0] out_latency_under_lut;
+    logic signed [31:0] expected;
 
     gemm_blocked_k8_original u_original (
         .in_BA0(in_BA0),
@@ -150,6 +151,12 @@ module tb_gemm_blocked_k8;
         end
     endfunction
 
+    function automatic logic signed [31:0] golden_expected;
+        begin
+            golden_expected = (in_BA0 * in_BB0) + (in_BA1 * in_BB1) + (in_BA2 * in_BB2) + (in_BA3 * in_BB3) + (in_BA4 * in_BB4) + (in_BA5 * in_BB5) + (in_BA6 * in_BB6) + (in_BA7 * in_BB7);
+        end
+    endfunction
+
     initial begin
         failures = 0;
         for (int vec = 0; vec < 200; vec++) begin
@@ -170,24 +177,29 @@ module tb_gemm_blocked_k8;
             in_BB6 = signed_value(14, vec);
             in_BB7 = signed_value(15, vec);
             #1;
-            if (out_weighted !== out_original) begin
-                $display("FAIL,gemm_blocked_k8,weighted,%0d,%0d,%0d", vec, out_original, out_weighted);
+            expected = golden_expected();
+            if (out_original !== expected) begin
+                $display("FAIL,gemm_blocked_k8,original_golden,%0d,%0d,%0d", vec, expected, out_original);
                 failures++;
             end
-            if (out_latency_unconstrained !== out_original) begin
-                $display("FAIL,gemm_blocked_k8,latency_unconstrained,%0d,%0d,%0d", vec, out_original, out_latency_unconstrained);
+            if (out_weighted !== expected) begin
+                $display("FAIL,gemm_blocked_k8,weighted_golden,%0d,%0d,%0d", vec, expected, out_weighted);
                 failures++;
             end
-            if (out_power_unconstrained !== out_original) begin
-                $display("FAIL,gemm_blocked_k8,power_unconstrained,%0d,%0d,%0d", vec, out_original, out_power_unconstrained);
+            if (out_latency_unconstrained !== expected) begin
+                $display("FAIL,gemm_blocked_k8,latency_unconstrained_golden,%0d,%0d,%0d", vec, expected, out_latency_unconstrained);
                 failures++;
             end
-            if (out_latency_under_dsp !== out_original) begin
-                $display("FAIL,gemm_blocked_k8,latency_under_dsp,%0d,%0d,%0d", vec, out_original, out_latency_under_dsp);
+            if (out_power_unconstrained !== expected) begin
+                $display("FAIL,gemm_blocked_k8,power_unconstrained_golden,%0d,%0d,%0d", vec, expected, out_power_unconstrained);
                 failures++;
             end
-            if (out_latency_under_lut !== out_original) begin
-                $display("FAIL,gemm_blocked_k8,latency_under_lut,%0d,%0d,%0d", vec, out_original, out_latency_under_lut);
+            if (out_latency_under_dsp !== expected) begin
+                $display("FAIL,gemm_blocked_k8,latency_under_dsp_golden,%0d,%0d,%0d", vec, expected, out_latency_under_dsp);
+                failures++;
+            end
+            if (out_latency_under_lut !== expected) begin
+                $display("FAIL,gemm_blocked_k8,latency_under_lut_golden,%0d,%0d,%0d", vec, expected, out_latency_under_lut);
                 failures++;
             end
         end

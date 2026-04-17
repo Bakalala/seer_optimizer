@@ -39,6 +39,7 @@ module tb_dot16;
     logic signed [31:0] out_latency_unconstrained;
     logic signed [31:0] out_power_unconstrained;
     logic signed [31:0] out_latency_under_dsp;
+    logic signed [31:0] expected;
 
     dot16_original u_original (
         .in_a0(in_a0),
@@ -226,6 +227,12 @@ module tb_dot16;
         end
     endfunction
 
+    function automatic logic signed [31:0] golden_expected;
+        begin
+            golden_expected = (in_a0 * in_b0) + (in_a1 * in_b1) + (in_a2 * in_b2) + (in_a3 * in_b3) + (in_a4 * in_b4) + (in_a5 * in_b5) + (in_a6 * in_b6) + (in_a7 * in_b7) + (in_a8 * in_b8) + (in_a9 * in_b9) + (in_a10 * in_b10) + (in_a11 * in_b11) + (in_a12 * in_b12) + (in_a13 * in_b13) + (in_a14 * in_b14) + (in_a15 * in_b15);
+        end
+    endfunction
+
     initial begin
         failures = 0;
         for (int vec = 0; vec < 200; vec++) begin
@@ -262,20 +269,25 @@ module tb_dot16;
             in_b8 = signed_value(30, vec);
             in_b9 = signed_value(31, vec);
             #1;
-            if (out_weighted !== out_original) begin
-                $display("FAIL,dot16,weighted,%0d,%0d,%0d", vec, out_original, out_weighted);
+            expected = golden_expected();
+            if (out_original !== expected) begin
+                $display("FAIL,dot16,original_golden,%0d,%0d,%0d", vec, expected, out_original);
                 failures++;
             end
-            if (out_latency_unconstrained !== out_original) begin
-                $display("FAIL,dot16,latency_unconstrained,%0d,%0d,%0d", vec, out_original, out_latency_unconstrained);
+            if (out_weighted !== expected) begin
+                $display("FAIL,dot16,weighted_golden,%0d,%0d,%0d", vec, expected, out_weighted);
                 failures++;
             end
-            if (out_power_unconstrained !== out_original) begin
-                $display("FAIL,dot16,power_unconstrained,%0d,%0d,%0d", vec, out_original, out_power_unconstrained);
+            if (out_latency_unconstrained !== expected) begin
+                $display("FAIL,dot16,latency_unconstrained_golden,%0d,%0d,%0d", vec, expected, out_latency_unconstrained);
                 failures++;
             end
-            if (out_latency_under_dsp !== out_original) begin
-                $display("FAIL,dot16,latency_under_dsp,%0d,%0d,%0d", vec, out_original, out_latency_under_dsp);
+            if (out_power_unconstrained !== expected) begin
+                $display("FAIL,dot16,power_unconstrained_golden,%0d,%0d,%0d", vec, expected, out_power_unconstrained);
+                failures++;
+            end
+            if (out_latency_under_dsp !== expected) begin
+                $display("FAIL,dot16,latency_under_dsp_golden,%0d,%0d,%0d", vec, expected, out_latency_under_dsp);
                 failures++;
             end
         end

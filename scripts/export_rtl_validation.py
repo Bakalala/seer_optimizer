@@ -13,7 +13,7 @@ import stat
 import subprocess
 import sys
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -264,6 +264,43 @@ endmodule
 """
 
 
+def golden_expression(benchmark: str) -> Optional[str]:
+    """Return the independent benchmark specification used by RTL testbenches."""
+    if benchmark == "fir8":
+        coeffs = [1, 2, 3, 4, 4, 3, 2, 1]
+        terms = [f"({sv_const(coeff)} * {sv_input_port(f'x{idx}')})" for idx, coeff in enumerate(coeffs)]
+        return " + ".join(terms)
+    if benchmark == "dot16":
+        terms = [f"({sv_input_port(f'a{idx}')} * {sv_input_port(f'b{idx}')})" for idx in range(16)]
+        return " + ".join(terms)
+    if benchmark == "gemm_k8":
+        terms = [f"({sv_input_port(f'A{idx}')} * {sv_input_port(f'B{idx}')})" for idx in range(8)]
+        return " + ".join(terms)
+    if benchmark == "gemm_blocked_k8":
+        terms = [f"({sv_input_port(f'BA{idx}')} * {sv_input_port(f'BB{idx}')})" for idx in range(8)]
+        return " + ".join(terms)
+    if benchmark == "conv3x3":
+        kernel = [
+            [1, 2, 1],
+            [2, 4, 2],
+            [1, 2, 1],
+        ]
+        terms = []
+        for row in range(3):
+            for col in range(3):
+                terms.append(f"({sv_const(kernel[row][col])} * {sv_input_port(f'p{row}{col}')})")
+        return " + ".join(terms)
+    if benchmark == "stencil5":
+        return (
+            f"({sv_const(4)} * {sv_input_port('center')}) "
+            f"+ ({sv_const(-1)} * {sv_input_port('north')}) "
+            f"+ ({sv_const(-1)} * {sv_input_port('south')}) "
+            f"+ ({sv_const(-1)} * {sv_input_port('east')}) "
+            f"+ ({sv_const(-1)} * {sv_input_port('west')})"
+        )
+    return None
+
+
 def render_testbench(benchmark: str, variants: list[dict], test_vectors: int) -> str:
     input_names = variants[0]["input_names"]
     decls = "\n".join(f"    logic signed [31:0] {sv_input_port(name)};" for name in input_names)
@@ -282,13 +319,21 @@ def render_testbench(benchmark: str, variants: list[dict], test_vectors: int) ->
         assignments.append(
             f"            {sv_input_port(name)} = signed_value({idx}, vec);"
         )
+    benchmark_golden = golden_expression(benchmark)
+    expected_expr = benchmark_golden if benchmark_golden is not None else "out_original"
     checks = []
+    checks.append(
+        f"""            if (out_original !== expected) begin
+                $display("FAIL,{benchmark},original_golden,%0d,%0d,%0d", vec, expected, out_original);
+                failures++;
+            end"""
+    )
     for item in variants:
         if item["variant"] == "original":
             continue
         checks.append(
-            f"""            if (out_{item['variant']} !== out_original) begin
-                $display("FAIL,{benchmark},{item['variant']},%0d,%0d,%0d", vec, out_original, out_{item['variant']});
+            f"""            if (out_{item['variant']} !== expected) begin
+                $display("FAIL,{benchmark},{item['variant']}_golden,%0d,%0d,%0d", vec, expected, out_{item['variant']});
                 failures++;
             end"""
         )
@@ -298,6 +343,7 @@ def render_testbench(benchmark: str, variants: list[dict], test_vectors: int) ->
 module tb_{benchmark};
 {decls}
 {chr(10).join(output_decls)}
+    logic signed [31:0] expected;
 
 {chr(10).join(instantiations)}
 
@@ -311,11 +357,18 @@ module tb_{benchmark};
         end
     endfunction
 
+    function automatic logic signed [31:0] golden_expected;
+        begin
+            golden_expected = {expected_expr};
+        end
+    endfunction
+
     initial begin
         failures = 0;
         for (int vec = 0; vec < {test_vectors}; vec++) begin
 {chr(10).join(assignments)}
             #1;
+            expected = golden_expected();
 {chr(10).join(checks)}
         end
         if (failures == 0) begin

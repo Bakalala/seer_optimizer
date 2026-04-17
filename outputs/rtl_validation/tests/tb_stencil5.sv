@@ -13,6 +13,7 @@ module tb_stencil5;
     logic signed [31:0] out_power_unconstrained;
     logic signed [31:0] out_latency_under_dsp;
     logic signed [31:0] out_latency_under_lut;
+    logic signed [31:0] expected;
 
     stencil5_original u_original (
         .in_center(in_center),
@@ -73,6 +74,12 @@ module tb_stencil5;
         end
     endfunction
 
+    function automatic logic signed [31:0] golden_expected;
+        begin
+            golden_expected = (32'sd4 * in_center) + (-32'sd1 * in_north) + (-32'sd1 * in_south) + (-32'sd1 * in_east) + (-32'sd1 * in_west);
+        end
+    endfunction
+
     initial begin
         failures = 0;
         for (int vec = 0; vec < 200; vec++) begin
@@ -82,24 +89,29 @@ module tb_stencil5;
             in_south = signed_value(3, vec);
             in_west = signed_value(4, vec);
             #1;
-            if (out_weighted !== out_original) begin
-                $display("FAIL,stencil5,weighted,%0d,%0d,%0d", vec, out_original, out_weighted);
+            expected = golden_expected();
+            if (out_original !== expected) begin
+                $display("FAIL,stencil5,original_golden,%0d,%0d,%0d", vec, expected, out_original);
                 failures++;
             end
-            if (out_latency_unconstrained !== out_original) begin
-                $display("FAIL,stencil5,latency_unconstrained,%0d,%0d,%0d", vec, out_original, out_latency_unconstrained);
+            if (out_weighted !== expected) begin
+                $display("FAIL,stencil5,weighted_golden,%0d,%0d,%0d", vec, expected, out_weighted);
                 failures++;
             end
-            if (out_power_unconstrained !== out_original) begin
-                $display("FAIL,stencil5,power_unconstrained,%0d,%0d,%0d", vec, out_original, out_power_unconstrained);
+            if (out_latency_unconstrained !== expected) begin
+                $display("FAIL,stencil5,latency_unconstrained_golden,%0d,%0d,%0d", vec, expected, out_latency_unconstrained);
                 failures++;
             end
-            if (out_latency_under_dsp !== out_original) begin
-                $display("FAIL,stencil5,latency_under_dsp,%0d,%0d,%0d", vec, out_original, out_latency_under_dsp);
+            if (out_power_unconstrained !== expected) begin
+                $display("FAIL,stencil5,power_unconstrained_golden,%0d,%0d,%0d", vec, expected, out_power_unconstrained);
                 failures++;
             end
-            if (out_latency_under_lut !== out_original) begin
-                $display("FAIL,stencil5,latency_under_lut,%0d,%0d,%0d", vec, out_original, out_latency_under_lut);
+            if (out_latency_under_dsp !== expected) begin
+                $display("FAIL,stencil5,latency_under_dsp_golden,%0d,%0d,%0d", vec, expected, out_latency_under_dsp);
+                failures++;
+            end
+            if (out_latency_under_lut !== expected) begin
+                $display("FAIL,stencil5,latency_under_lut_golden,%0d,%0d,%0d", vec, expected, out_latency_under_lut);
                 failures++;
             end
         end

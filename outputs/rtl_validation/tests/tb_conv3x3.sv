@@ -17,6 +17,7 @@ module tb_conv3x3;
     logic signed [31:0] out_power_unconstrained;
     logic signed [31:0] out_latency_under_dsp;
     logic signed [31:0] out_latency_under_lut;
+    logic signed [31:0] expected;
 
     conv3x3_original u_original (
         .in_p00(in_p00),
@@ -101,6 +102,12 @@ module tb_conv3x3;
         end
     endfunction
 
+    function automatic logic signed [31:0] golden_expected;
+        begin
+            golden_expected = (32'sd1 * in_p00) + (32'sd2 * in_p01) + (32'sd1 * in_p02) + (32'sd2 * in_p10) + (32'sd4 * in_p11) + (32'sd2 * in_p12) + (32'sd1 * in_p20) + (32'sd2 * in_p21) + (32'sd1 * in_p22);
+        end
+    endfunction
+
     initial begin
         failures = 0;
         for (int vec = 0; vec < 200; vec++) begin
@@ -114,24 +121,29 @@ module tb_conv3x3;
             in_p21 = signed_value(7, vec);
             in_p22 = signed_value(8, vec);
             #1;
-            if (out_weighted !== out_original) begin
-                $display("FAIL,conv3x3,weighted,%0d,%0d,%0d", vec, out_original, out_weighted);
+            expected = golden_expected();
+            if (out_original !== expected) begin
+                $display("FAIL,conv3x3,original_golden,%0d,%0d,%0d", vec, expected, out_original);
                 failures++;
             end
-            if (out_latency_unconstrained !== out_original) begin
-                $display("FAIL,conv3x3,latency_unconstrained,%0d,%0d,%0d", vec, out_original, out_latency_unconstrained);
+            if (out_weighted !== expected) begin
+                $display("FAIL,conv3x3,weighted_golden,%0d,%0d,%0d", vec, expected, out_weighted);
                 failures++;
             end
-            if (out_power_unconstrained !== out_original) begin
-                $display("FAIL,conv3x3,power_unconstrained,%0d,%0d,%0d", vec, out_original, out_power_unconstrained);
+            if (out_latency_unconstrained !== expected) begin
+                $display("FAIL,conv3x3,latency_unconstrained_golden,%0d,%0d,%0d", vec, expected, out_latency_unconstrained);
                 failures++;
             end
-            if (out_latency_under_dsp !== out_original) begin
-                $display("FAIL,conv3x3,latency_under_dsp,%0d,%0d,%0d", vec, out_original, out_latency_under_dsp);
+            if (out_power_unconstrained !== expected) begin
+                $display("FAIL,conv3x3,power_unconstrained_golden,%0d,%0d,%0d", vec, expected, out_power_unconstrained);
                 failures++;
             end
-            if (out_latency_under_lut !== out_original) begin
-                $display("FAIL,conv3x3,latency_under_lut,%0d,%0d,%0d", vec, out_original, out_latency_under_lut);
+            if (out_latency_under_dsp !== expected) begin
+                $display("FAIL,conv3x3,latency_under_dsp_golden,%0d,%0d,%0d", vec, expected, out_latency_under_dsp);
+                failures++;
+            end
+            if (out_latency_under_lut !== expected) begin
+                $display("FAIL,conv3x3,latency_under_lut_golden,%0d,%0d,%0d", vec, expected, out_latency_under_lut);
                 failures++;
             end
         end
