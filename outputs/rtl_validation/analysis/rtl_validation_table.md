@@ -1,37 +1,37 @@
 | benchmark | variant | rtl_intended_dsp_count | quartus_dsp_blocks | quartus_alm_or_alut | quartus_fmax_mhz | quartus_worst_slack_ns | timing_passed | status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| dot16 | original | 16 |  | 732 |  | -4.196 | false | compiled |
-| dot16 | weighted | 0 |  | 4328 |  | -3.354 | false | compiled |
-| dot16 | latency_unconstrained | 0 |  | 4328 |  | -3.354 | false | compiled |
-| dot16 | power_unconstrained | 7 |  | 2665 |  | -4.957 | false | compiled |
-| dot16 | latency_under_dsp | 0 |  | 4328 |  | -3.354 | false | compiled |
-| gemm_blocked_k8 | original | 8 |  | 366 |  | -3.421 | false | compiled |
-| gemm_blocked_k8 | weighted | 0 |  | 2154 |  | -2.079 | false | compiled |
-| gemm_blocked_k8 | latency_unconstrained | 8 |  | 366 |  | -3.421 | false | compiled |
-| gemm_blocked_k8 | power_unconstrained | 8 |  | 366 |  | -3.421 | false | compiled |
-| gemm_blocked_k8 | latency_under_dsp | 0 |  | 2154 |  | -2.079 | false | compiled |
-| gemm_blocked_k8 | latency_under_lut | 8 |  | 366 |  | -3.421 | false | compiled |
-| stencil5 | original | 5 |  | 240 |  | 1.350 | true | compiled |
-| stencil5 | weighted | 0 |  | 240 |  | 1.350 | true | compiled |
-| stencil5 | latency_unconstrained | 4 |  | 240 |  | 1.350 | true | compiled |
-| stencil5 | power_unconstrained | 5 |  | 240 |  | 1.350 | true | compiled |
-| stencil5 | latency_under_dsp | 0 |  | 240 |  | 1.350 | true | compiled |
-| stencil5 | latency_under_lut | 5 |  | 240 |  | 1.350 | true | compiled |
-| fir8 | original | 8 |  | 288 |  | 1.227 | true | compiled |
-| fir8 | weighted | 0 |  | 288 |  | 1.227 | true | compiled |
-| fir8 | latency_unconstrained | 3 |  | 288 |  | 1.227 | true | compiled |
-| fir8 | power_unconstrained | 4 |  | 288 |  | 1.227 | true | compiled |
-| fir8 | latency_under_dsp | 0 |  | 288 |  | 1.227 | true | compiled |
-| fir8 | latency_under_lut | 4 |  | 288 |  | 1.227 | true | compiled |
-| conv3x3 | original | 9 |  | 289 |  | 1.309 | true | compiled |
-| conv3x3 | weighted | 0 |  | 289 |  | 1.309 | true | compiled |
-| conv3x3 | latency_unconstrained | 1 |  | 289 |  | 1.309 | true | compiled |
-| conv3x3 | power_unconstrained | 1 |  | 289 |  | 1.309 | true | compiled |
-| conv3x3 | latency_under_dsp | 0 |  | 289 |  | 1.309 | true | compiled |
-| conv3x3 | latency_under_lut | 1 |  | 289 |  | 1.309 | true | compiled |
-| gemm_k8 | original | 8 |  | 366 |  | -3.421 | false | compiled |
-| gemm_k8 | weighted | 0 |  | 2154 |  | -2.079 | false | compiled |
-| gemm_k8 | latency_unconstrained | 4 |  | 1272 |  | -3.511 | false | compiled |
-| gemm_k8 | power_unconstrained | 8 |  | 366 |  | -3.421 | false | compiled |
-| gemm_k8 | latency_under_dsp | 0 |  | 2154 |  | -2.079 | false | compiled |
-| gemm_k8 | latency_under_lut | 8 |  | 366 |  | -3.421 | false | compiled |
+| dot16 | original | 16 | 24 | 732 | 166.69 | -4.196 | false | compiled |
+| dot16 | weighted | 0 | 0 | 4328 | 186.78 | -3.354 | false | compiled |
+| dot16 | latency_unconstrained | 0 | 0 | 4328 | 186.78 | -3.354 | false | compiled |
+| dot16 | power_unconstrained | 7 | 11 | 2665 | 147.43 | -4.957 | false | compiled |
+| dot16 | latency_under_dsp | 0 | 0 | 4328 | 186.78 | -3.354 | false | compiled |
+| gemm_blocked_k8 | original | 8 | 12 | 366 | 190.95 | -3.421 | false | compiled |
+| gemm_blocked_k8 | weighted | 0 | 0 | 2154 | 245.16 | -2.079 | false | compiled |
+| gemm_blocked_k8 | latency_unconstrained | 8 | 12 | 366 | 190.95 | -3.421 | false | compiled |
+| gemm_blocked_k8 | power_unconstrained | 8 | 12 | 366 | 190.95 | -3.421 | false | compiled |
+| gemm_blocked_k8 | latency_under_dsp | 0 | 0 | 2154 | 245.16 | -2.079 | false | compiled |
+| gemm_blocked_k8 | latency_under_lut | 8 | 12 | 366 | 190.95 | -3.421 | false | compiled |
+| stencil5 | original | 5 | 0 | 240 | 1538.46 | 1.350 | true | compiled |
+| stencil5 | weighted | 0 | 0 | 240 | 1538.46 | 1.350 | true | compiled |
+| stencil5 | latency_unconstrained | 4 | 0 | 240 | 1538.46 | 1.350 | true | compiled |
+| stencil5 | power_unconstrained | 5 | 0 | 240 | 1538.46 | 1.350 | true | compiled |
+| stencil5 | latency_under_dsp | 0 | 0 | 240 | 1538.46 | 1.350 | true | compiled |
+| stencil5 | latency_under_lut | 5 | 0 | 240 | 1538.46 | 1.350 | true | compiled |
+| fir8 | original | 8 | 0 | 288 | 1293.66 | 1.227 | true | compiled |
+| fir8 | weighted | 0 | 0 | 288 | 1293.66 | 1.227 | true | compiled |
+| fir8 | latency_unconstrained | 3 | 0 | 288 | 1293.66 | 1.227 | true | compiled |
+| fir8 | power_unconstrained | 4 | 0 | 288 | 1293.66 | 1.227 | true | compiled |
+| fir8 | latency_under_dsp | 0 | 0 | 288 | 1293.66 | 1.227 | true | compiled |
+| fir8 | latency_under_lut | 4 | 0 | 288 | 1293.66 | 1.227 | true | compiled |
+| conv3x3 | original | 9 | 0 | 289 | 1447.18 | 1.309 | true | compiled |
+| conv3x3 | weighted | 0 | 0 | 289 | 1447.18 | 1.309 | true | compiled |
+| conv3x3 | latency_unconstrained | 1 | 0 | 289 | 1447.18 | 1.309 | true | compiled |
+| conv3x3 | power_unconstrained | 1 | 0 | 289 | 1447.18 | 1.309 | true | compiled |
+| conv3x3 | latency_under_dsp | 0 | 0 | 289 | 1447.18 | 1.309 | true | compiled |
+| conv3x3 | latency_under_lut | 1 | 0 | 289 | 1447.18 | 1.309 | true | compiled |
+| gemm_k8 | original | 8 | 12 | 366 | 190.95 | -3.421 | false | compiled |
+| gemm_k8 | weighted | 0 | 0 | 2154 | 245.16 | -2.079 | false | compiled |
+| gemm_k8 | latency_unconstrained | 4 | 6 | 1272 | 185.63 | -3.511 | false | compiled |
+| gemm_k8 | power_unconstrained | 8 | 12 | 366 | 190.95 | -3.421 | false | compiled |
+| gemm_k8 | latency_under_dsp | 0 | 0 | 2154 | 245.16 | -2.079 | false | compiled |
+| gemm_k8 | latency_under_lut | 8 | 12 | 366 | 190.95 | -3.421 | false | compiled |

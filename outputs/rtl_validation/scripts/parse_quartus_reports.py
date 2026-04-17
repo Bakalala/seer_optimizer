@@ -39,6 +39,8 @@ def parse_variant(root: Path, item: dict) -> dict[str, str]:
         r"Total registers\s*[:;]\s*([\d,]+)",
     ])
     dsp = first_match(text, [
+        r"Total DSP Blocks\s*[:;]\s*([\d,]+)\s*/",
+        r"DSP Blocks Needed \[=A\+B-C\]\s*[:;]\s*([\d,]+)\s*/",
         r"Variable precision DSP blocks\s*[:;]\s*([\d,]+)",
         r"DSP block 18-bit elements\s*[:;]\s*([\d,]+)",
         r"Embedded Multiplier 18-bit elements\s*[:;]\s*([\d,]+)",
@@ -49,6 +51,7 @@ def parse_variant(root: Path, item: dict) -> dict[str, str]:
         r"M20K blocks\s*[:;]\s*([\d,]+)",
     ])
     fmax = first_match(timing, [
+        r";\s*([\d.]+)\s+MHz\s*;\s*[\d.]+\s+MHz\s*;\s*clk",
         r"^\s*clk\s+([\d.]+)\s+MHz",
         r"Fmax\s+Summary.*?clk.*?([\d.]+)\s+MHz",
         r"Restricted Fmax\s*[:;]\s*([\d.]+)\s*MHz",
