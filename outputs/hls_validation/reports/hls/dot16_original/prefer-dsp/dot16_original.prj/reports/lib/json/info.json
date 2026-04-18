@@ -1,1 +1,0 @@
-{"compileInfo":{"nodes":[{"command":"i++ -march=Arria10 --simulator none --dsp-mode=prefer-dsp /home/aseife2/seer_optimizer/outputs/hls_validation/src/dot16_original.cpp -o dot16_original","family":"Arria10, 10AX115U1F45I1SG","id":1,"name":"./dot16_original","product":"HLS","quartus":"19.2.0 Build 57 Pro","time":"Wed Apr 15 12:37:59 2026","version":"21.1.0 Build 173.3"}]}}

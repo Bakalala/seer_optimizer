@@ -2,6 +2,11 @@
 
 This folder is generated from `outputs/benchmark_results.json`.
 
+This path is exploratory in the final report. Intel HLS accepts the generated C++
+components and produces useful frontend/report artifacts, but it often remaps distinct
+source variants to similar estimated hardware. The final validation claim therefore
+uses direct generated RTL plus ModelSim/Quartus summaries under `outputs/rtl_validation/`.
+
 ## Local correctness test
 
 Run this on any machine with `g++` or `clang++`:
@@ -45,3 +50,8 @@ python3 scripts/parse_hls_reports.py   --root reports/hls   --metadata metadata/
 
 Use `metadata/expected_resource_summary.csv` to compare analytical DSP/LUT
 expectations with Quartus/HLS reports.
+
+The raw `reports/hls/` project tree is intentionally not tracked in Git because it
+contains large generated Intel HLS build directories. The committed artifacts are the
+generated C++ sources, metadata, compact CSV/Markdown summaries, and figures needed
+to reproduce the report discussion.

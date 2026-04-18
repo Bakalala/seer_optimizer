@@ -56,6 +56,7 @@ outputs/hls_validation/scripts/__pycache__/
 !outputs/hls_validation/tests/**
 !outputs/hls_validation/reports/
 !outputs/hls_validation/reports/**
+outputs/hls_validation/reports/hls/
 outputs/hls_validation/reports/generated_datapaths_test
 outputs/hls_validation/reports/cpp_correctness.log
 !outputs/rtl_validation/
@@ -74,6 +75,27 @@ outputs/rtl_validation/scripts/__pycache__/
 !outputs/rtl_validation/tests/**
 !outputs/rtl_validation/quartus/
 !outputs/rtl_validation/quartus/**
+# Keep source/project files and compact reports, but do not track bulky Quartus
+# implementation databases. The summary CSVs and .syn/.fit/.sta reports are enough
+# for reproducible report analysis.
+outputs/rtl_validation/quartus/**/qdb/
+outputs/rtl_validation/quartus/**/tmp-clearbox/
+outputs/rtl_validation/quartus/**/*.cdb
+outputs/rtl_validation/quartus/**/*.hdb
+outputs/rtl_validation/quartus/**/*.qmsgdb
+outputs/rtl_validation/quartus/**/*.model
+outputs/rtl_validation/quartus/**/*.rdb
+outputs/rtl_validation/quartus/**/*.ddb
+outputs/rtl_validation/quartus/**/*.db_info
+outputs/rtl_validation/quartus/**/*.tdb
+outputs/rtl_validation/quartus/**/*.hsd
+outputs/rtl_validation/quartus/**/*.sof
+outputs/rtl_validation/quartus/**/*.sld
+outputs/rtl_validation/quartus/**/*.pin
+outputs/rtl_validation/quartus/**/*.done
+outputs/rtl_validation/quartus/**/*.summary
+outputs/rtl_validation/quartus/**/*.smsg
+outputs/rtl_validation/quartus/**/*.fit.*.rpt
 !outputs/rtl_validation/reports/
 !outputs/rtl_validation/reports/**
 outputs/rtl_validation/reports/sim/

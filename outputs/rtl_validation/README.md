@@ -1,20 +1,28 @@
 # RTL Validation
 
-This directory contains direct SystemVerilog variants generated from the optimizer output.
+This directory contains direct Verilog/SystemVerilog-style RTL variants generated from the optimizer output.
 It is intended to validate DSP-vs-logic multiplier mapping with Quartus fit/STA, not
 through Intel HLS inference.
 
 ## Current validation status
 
 The optimizer generates functionally equivalent RTL variants with different analytical
-and structural DSP/LUT intent. A real FPGA fitted-metric validation flow is implemented,
-but the available Quartus installation cannot produce fit/STA reports on this server,
-so no fitted FPGA improvement is claimed yet.
+and structural DSP/LUT intent. The final committed run includes both functional simulation
+and Quartus fitted-resource summaries.
 
-This server is valid for Rust optimizer tests, Python benchmark tests, RTL generation,
-ModelSim functional equivalence, structural analytical validation, and Quartus preflight
-failure diagnosis. It is not valid for fitted ALM/DSP claims, Fmax claims, Quartus power
-claims, or any real-FPGA improvement statement.
+Committed evidence:
+
+- ModelSim functional simulation passes for all 6 benchmark testbenches.
+- Quartus compiles all 35 generated RTL variants.
+- `reports/rtl_quartus_summary.csv` contains fitted DSP, ALM/ALUT, register, Fmax, slack, and status fields.
+- `analysis/real_fpga_evidence_table.md` summarizes original-vs-generated resource steering.
+
+Scope of the evidence:
+
+- Strongest claim: multiplier-heavy kernels can trade fitted DSP blocks for ALMs.
+- Fmax is reported STA output, not a universal timing-signoff claim.
+- Power is not measured by this RTL flow.
+- Small kernels often map to identical fitted resources because Quartus optimizes equivalent arithmetic.
 
 ## Functional simulation
 
@@ -28,8 +36,8 @@ tries Icarus Verilog.
 
 ## Quartus fit and timing
 
-Run this package on a different Quartus machine. First verify the selected Quartus
-install, license, family, and device with a trivial registered adder:
+First verify the selected Quartus install, license, family, and device with a trivial
+registered adder:
 
 ```bash
 cd ~/seer_optimizer
@@ -41,7 +49,7 @@ RTL_DEVICE='<valid device>' \
 outputs/rtl_validation/scripts/run_quartus_preflight.sh
 ```
 
-Then compile the high-value subset first:
+Then compile a high-value subset first:
 
 ```bash
 SKIP_RTL_SIM=1 \
@@ -72,9 +80,9 @@ The easiest fitted metrics to use are:
 - Optional: Fmax if STA reports it.
 - Excluded: power, unless Power Analyzer output is generated and parsed.
 
-Successful real-FPGA evidence requires at least the original and one optimized variant
-to compile on the same family/device, with functional equivalence passing and at least
-one optimized variant improving a real fitted metric over `original`.
+Useful FPGA evidence requires at least the original and one generated variant to compile
+on the same family/device, with functional equivalence passing and at least one generated
+variant changing a real fitted metric relative to `original`.
 
 For direct script use from this directory:
 

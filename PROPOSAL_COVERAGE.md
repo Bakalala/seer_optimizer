@@ -11,13 +11,15 @@ The core proposal is covered:
 - Area/latency tradeoff exploration and Pareto extraction: implemented
 - Datapath-oriented HLS benchmark suite: implemented
 - Analytical hardware cost model and report generation: implemented
+- Generated RTL functional validation: implemented
+- Quartus fitted-resource validation: implemented for the generated RTL variants
 
 The remaining differences are intentional scope decisions that were made later in the project:
 
 - No control-flow or loop transformations
 - No MLIR/CIRCT frontend work
 - No BRAM or memory-system modeling
-- No explicit power-optimization objective, although the framework supports weighted multi-metric scoring and resource-aware constraints
+- Power is a normalized analytical proxy, not measured FPGA power
 
 ## Proposal Section Mapping
 
@@ -119,6 +121,7 @@ Repo coverage:
 - `latency_under_lut`: implemented
 - weighted scalarized extraction: implemented
 - exact Pareto frontier over area/latency: implemented
+- normalized power-proxy extraction: implemented
 
 Files:
 
@@ -173,20 +176,26 @@ Proposal metrics:
 - hardware area
 - resource utilization
 - comparison against baseline, unconstrained equality saturation, and constrained extraction
+- functional correctness of generated implementations
+- optional backend FPGA resource validation
 
 Repo coverage:
 
 - Latency: implemented
 - Area: implemented
+- Normalized power proxy: implemented as an analytical metric
 - DSP/LUT resource utilization: implemented
 - Baseline vs weighted vs constrained vs Pareto comparisons: implemented
 - HTML, Markdown, CSV, and JSON reporting: implemented
+- ModelSim functional validation against independent golden formulas: implemented
+- Quartus fitted DSP/ALM/Fmax extraction: implemented and committed for all generated RTL variants
 
 Files:
 
 - Shared cost model definition: [`cost_model.json`](cost_model.json)
 - Rust metrics/extraction consumption: [`rust_core/src/ir.rs`](rust_core/src/ir.rs)
 - Python-side baseline metric and reporting consumption: [`run_benchmarks.py`](run_benchmarks.py)
+- RTL validation summaries: [`outputs/rtl_validation/reports/functional_validation.md`](outputs/rtl_validation/reports/functional_validation.md), [`outputs/rtl_validation/reports/rtl_quartus_summary.csv`](outputs/rtl_validation/reports/rtl_quartus_summary.csv)
 
 Clarification:
 
@@ -208,6 +217,7 @@ Repo coverage:
 - Rust optimizer core: implemented
 - Hardware-aware analytical cost model: implemented
 - Benchmark suite and automated evaluation: implemented
+- Generated RTL, ModelSim validation, and Quartus summaries: implemented
 - Report artifacts and reproduction script: implemented
 
 Status: covered
@@ -219,6 +229,7 @@ These are the only material items from the proposal text that are not implemente
 - Loop/control-path transformations
 - MLIR/CIRCT integration
 - BRAM-aware or memory-aware optimization
-- Explicit power objective as a first-class optimization target
+- Device-calibrated power modeling or measured FPGA power
+- Global claims that Quartus improves every fitted area/timing metric
 
 Those do not block the current paper implementation because the final agreed scope is strictly datapath-only.

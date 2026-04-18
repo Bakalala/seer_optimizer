@@ -1,6 +1,29 @@
-# Seer Optimizer
+# Constraint-Aware E-Graph HLS Optimizer
 
-Datapath-only constraint-aware HLS optimizer built around a Rust `egg` core and a thin Python benchmark/report harness.
+Datapath-only constraint-aware HLS optimizer built around a Rust `egg` core, a Python benchmark harness, generated RTL validation, and a final SIGPLAN-style report.
+
+Project repository: <https://github.com/Bakalala/seer_optimizer>
+
+## Final Submission Status
+
+The final report is:
+
+- [`report/main.pdf`](report/main.pdf): compiled report
+- [`outputs/project_report.pdf`](outputs/project_report.pdf): exported report copy
+- [`report/main.tex`](report/main.tex): LaTeX source
+
+Main claim:
+
+> Equality saturation can generate many equivalent HLS datapaths, but a designer still needs extraction interfaces that can answer constrained design questions. This project adds weighted, constrained, infeasibility-reporting, and Pareto extraction over a retained e-graph frontier.
+
+Validation evidence:
+
+- Analytical benchmark evaluation across six arithmetic kernels.
+- Generated Verilog RTL variants tested with ModelSim against independent golden formulas.
+- Quartus Prime Pro 19.2 fit/STA reports for all 35 generated RTL variants on Arria 10.
+- Narrow FPGA-backed evidence that multiplier-heavy kernels can trade fitted DSP blocks for ALMs.
+
+Important scope note: the project does **not** claim global FPGA optimality, calibrated power modeling, or consistent Fmax/area improvement for every variant. Quartus is an optimizing backend and can legally merge small equivalent datapaths into identical fitted circuits.
 
 ## Scope
 
@@ -12,16 +35,40 @@ Datapath-only constraint-aware HLS optimizer built around a Rust `egg` core and 
   - constrained optimization under explicit budgets
   - exact 2D area/latency Pareto extraction
   - latency-optimal extraction with no budgets
-  - DSP-budget scaling sweeps for "bigger FPGA, faster datapath" analysis
+  - normalized power-proxy extraction
+  - DSP/LUT resource-budget queries
+
+## Key Artifacts
+
+- Analytical summaries:
+  - [`outputs/main_comparison_table.md`](outputs/main_comparison_table.md)
+  - [`outputs/baseline_constraints.md`](outputs/baseline_constraints.md)
+  - [`outputs/analysis.md`](outputs/analysis.md)
+- Structural validation:
+  - [`outputs/variant_structure/interpretation.md`](outputs/variant_structure/interpretation.md)
+  - [`outputs/variant_structure/variant_structure_summary.csv`](outputs/variant_structure/variant_structure_summary.csv)
+- RTL validation:
+  - [`outputs/rtl_validation/reports/functional_validation.md`](outputs/rtl_validation/reports/functional_validation.md)
+  - [`outputs/rtl_validation/reports/functional_summary.csv`](outputs/rtl_validation/reports/functional_summary.csv)
+  - [`outputs/rtl_validation/reports/rtl_quartus_summary.csv`](outputs/rtl_validation/reports/rtl_quartus_summary.csv)
+  - [`outputs/rtl_validation/analysis/real_fpga_evidence_table.md`](outputs/rtl_validation/analysis/real_fpga_evidence_table.md)
+- HLS exploration:
+  - [`outputs/hls_validation/analysis/hls_validation_table.md`](outputs/hls_validation/analysis/hls_validation_table.md)
 
 ## What You Need Installed
 
-This repository has only two real runtime prerequisites:
+The analytical optimizer and benchmark harness require:
 
 - Rust toolchain with `cargo` and `rustc`
-- Python 3.11 or newer
+- Python 3.10 or newer
 
 The Python harness uses only the Python standard library. There is no `requirements.txt` and no third-party Python package install step.
+
+Optional tools for validation/report work:
+
+- ModelSim/Questa or Icarus Verilog for generated RTL functional simulation.
+- Intel Quartus Prime Pro for fit/STA validation.
+- Tectonic or a standard LaTeX toolchain for compiling `report/main.tex`.
 
 ### Verify Your Tooling
 
@@ -36,7 +83,7 @@ git --version
 
 Expected:
 
-- `python3` should be `3.11+`
+- `python3` should be `3.10+`
 - `rustc` and `cargo` should both be available on `PATH`
 
 ### If Rust Is Missing
@@ -90,6 +137,11 @@ There are no Python dependencies to install after that. The `venv` is used so th
 - [`benchmark_config.json`](benchmark_config.json): saturation limits, weight sweep, fixed constraint profiles, DSP sweep settings
 - [`cost_model.json`](cost_model.json): single source of truth for datapath operation costs shared by Python and Rust
 - [`scripts/reproduce.sh`](scripts/reproduce.sh): one-command end-to-end reproduction
+- [`scripts/export_rtl_validation.py`](scripts/export_rtl_validation.py): generated Verilog RTL and Quartus validation package exporter
+- [`scripts/run_rtl_validation_server.sh`](scripts/run_rtl_validation_server.sh): server-side ModelSim/Quartus validation driver
+- [`outputs/rtl_validation/`](outputs/rtl_validation): generated RTL, functional summaries, Quartus summaries, and validation tables
+- [`outputs/hls_validation/`](outputs/hls_validation): generated C++/Intel HLS exploration artifacts
+- [`report/`](report): SIGPLAN-style report source, figures, bibliography, and compiled PDF
 - [`PROPOSAL_COVERAGE.md`](PROPOSAL_COVERAGE.md): section-by-section mapping from the original proposal to the implemented system
 - [`HLS_project_proposal.pdf`](HLS_project_proposal.pdf): original proposal document
 
@@ -159,8 +211,11 @@ The harness runs all of the following:
 
 - weighted extraction
 - latency-optimal extraction with no budgets
+- power-proxy extraction with no budgets
 - minimize latency with `area_max = original_area`
 - minimize area with `latency_max = original_latency`
+- minimize power proxy with `latency_max = original_latency`
+- minimize latency with `power_max = original_power_proxy`
 - minimize latency with `dsp_max = 0`
 - minimize latency with a configured per-benchmark LUT cap
 - exact Pareto extraction
@@ -258,6 +313,41 @@ cargo test --manifest-path rust_core/Cargo.toml
 ```
 
 If this script passes, the project is in the expected reproducible state.
+
+## RTL / Quartus Validation
+
+The generated RTL validation package is under [`outputs/rtl_validation/`](outputs/rtl_validation).
+
+Functional simulation only:
+
+```bash
+SKIP_RTL_QUARTUS=1 ./scripts/run_rtl_validation_server.sh
+```
+
+Full server validation, when Quartus is available and configured:
+
+```bash
+SKIP_RTL_SIM=1 JOBS=4 ./scripts/run_rtl_validation_server.sh
+```
+
+The final committed run contains:
+
+- 6/6 ModelSim benchmark testbenches passing.
+- 35/35 generated RTL variants compiled by Quartus.
+- Compact fitted-resource summaries in [`outputs/rtl_validation/reports/rtl_quartus_summary.csv`](outputs/rtl_validation/reports/rtl_quartus_summary.csv).
+
+Do not use the Quartus data as a universal “optimized RTL is faster” claim. The useful FPGA result is narrower: on multiplier-heavy kernels, generated soft/LUT-multiplier variants reduce fitted DSP usage to zero and increase ALM usage, showing real resource steering.
+
+## Report Build
+
+Compile the final report with:
+
+```bash
+tectonic -X compile report/main.tex
+cp report/main.pdf outputs/project_report.pdf
+```
+
+The final PDF is expected to be 7 pages total: six body pages plus references on page 7.
 
 ## Where The Outputs Go
 
